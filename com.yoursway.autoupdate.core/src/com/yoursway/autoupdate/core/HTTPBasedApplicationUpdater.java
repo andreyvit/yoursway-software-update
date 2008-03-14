@@ -7,7 +7,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +34,13 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 		public String changesDescription;
 		public List<ApplicationFile> files;
 
-		public static VersionDescriptionFile createFromXML(String repositoryURL, InputStream xml) throws IOException  {
+		public VersionDescriptionFile() {
+			files = new ArrayList<ApplicationFile>();
+			isLatest = false;
+		}
+
+		public static VersionDescriptionFile createFromXML(
+				String repositoryURL, InputStream xml) throws IOException {
 			VersionDescriptionFile file = new VersionDescriptionFile();
 
 			InputStream stream = new BufferedInputStream(xml);
@@ -62,30 +70,33 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 				Node node = list.item(i);
 				String nodeName = node.getNodeName();
 				if (nodeName.equals("next-version")) {
-					file.nextVersion = node.getNodeValue();
+					file.nextVersion = node.getTextContent();
 				} else if (nodeName.equals("display-name")) {
-					file.displayName = node.getNodeValue();
+					file.displayName = node.getTextContent();
 				} else if (nodeName.equals("latest")) {
-					file.isLatest = (node.getNodeValue().equals("true"));
+					file.isLatest = (node.getTextContent().equals("true"));
 				} else if (nodeName.equals("files")) {
-					file.files = new ArrayList<ApplicationFile>();
 					NodeList filesNodes = node.getChildNodes();
 					int filesCount = filesNodes.getLength();
 					for (int j = 0; j < filesCount; j++) {
-						Node f = filesNodes.item(j);						
+						Node f = filesNodes.item(j);
 						if (f.getNodeName().equals("file")) {
 							NamedNodeMap attrs = f.getAttributes();
-							String serverPath = attrs.getNamedItem("path").getNodeValue();
-							String md5 = attrs.getNamedItem("md5").getNodeValue();
-							String installationPath = attrs.getNamedItem("installPath").getNodeValue();
+							String serverPath = attrs.getNamedItem("path")
+									.getNodeName();
+							String md5 = attrs.getNamedItem("md5")
+									.getNodeValue();
+							String installationPath = attrs.getNamedItem(
+									"installPath").getNodeValue();
 							if (new Path(serverPath).getDevice() == null)
 								serverPath = repositoryURL + serverPath;
 							URL remoteUrl = new URL(serverPath);
-							file.files.add(new ApplicationFile(md5, installationPath, remoteUrl));
+							file.files.add(new ApplicationFile(md5,
+									installationPath, remoteUrl));
 						}
 					}
 				} else if (nodeName.equals("changes")) {
-					file.changesDescription = node.getNodeValue();
+					file.changesDescription = node.getTextContent();
 				}
 			}
 			return file;
@@ -99,7 +110,7 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 		if (!repositoryURL.endsWith("/"))
 			repositoryURL += "/";
 		this.repositoryURL = repositoryURL;
-		
+
 	}
 
 	protected InputStream contentsFor(URL url) throws IOException {
@@ -112,8 +123,22 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * 
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#latestUpdateFor(com.yoursway.autoupdate.core.ApplicationVersion)
 	 */
-	public ApplicationUpdate latestUpdateFor(ApplicationVersion currentVersion) {
-		return null;
+	public ApplicationUpdate latestUpdateFor(ApplicationVersion currentVersion)
+			throws UpdateLoopException {
+		Set<ApplicationVersion> visited = new HashSet<ApplicationVersion>();
+		visited.add(currentVersion);
+		ApplicationUpdate currentUpdate = null;
+		while (true) {
+			ApplicationUpdate lastUpdate = currentUpdate;
+			currentUpdate = nextUpdateFor(currentVersion);
+			if (currentUpdate == null)
+				return lastUpdate;
+			if (visited.contains(currentUpdate.version())) {
+				throw new UpdateLoopException();
+			}
+			currentVersion = currentUpdate.version();
+			visited.add(currentVersion);
+		}
 	}
 
 	/*
@@ -138,19 +163,22 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	}
 
 	public boolean freshUpdatesAvailable(ApplicationVersion currentVersion) {
-		// TODO Auto-generated method stub
-		return false;
+		return nextUpdateFor(currentVersion) != null;
 	}
 
 	public ApplicationUpdate nextUpdateFor(ApplicationVersion currentVersion) {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
+			ApplicationVersion freshVersion = new ApplicationVersion(
+					description.nextVersion, description.displayName);
 			if (description.isLatest)
 				return null;
+			description = getDescription(freshVersion);
 			List<ApplicationFile> appFiles = description.files;
-			ApplicationFile[] files = appFiles.toArray(new ApplicationFile[appFiles.size()]);
-			ApplicationVersion version = new ApplicationVersion(description.nextVersion, description.displayName);
-			return new ApplicationUpdate(version, description.changesDescription, files);
+			ApplicationFile[] files = appFiles
+					.toArray(new ApplicationFile[appFiles.size()]);
+			return new ApplicationUpdate(freshVersion,
+					description.changesDescription, files);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -161,9 +189,11 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	private VersionDescriptionFile getDescription(
 			ApplicationVersion currentVersion) throws MalformedURLException,
 			IOException {
-		URL updateFileURL = new URL(repositoryURL + currentVersion.versionString()+ ".xml");
+		URL updateFileURL = new URL(repositoryURL
+				+ currentVersion.versionString() + ".xml");
 		InputStream stream = contentsFor(updateFileURL);
-		VersionDescriptionFile description = VersionDescriptionFile.createFromXML(repositoryURL, stream);
+		VersionDescriptionFile description = VersionDescriptionFile
+				.createFromXML(repositoryURL, stream);
 		return description;
 	}
 

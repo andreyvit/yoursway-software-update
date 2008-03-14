@@ -2,7 +2,7 @@ package com.yoursway.autoupdate.core;
 
 public interface IApplicationUpdater {
 
-	ApplicationUpdate latestUpdateFor(ApplicationVersion currentVersion);
+	ApplicationUpdate latestUpdateFor(ApplicationVersion currentVersion) throws UpdateLoopException;
 
 	ApplicationUpdate nextUpdateFor(ApplicationVersion currentVersion);
 

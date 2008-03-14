@@ -25,7 +25,5 @@ public class ApplicationFile {
 	public URL remoteUrl() {
 		return remoteUrl;
 	}
-	
-	
-	
+
 }
