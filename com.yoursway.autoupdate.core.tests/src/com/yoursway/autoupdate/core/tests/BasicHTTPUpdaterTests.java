@@ -28,21 +28,21 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 	@Test
 	public void checksForFreshUpdates1() throws Exception {
 		IApplicationUpdater updater = updater();
-		boolean freshUpdatesAvailable = updater.freshUpdatesAvailable(V10);
+		boolean freshUpdatesAvailable = updater.newerVersionExists(V10);
 		assertTrue(freshUpdatesAvailable);
 	}
 
 	@Test
 	public void checksForFreshUpdates0() throws Exception {
 		IApplicationUpdater updater = updater();
-		boolean freshUpdatesAvailable = updater.freshUpdatesAvailable(V12);
+		boolean freshUpdatesAvailable = updater.newerVersionExists(V12);
 		assertFalse(freshUpdatesAvailable);
 	}
 
 	@Test
 	public void returnsNextUpdateForUpdateble() throws Exception {
 		IApplicationUpdater updater = updater();
-		VersionDefinition update = updater.nextUpdateFor(V10);
+		VersionDefinition update = updater.nextVersionFor(V10);
 		assertNotNull(update);
 		Version version = update.version();
 		assertNotNull(version);
@@ -55,7 +55,7 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 	@Test
 	public void returnsNextUpdateForUpdateble2() throws Exception {
 		IApplicationUpdater updater = updater();
-		VersionDefinition update = updater.nextUpdateFor(V11);
+		VersionDefinition update = updater.nextVersionFor(V11);
 		Version version = update.version();
 		assertEquals(V12.versionString(), version.versionString());
 		ApplicationFile[] files = update.files();
@@ -66,7 +66,7 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 	@Test
 	public void returnsNullUpdateForTheLatest() throws Exception {
 		IApplicationUpdater updater = updater();
-		VersionDefinition update = updater.nextUpdateFor(V12);
+		VersionDefinition update = updater.nextVersionFor(V12);
 		assertNull(update);
 	}
 

@@ -4,9 +4,9 @@ public interface IApplicationUpdater {
 
 	VersionDefinition latestUpdateFor(Version currentVersion) throws UpdateLoopException;
 
-	VersionDefinition nextUpdateFor(Version currentVersion);
+	VersionDefinition nextVersionFor(Version currentVersion);
 
-	boolean freshUpdatesAvailable(Version currentVersion);
+	boolean newerVersionExists(Version currentVersion);
 
 	Version[] availableVersions(Version currentVersion);
 

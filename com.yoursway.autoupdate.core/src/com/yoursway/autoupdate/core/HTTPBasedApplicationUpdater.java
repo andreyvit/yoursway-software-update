@@ -130,7 +130,7 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 		VersionDefinition currentUpdate = null;
 		while (true) {
 			VersionDefinition lastUpdate = currentUpdate;
-			currentUpdate = nextUpdateFor(currentVersion);
+			currentUpdate = nextVersionFor(currentVersion);
 			if (currentUpdate == null)
 				return lastUpdate;
 			if (visited.contains(currentUpdate.version())) {
@@ -162,11 +162,11 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 		return null;
 	}
 
-	public boolean freshUpdatesAvailable(Version currentVersion) {
-		return nextUpdateFor(currentVersion) != null;
+	public boolean newerVersionExists(Version currentVersion) {
+		return nextVersionFor(currentVersion) != null;
 	}
 
-	public VersionDefinition nextUpdateFor(Version currentVersion) {
+	public VersionDefinition nextVersionFor(Version currentVersion) {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
 			Version freshVersion = new Version(
