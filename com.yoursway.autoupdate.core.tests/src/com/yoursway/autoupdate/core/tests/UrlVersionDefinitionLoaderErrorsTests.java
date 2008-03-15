@@ -13,35 +13,23 @@ public class UrlVersionDefinitionLoaderErrorsTests extends AbstractVersionDefini
 	private static final Version V11 = new Version("1.1.shit");
 	private static final Version V13 = new Version("1.3.shit");
 	
-	@Test
+	@Test(expected=RuntimeException.class)
 	public void wrongLatestUpdate1() throws Exception {
-		try {
-			IVersionDefinitionLoader updater = updater();
-			updater.latestUpdateFor(V13);
-			throw new AssertionError("Should fail with RuntimeException");
-		} catch (RuntimeException e) {
-		}
+		IVersionDefinitionLoader updater = updater();
+		updater.latestUpdateFor(V13);
 	}
 	
 	
-	@Test
+	@Test(expected=UpdateLoopException.class)
 	public void cyclicLatestUpdate1() throws Exception {
-		try {
-			IVersionDefinitionLoader updater = updater();
-			updater.latestUpdateFor(V10);
-			throw new AssertionError("Should fail with UpdateLoopException");
-		} catch (UpdateLoopException e) {
-		}
+		IVersionDefinitionLoader updater = updater();
+		updater.latestUpdateFor(V10);
 	}
 	
-	@Test
+	@Test(expected=UpdateLoopException.class)
 	public void cyclicLatestUpdate() throws Exception {
-		try {
-			IVersionDefinitionLoader updater = updater();
-			updater.latestUpdateFor(V11);
-			throw new AssertionError("Should fail with UpdateLoopException");
-		} catch (UpdateLoopException e) {
-		}
+		IVersionDefinitionLoader updater = updater();
+		updater.latestUpdateFor(V11);
 	}
 
 }
