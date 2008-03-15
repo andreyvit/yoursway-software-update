@@ -3,7 +3,6 @@ package com.yoursway.autoupdate.core.tests.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -11,25 +10,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;
 
-import com.yoursway.autoupdate.core.HTTPBasedApplicationUpdater;
 import com.yoursway.autoupdate.core.IApplicationUpdater;
 import com.yoursway.autoupdate.core.tests.Activator;
+import com.yoursway.autoupdate.core.tests.mocks.LocalDirectoryUpdater;
 
 public abstract class AbstractAutoUpdaterTestCase extends Assert {
 
-	private static final String REP_URL = "http://botva/";
 	private IApplicationUpdater updater;
 
 	@Before
 	public void prepare() throws Exception {
-		final Class<? extends AbstractAutoUpdaterTestCase> currentClass = getClass();
-		updater = new HTTPBasedApplicationUpdater(REP_URL) {
-			@Override
-			protected InputStream contentsFor(URL url) throws IOException {
-				String path = url.toString().substring(REP_URL.length());
-				return Activator.openResource("tests/" + currentClass.getSimpleName() + "/" + path);
-			}
-		};
+		updater = new LocalDirectoryUpdater(getClass().getSimpleName());
 	}
 	
 	protected IApplicationUpdater updater() {
