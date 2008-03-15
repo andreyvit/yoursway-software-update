@@ -76,6 +76,8 @@ public class Activator extends AbstractUIPlugin {
 	
 	  public static InputStream openResource(String path) throws IOException {
 	        URL url = Activator.getDefault().getBundle().getEntry(path);
+	        if (url == null)
+	        	throw new IOException("Resource does not exist: " + path);
 	        return new BufferedInputStream(url.openStream());
 	    }
 	

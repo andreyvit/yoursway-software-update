@@ -3,18 +3,19 @@ package com.yoursway.autoupdate.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -24,7 +25,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader {
+public class UrlBasedVersionDefinitionLoader implements
+		IVersionDefinitionLoader {
 
 	static class VersionDescriptionFile {
 		private static final String TOP_LEVEL_NODE = "version";
@@ -39,8 +41,8 @@ public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader
 			isLatest = false;
 		}
 
-		public static VersionDescriptionFile createFromXML(
-				String repositoryURL, InputStream xml) throws IOException {
+		public static VersionDescriptionFile createFromXML(URL repositoryURL,
+				InputStream xml) throws IOException {
 			VersionDescriptionFile file = new VersionDescriptionFile();
 
 			InputStream stream = new BufferedInputStream(xml);
@@ -88,9 +90,7 @@ public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader
 									.getNodeValue();
 							String installationPath = attrs.getNamedItem(
 									"installPath").getNodeValue();
-							if (new Path(serverPath).getDevice() == null)
-								serverPath = repositoryURL + serverPath;
-							URL remoteUrl = new URL(serverPath);
+							URL remoteUrl = new URL(repositoryURL, serverPath);
 							file.files.add(new ApplicationFile(md5,
 									installationPath, remoteUrl));
 						}
@@ -104,11 +104,10 @@ public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader
 
 	}
 
-	private final String repositoryURL;
+	private final URL repositoryURL;
 
-	public UrlBasedVersionDefinitionLoader(String repositoryURL) {
-		if (!repositoryURL.endsWith("/"))
-			repositoryURL += "/";
+	public UrlBasedVersionDefinitionLoader(URL repositoryURL) {
+		Assert.isNotNull(repositoryURL);
 		this.repositoryURL = repositoryURL;
 
 	}
@@ -118,83 +117,35 @@ public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader
 		return connection.getInputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#latestUpdateFor(com.yoursway.autoupdate.core.ApplicationVersion)
-	 */
-	public VersionDefinition latestUpdateFor(Version currentVersion)
-			throws UpdateLoopException {
-		Set<Version> visited = new HashSet<Version>();
-		visited.add(currentVersion);
-		VersionDefinition currentUpdate = null;
-		while (true) {
-			VersionDefinition lastUpdate = currentUpdate;
-			currentUpdate = nextVersionFor(currentVersion);
-			if (currentUpdate == null)
-				return lastUpdate;
-			if (visited.contains(currentUpdate.version())) {
-				throw new UpdateLoopException();
-			}
-			currentVersion = currentUpdate.version();
-			visited.add(currentVersion);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#availableVersions()
-	 */
-	public Version[] availableVersions(
-			Version currentVersion) {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#updateToVersion(com.yoursway.autoupdate.core.ApplicationVersion,
-	 *      com.yoursway.autoupdate.core.ApplicationVersion)
-	 */
-	public VersionDefinition updateToVersion(Version current,
-			Version target) {
-		return null;
-	}
-
-	public boolean newerVersionExists(Version currentVersion) {
-		return nextVersionFor(currentVersion) != null;
-	}
-
-	public VersionDefinition nextVersionFor(Version currentVersion) {
+	public VersionDefinition loadDefinition(Version currentVersion) throws VersionDefinitionNotAvailable {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
-			Version freshVersion = new Version(
-					description.nextVersion);
-			if (description.isLatest)
-				return null;
-			description = getDescription(freshVersion);
 			List<ApplicationFile> appFiles = description.files;
 			ApplicationFile[] files = appFiles
 					.toArray(new ApplicationFile[appFiles.size()]);
-			return new VersionDefinition(freshVersion, description.displayName,
+			return new VersionDefinition(currentVersion,
+					description.displayName, Version
+							.fromString(description.nextVersion),
 					description.changesDescription, files);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new VersionDefinitionNotAvailable(e);
 		}
 	}
 
-	private VersionDescriptionFile getDescription(
-			Version currentVersion) throws MalformedURLException,
-			IOException {
-		URL updateFileURL = new URL(repositoryURL
-				+ currentVersion.versionString() + ".xml");
+	private VersionDescriptionFile getDescription(Version currentVersion)
+			throws IOException {
+		URL updateFileURL;
+		try {
+			updateFileURL = new URL(repositoryURL, URLEncoder.encode(
+					currentVersion.versionString() + ".xml", "UTF-8"));
+		} catch (MalformedURLException e) {
+			throw new AssertionError(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new AssertionError(e);
+		}
 		InputStream stream = contentsFor(updateFileURL);
-		VersionDescriptionFile description = VersionDescriptionFile
-				.createFromXML(repositoryURL, stream);
-		return description;
+		
+		return VersionDescriptionFile.createFromXML(repositoryURL, stream);
 	}
 
 }

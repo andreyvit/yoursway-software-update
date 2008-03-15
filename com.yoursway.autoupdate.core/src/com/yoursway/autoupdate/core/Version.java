@@ -1,5 +1,7 @@
 package com.yoursway.autoupdate.core;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * This class encapsulates a String version ID, in case we want to turn it into
  * something more interesting in the future.
@@ -9,13 +11,14 @@ public class Version {
 	private final String version;
 
 	public Version(String version) {
+		Assert.isNotNull(version);
 		this.version = version;
 	}
 
 	public String versionString() {
 		return version;
 	}
-	
+
 	@Override
 	public String toString() {
 		return version;
@@ -44,6 +47,13 @@ public class Version {
 		} else if (!version.equals(other.version))
 			return false;
 		return true;
+	}
+
+	public static Version fromString(String nextVersion) {
+		if (nextVersion == null)
+			return null;
+		else
+			return new Version(nextVersion);
 	}
 
 }
