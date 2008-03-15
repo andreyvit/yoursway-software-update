@@ -4,11 +4,11 @@ package com.yoursway.autoupdate.core;
  * This class encapsulates a String version ID, in case we want to turn it into
  * something more interesting in the future.
  */
-public class ApplicationVersion {
+public class Version {
 
 	private final String version;
 
-	public ApplicationVersion(String version) {
+	public Version(String version) {
 		this.version = version;
 	}
 
@@ -37,7 +37,7 @@ public class ApplicationVersion {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ApplicationVersion other = (ApplicationVersion) obj;
+		Version other = (Version) obj;
 		if (version == null) {
 			if (other.version != null)
 				return false;

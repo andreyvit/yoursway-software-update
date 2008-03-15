@@ -2,19 +2,16 @@ package com.yoursway.autoupdate.core.tests;
 
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.ApplicationVersion;
+import com.yoursway.autoupdate.core.Version;
 import com.yoursway.autoupdate.core.IApplicationUpdater;
 import com.yoursway.autoupdate.core.UpdateLoopException;
 import com.yoursway.autoupdate.core.tests.internal.AbstractAutoUpdaterTestCase;
 
 public class ErrorHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 
-	private static final ApplicationVersion V10 = new ApplicationVersion(
-			"1.0.shit");
-	private static final ApplicationVersion V11 = new ApplicationVersion(
-			"1.1.shit");
-	private static final ApplicationVersion V13 = new ApplicationVersion(
-			"1.3.shit");
+	private static final Version V10 = new Version("1.0.shit");
+	private static final Version V11 = new Version("1.1.shit");
+	private static final Version V13 = new Version("1.3.shit");
 	
 	@Test
 	public void wrongLatestUpdate1() throws Exception {

@@ -4,24 +4,20 @@ import org.junit.Test;
 
 import com.yoursway.autoupdate.core.ApplicationFile;
 import com.yoursway.autoupdate.core.VersionDefinition;
-import com.yoursway.autoupdate.core.ApplicationVersion;
+import com.yoursway.autoupdate.core.Version;
 import com.yoursway.autoupdate.core.IApplicationUpdater;
 import com.yoursway.autoupdate.core.tests.internal.AbstractAutoUpdaterTestCase;
 
 public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 
-	private static final ApplicationVersion V10 = new ApplicationVersion(
-			"1.0.shit");
-	private static final ApplicationVersion V11 = new ApplicationVersion(
-			"1.1.shit");
-	private static final ApplicationVersion V12 = new ApplicationVersion(
-			"1.2.shit");
-
+	private static final Version V10 = new Version("1.0.shit");
+	private static final Version V11 = new Version("1.1.shit");
+	private static final Version V12 = new Version("1.2.shit");
 	
-	@Test // not implemented by now  
+	@Test // not implemented by now
 	public void availableVersions() throws Exception {
 		IApplicationUpdater updater = updater();
-		ApplicationVersion[] availableVersions = updater.availableVersions(V10);
+		Version[] availableVersions = updater.availableVersions(V10);
 		assertNotNull(availableVersions);
 		assertEquals(3, availableVersions.length);
 		assertEquals("1.0.shit", availableVersions[0].versionString());
@@ -48,7 +44,7 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 		IApplicationUpdater updater = updater();
 		VersionDefinition update = updater.nextUpdateFor(V10);
 		assertNotNull(update);
-		ApplicationVersion version = update.version();
+		Version version = update.version();
 		assertNotNull(version);
 		assertEquals(V11.versionString(), version.versionString());
 		ApplicationFile[] files = update.files();
@@ -60,7 +56,7 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 	public void returnsNextUpdateForUpdateble2() throws Exception {
 		IApplicationUpdater updater = updater();
 		VersionDefinition update = updater.nextUpdateFor(V11);
-		ApplicationVersion version = update.version();
+		Version version = update.version();
 		assertEquals(V12.versionString(), version.versionString());
 		ApplicationFile[] files = update.files();
 		assertNotNull(files);
@@ -79,7 +75,7 @@ public class BasicHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 		IApplicationUpdater updater = updater();
 		VersionDefinition update = updater.latestUpdateFor(V10);
 		assertNotNull(update);
-		ApplicationVersion version = update.version();
+		Version version = update.version();
 		assertNotNull(version);
 		assertEquals(V12.versionString(), version.versionString());
 		ApplicationFile[] files = update.files();

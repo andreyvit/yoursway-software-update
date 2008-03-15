@@ -123,9 +123,9 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * 
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#latestUpdateFor(com.yoursway.autoupdate.core.ApplicationVersion)
 	 */
-	public VersionDefinition latestUpdateFor(ApplicationVersion currentVersion)
+	public VersionDefinition latestUpdateFor(Version currentVersion)
 			throws UpdateLoopException {
-		Set<ApplicationVersion> visited = new HashSet<ApplicationVersion>();
+		Set<Version> visited = new HashSet<Version>();
 		visited.add(currentVersion);
 		VersionDefinition currentUpdate = null;
 		while (true) {
@@ -146,8 +146,8 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * 
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#availableVersions()
 	 */
-	public ApplicationVersion[] availableVersions(
-			ApplicationVersion currentVersion) {
+	public Version[] availableVersions(
+			Version currentVersion) {
 		return null;
 	}
 
@@ -157,19 +157,19 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#updateToVersion(com.yoursway.autoupdate.core.ApplicationVersion,
 	 *      com.yoursway.autoupdate.core.ApplicationVersion)
 	 */
-	public VersionDefinition updateToVersion(ApplicationVersion current,
-			ApplicationVersion target) {
+	public VersionDefinition updateToVersion(Version current,
+			Version target) {
 		return null;
 	}
 
-	public boolean freshUpdatesAvailable(ApplicationVersion currentVersion) {
+	public boolean freshUpdatesAvailable(Version currentVersion) {
 		return nextUpdateFor(currentVersion) != null;
 	}
 
-	public VersionDefinition nextUpdateFor(ApplicationVersion currentVersion) {
+	public VersionDefinition nextUpdateFor(Version currentVersion) {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
-			ApplicationVersion freshVersion = new ApplicationVersion(
+			Version freshVersion = new Version(
 					description.nextVersion);
 			if (description.isLatest)
 				return null;
@@ -187,7 +187,7 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	}
 
 	private VersionDescriptionFile getDescription(
-			ApplicationVersion currentVersion) throws MalformedURLException,
+			Version currentVersion) throws MalformedURLException,
 			IOException {
 		URL updateFileURL = new URL(repositoryURL
 				+ currentVersion.versionString() + ".xml");

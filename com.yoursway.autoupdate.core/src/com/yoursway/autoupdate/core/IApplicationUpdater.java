@@ -2,15 +2,15 @@ package com.yoursway.autoupdate.core;
 
 public interface IApplicationUpdater {
 
-	VersionDefinition latestUpdateFor(ApplicationVersion currentVersion) throws UpdateLoopException;
+	VersionDefinition latestUpdateFor(Version currentVersion) throws UpdateLoopException;
 
-	VersionDefinition nextUpdateFor(ApplicationVersion currentVersion);
+	VersionDefinition nextUpdateFor(Version currentVersion);
 
-	boolean freshUpdatesAvailable(ApplicationVersion currentVersion);
+	boolean freshUpdatesAvailable(Version currentVersion);
 
-	ApplicationVersion[] availableVersions(ApplicationVersion currentVersion);
+	Version[] availableVersions(Version currentVersion);
 
-	VersionDefinition updateToVersion(ApplicationVersion current,
-			ApplicationVersion target);
+	VersionDefinition updateToVersion(Version current,
+			Version target);
 
 }
