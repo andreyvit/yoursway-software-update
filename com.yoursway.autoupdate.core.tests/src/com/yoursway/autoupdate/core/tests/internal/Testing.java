@@ -9,11 +9,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import com.google.common.collect.Lists;
-import com.yoursway.autoupdate.core.IVersionDefinitionLoader;
-import com.yoursway.autoupdate.core.Version;
-import com.yoursway.autoupdate.core.VersionDefinition;
-import com.yoursway.autoupdate.core.VersionDefinitionNotAvailable;
 import com.yoursway.autoupdate.core.tests.Activator;
+import com.yoursway.autoupdate.core.versiondef.IVersionDefinitionLoader;
+import com.yoursway.autoupdate.core.versiondef.Version;
+import com.yoursway.autoupdate.core.versiondef.VersionDefinition;
+import com.yoursway.autoupdate.core.versiondef.VersionDefinitionNotAvailable;
 
 public class Testing {
 

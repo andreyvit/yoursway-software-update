@@ -2,9 +2,9 @@ package com.yoursway.autoupdate.core.tests;
 
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.Version;
-import com.yoursway.autoupdate.core.VersionDefinitionNotAvailable;
 import com.yoursway.autoupdate.core.tests.internal.AbstractVersionDefinitionLoaderTestCase;
+import com.yoursway.autoupdate.core.versiondef.Version;
+import com.yoursway.autoupdate.core.versiondef.VersionDefinitionNotAvailable;
 
 public class UrlVersionDefinitionLoaderErrorsTests extends AbstractVersionDefinitionLoaderTestCase {
 

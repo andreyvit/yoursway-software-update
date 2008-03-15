@@ -8,10 +8,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 
-import com.yoursway.autoupdate.core.IVersionDefinitionLoader;
-import com.yoursway.autoupdate.core.Version;
-import com.yoursway.autoupdate.core.VersionDefinitionNotAvailable;
 import com.yoursway.autoupdate.core.tests.mocks.LocalDirectoryUpdater;
+import com.yoursway.autoupdate.core.versiondef.IVersionDefinitionLoader;
+import com.yoursway.autoupdate.core.versiondef.Version;
+import com.yoursway.autoupdate.core.versiondef.VersionDefinitionNotAvailable;
 
 public abstract class AbstractVersionDefinitionLoaderTestCase extends Assert {
 

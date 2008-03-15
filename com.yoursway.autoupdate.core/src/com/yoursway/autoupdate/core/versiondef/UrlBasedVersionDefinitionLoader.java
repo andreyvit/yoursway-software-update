@@ -1,4 +1,6 @@
-package com.yoursway.autoupdate.core;
+package com.yoursway.autoupdate.core.versiondef;
+
+import static com.yoursway.autoupdate.core.path.Pathes.relativePath;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+
 public class UrlBasedVersionDefinitionLoader implements
 		IVersionDefinitionLoader {
 
@@ -34,10 +37,10 @@ public class UrlBasedVersionDefinitionLoader implements
 		public String displayName;
 		public boolean isLatest;
 		public String changesDescription;
-		public List<ApplicationFile> files;
+		public List<RemoteFile> files;
 
 		public VersionDescriptionFile() {
-			files = new ArrayList<ApplicationFile>();
+			files = new ArrayList<RemoteFile>();
 			isLatest = false;
 		}
 
@@ -91,8 +94,9 @@ public class UrlBasedVersionDefinitionLoader implements
 							String installationPath = attrs.getNamedItem(
 									"installPath").getNodeValue();
 							URL remoteUrl = new URL(repositoryURL, serverPath);
-							file.files.add(new ApplicationFile(md5,
-									installationPath, remoteUrl));
+							file.files.add(new RemoteFile(
+									relativePath(installationPath),
+									md5, remoteUrl));
 						}
 					}
 				} else if (nodeName.equals("changes")) {
@@ -120,9 +124,9 @@ public class UrlBasedVersionDefinitionLoader implements
 	public VersionDefinition loadDefinition(Version currentVersion) throws VersionDefinitionNotAvailable {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
-			List<ApplicationFile> appFiles = description.files;
-			ApplicationFile[] files = appFiles
-					.toArray(new ApplicationFile[appFiles.size()]);
+			List<RemoteFile> appFiles = description.files;
+			RemoteFile[] files = appFiles
+					.toArray(new RemoteFile[appFiles.size()]);
 			return new VersionDefinition(currentVersion,
 					description.displayName, Version
 							.fromString(description.nextVersion),

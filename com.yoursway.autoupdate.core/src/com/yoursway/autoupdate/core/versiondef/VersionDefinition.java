@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core;
+package com.yoursway.autoupdate.core.versiondef;
 
 import static java.util.Arrays.asList;
 
@@ -6,16 +6,17 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
 
+
 public class VersionDefinition {
 
-	private final ApplicationFile[] files;
+	private final RemoteFile[] files;
 	private final Version version;
 	private final String changes;
 	private final String displayName;
 	private final Version nextVersion;
 
 	public VersionDefinition(Version version, String displayName,
-			Version nextVersion, String changesDescription, ApplicationFile[] files) {
+			Version nextVersion, String changesDescription, RemoteFile[] files) {
 		Assert.isNotNull(version);
 		Assert.isNotNull(displayName);
 		Assert.isNotNull(files);
@@ -38,7 +39,7 @@ public class VersionDefinition {
 		return changes;
 	}
 
-	public Collection<ApplicationFile> files() {
+	public Collection<RemoteFile> files() {
 		return asList(files);
 	}
 	

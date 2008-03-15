@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { BasicUrlVersionDefinitionLoaderTests.class,
-		UrlVersionDefinitionLoaderErrorsTests.class })
+		UrlVersionDefinitionLoaderErrorsTests.class,
+		UpdatePlanBuilderTests.class })
 public class AllTests {
 
 }

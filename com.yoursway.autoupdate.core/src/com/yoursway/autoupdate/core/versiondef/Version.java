@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core;
+package com.yoursway.autoupdate.core.versiondef;
 
 import org.eclipse.core.runtime.Assert;
 

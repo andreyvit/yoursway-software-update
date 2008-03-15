@@ -4,8 +4,8 @@ import static com.yoursway.autoupdate.core.tests.internal.Testing.findNewerVersi
 
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.Version;
 import com.yoursway.autoupdate.core.tests.internal.AbstractVersionDefinitionLoaderTestCase;
+import com.yoursway.autoupdate.core.versiondef.Version;
 
 public class BasicUrlVersionDefinitionLoaderTests extends
 		AbstractVersionDefinitionLoaderTestCase {
