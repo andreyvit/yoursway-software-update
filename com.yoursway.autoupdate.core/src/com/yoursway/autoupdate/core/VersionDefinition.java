@@ -1,15 +1,17 @@
 package com.yoursway.autoupdate.core;
 
-public class ApplicationUpdate {
+public class VersionDefinition {
 
 	private final ApplicationFile[] files;
 	private final ApplicationVersion version;
 	private final String changes;
+	private final String displayName;
 
-	public ApplicationUpdate(ApplicationVersion version, String changes,
-			ApplicationFile[] files) {
+	public VersionDefinition(ApplicationVersion version, String changes,
+			String displayName, ApplicationFile[] files) {
 		this.version = version;
 		this.changes = changes;
+		this.displayName = displayName;
 		this.files = files;
 	}
 

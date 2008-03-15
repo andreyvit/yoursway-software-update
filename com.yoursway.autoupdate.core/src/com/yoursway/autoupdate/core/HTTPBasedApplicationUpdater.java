@@ -123,13 +123,13 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * 
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#latestUpdateFor(com.yoursway.autoupdate.core.ApplicationVersion)
 	 */
-	public ApplicationUpdate latestUpdateFor(ApplicationVersion currentVersion)
+	public VersionDefinition latestUpdateFor(ApplicationVersion currentVersion)
 			throws UpdateLoopException {
 		Set<ApplicationVersion> visited = new HashSet<ApplicationVersion>();
 		visited.add(currentVersion);
-		ApplicationUpdate currentUpdate = null;
+		VersionDefinition currentUpdate = null;
 		while (true) {
-			ApplicationUpdate lastUpdate = currentUpdate;
+			VersionDefinition lastUpdate = currentUpdate;
 			currentUpdate = nextUpdateFor(currentVersion);
 			if (currentUpdate == null)
 				return lastUpdate;
@@ -157,7 +157,7 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 	 * @see com.yoursway.autoupdate.core.IApplicationUpdater#updateToVersion(com.yoursway.autoupdate.core.ApplicationVersion,
 	 *      com.yoursway.autoupdate.core.ApplicationVersion)
 	 */
-	public ApplicationUpdate updateToVersion(ApplicationVersion current,
+	public VersionDefinition updateToVersion(ApplicationVersion current,
 			ApplicationVersion target) {
 		return null;
 	}
@@ -166,18 +166,18 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 		return nextUpdateFor(currentVersion) != null;
 	}
 
-	public ApplicationUpdate nextUpdateFor(ApplicationVersion currentVersion) {
+	public VersionDefinition nextUpdateFor(ApplicationVersion currentVersion) {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
 			ApplicationVersion freshVersion = new ApplicationVersion(
-					description.nextVersion, description.displayName);
+					description.nextVersion);
 			if (description.isLatest)
 				return null;
 			description = getDescription(freshVersion);
 			List<ApplicationFile> appFiles = description.files;
 			ApplicationFile[] files = appFiles
 					.toArray(new ApplicationFile[appFiles.size()]);
-			return new ApplicationUpdate(freshVersion,
+			return new VersionDefinition(freshVersion, description.displayName,
 					description.changesDescription, files);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);

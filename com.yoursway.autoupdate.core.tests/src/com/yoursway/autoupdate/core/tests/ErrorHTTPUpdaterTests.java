@@ -10,12 +10,12 @@ import com.yoursway.autoupdate.core.tests.internal.AbstractAutoUpdaterTestCase;
 public class ErrorHTTPUpdaterTests extends AbstractAutoUpdaterTestCase {
 
 	private static final ApplicationVersion V10 = new ApplicationVersion(
-			"1.0.shit", "Megashit 1.0");
+			"1.0.shit");
 	private static final ApplicationVersion V11 = new ApplicationVersion(
-			"1.1.shit", "Megashit 1.1");
+			"1.1.shit");
 	private static final ApplicationVersion V13 = new ApplicationVersion(
-			"1.3.shit", "Megashit 1.3");
-
+			"1.3.shit");
+	
 	@Test
 	public void wrongLatestUpdate1() throws Exception {
 		try {
