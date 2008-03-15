@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package com.yoursway.autoupdate.launching;
+package com.yoursway.autoupdate.internal.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.ILaunch;
+
+import com.yoursway.autoupdate.launching.ILaunch;
 
 
 
@@ -39,6 +40,6 @@ public interface IVMRunner {
 	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @exception CoreException if an exception occurs while launching
 	 */
-	public void run(VMRunnerConfiguration configuration, IProgressMonitor monitor) throws CoreException;	
+	public void run(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException;	
 	
 }

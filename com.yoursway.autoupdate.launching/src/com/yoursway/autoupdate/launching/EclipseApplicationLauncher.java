@@ -7,6 +7,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
+import com.yoursway.autoupdate.internal.launching.IVMRunner;
+import com.yoursway.autoupdate.internal.launching.LaunchHelper;
+import com.yoursway.autoupdate.internal.launching.MacOSXJavaVM;
+import com.yoursway.autoupdate.internal.launching.MacOSXVMRunner;
+import com.yoursway.autoupdate.internal.launching.StandardJavaVM;
+import com.yoursway.autoupdate.internal.launching.StandardVMRunner;
+import com.yoursway.autoupdate.internal.launching.VMRunnerConfiguration;
+
 public class EclipseApplicationLauncher {
 
 	protected File fConfigDir = null;
@@ -23,7 +31,7 @@ public class EclipseApplicationLauncher {
 	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void launch(IProgressMonitor monitor) throws CoreException {
+	public void launch(ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
 			fConfigDir = null;
 			monitor.beginTask("", 4); //$NON-NLS-1$
@@ -42,7 +50,7 @@ public class EclipseApplicationLauncher {
 
 			IVMRunner runner = createRunner();
 			if (runner != null)
-				runner.run(runnerConfig, monitor);
+				runner.run(runnerConfig, launch, monitor);
 			else
 				monitor.setCanceled(true);
 			monitor.done();

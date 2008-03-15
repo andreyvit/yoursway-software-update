@@ -8,9 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.yoursway.autoupdate.launching;
+package com.yoursway.autoupdate.internal.launching;
 
-import com.yoursway.autoupdate.internal.launching.AutoupdateLaunchingPlugin;
 
 /**
  * Constant definitions for Java launch configurations.

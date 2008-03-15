@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.yoursway.autoupdate.launching;
+package com.yoursway.autoupdate.internal.launching;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import com.yoursway.autoupdate.internal.launching.AutoupdateLaunchingPlugin;
+import com.yoursway.autoupdate.launching.ILaunch;
 
 /**
  * A launcher for running Java main classes.
@@ -209,7 +209,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 *      org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(VMRunnerConfiguration config, IProgressMonitor monitor)
+	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 
 		if (monitor == null) {
@@ -259,6 +259,13 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.subTask("starting vm");
 		Process p = null;
 		File workingDir = getWorkingDir(config);
+		StringBuilder plainCmdLine = new StringBuilder();
+		for (String s : cmdLine) {
+			plainCmdLine.append(s);
+			plainCmdLine.append(" ");
+		}
+		System.out.println("Command line: " + plainCmdLine.toString());
+		System.out.println("Working dir: " + workingDir);
 		p = exec(cmdLine, workingDir, envp);
 		if (p == null) {
 			throw new RuntimeException("Failed to launch application.");
@@ -274,6 +281,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		// getDefaultProcessMap());
 		// process.setAttribute(IProcess.ATTR_CMDLINE,
 		// renderCommandLine(cmdLine));
+		launch.setProcess(p);
 		subMonitor.worked(1);
 		subMonitor.done();
 	}

@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.launching;
+package com.yoursway.autoupdate.internal.launching;
 
 import java.io.IOException;
 
