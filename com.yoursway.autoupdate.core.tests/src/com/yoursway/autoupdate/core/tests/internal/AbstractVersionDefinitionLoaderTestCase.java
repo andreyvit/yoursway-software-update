@@ -10,20 +10,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;
 
-import com.yoursway.autoupdate.core.IApplicationUpdater;
+import com.yoursway.autoupdate.core.IVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.tests.Activator;
 import com.yoursway.autoupdate.core.tests.mocks.LocalDirectoryUpdater;
 
-public abstract class AbstractAutoUpdaterTestCase extends Assert {
+public abstract class AbstractVersionDefinitionLoaderTestCase extends Assert {
 
-	private IApplicationUpdater updater;
+	private IVersionDefinitionLoader updater;
 
 	@Before
 	public void prepare() throws Exception {
 		updater = new LocalDirectoryUpdater(getClass().getSimpleName());
 	}
 	
-	protected IApplicationUpdater updater() {
+	protected IVersionDefinitionLoader updater() {
 		return updater;
 	}
 

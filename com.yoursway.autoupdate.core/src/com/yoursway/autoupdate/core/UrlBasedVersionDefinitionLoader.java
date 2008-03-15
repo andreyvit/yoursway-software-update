@@ -24,7 +24,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
+public class UrlBasedVersionDefinitionLoader implements IVersionDefinitionLoader {
 
 	static class VersionDescriptionFile {
 		private static final String TOP_LEVEL_NODE = "version";
@@ -106,7 +106,7 @@ public class HTTPBasedApplicationUpdater implements IApplicationUpdater {
 
 	private final String repositoryURL;
 
-	public HTTPBasedApplicationUpdater(String repositoryURL) {
+	public UrlBasedVersionDefinitionLoader(String repositoryURL) {
 		if (!repositoryURL.endsWith("/"))
 			repositoryURL += "/";
 		this.repositoryURL = repositoryURL;

@@ -1,6 +1,6 @@
 package com.yoursway.autoupdate.core;
 
-public interface IApplicationUpdater {
+public interface IVersionDefinitionLoader {
 
 	VersionDefinition latestUpdateFor(Version currentVersion) throws UpdateLoopException;
 

@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.yoursway.autoupdate.core.HTTPBasedApplicationUpdater;
+import com.yoursway.autoupdate.core.UrlBasedVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.tests.Activator;
 
 public final class LocalDirectoryUpdater extends
-		HTTPBasedApplicationUpdater {
+		UrlBasedVersionDefinitionLoader {
 	
 	private static final String REP_URL = "http://botva/";
 	
