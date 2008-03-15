@@ -1,19 +1,18 @@
 package com.yoursway.autoupdate.core;
 
+import com.yoursway.autoupdate.core.path.Path;
 import com.yoursway.autoupdate.core.versiondef.RemoteFile;
 
 public abstract class FileAction {
 	
-	private static final class KeepAction extends FileAction {
+	private final Path file;
+
+	public static final class RemoveAction extends FileAction {
 		
-		public boolean isChanged() {
-			return false;
+		public RemoveAction(Path file) {
+			super(file);
 		}
-		
-	}
-	
-	private static final class RemoveAction extends FileAction {
-		
+
 		public boolean isChanged() {
 			return true;
 		}
@@ -24,7 +23,8 @@ public abstract class FileAction {
 		
 		private final RemoteFile replaceWith;
 
-		public ReplaceAction(RemoteFile replaceWith) {
+		public ReplaceAction(Path file, RemoteFile replaceWith) {
+			super(file);
 			this.replaceWith = replaceWith;
 		}
 		
@@ -36,24 +36,24 @@ public abstract class FileAction {
 	
 	public static final class AddAction extends ReplaceAction {
 
-		public AddAction(RemoteFile replaceWith) {
-			super(replaceWith);
+		public AddAction(Path file, RemoteFile replaceWith) {
+			super(file, replaceWith);
 		}
 		
 	}
 	
 	public static final class UpdateAction extends ReplaceAction {
 		
-		public UpdateAction(RemoteFile replaceWith) {
-			super(replaceWith);
+		public UpdateAction(Path file, RemoteFile replaceWith) {
+			super(file, replaceWith);
 		}
 		
 	}
+	
+	public FileAction(Path file) {
+		this.file = file;
+	}
 
-	public static final FileAction REMOVE = new RemoveAction();
-	
-	public static final FileAction KEEP = new KeepAction();
-	
 	public abstract boolean isChanged();
 
 }

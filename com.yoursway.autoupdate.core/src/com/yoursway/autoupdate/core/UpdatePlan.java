@@ -67,5 +67,9 @@ public class UpdatePlan {
 	public void useUpdaterAsIs() {
 		updaterLocation = new ApplicationDirectory();
 	}
+
+	public ExecutablePlan instantiate(UpdateRequest parameterObject) {
+		return null;
+	}
 	
 }
