@@ -1,13 +1,23 @@
 package com.yoursway.autoupdate.core.versiondef;
 
+import static com.yoursway.autoupdate.core.path.Pathes.relativePath;
+
 import org.eclipse.core.runtime.Assert;
 
+import com.google.common.base.Function;
 import com.yoursway.autoupdate.core.path.Path;
 
 public class AppFile {
 
 	protected final Path path;
 	protected final String md5;
+    public static final Function<AppFile, Path> APPFILE_TO_PATH = new Function<AppFile, Path>() {
+        
+        public Path apply(AppFile from) {
+            return from.path();
+        }
+        
+    };
 
 	public AppFile(Path path, String md5) {
 		Assert.isNotNull(path);
@@ -59,5 +69,9 @@ public class AppFile {
 			return false;
 		return true;
 	}
+
+    public static AppFile appFile(String path, String md5) {
+        return new AppFile(relativePath(path), md5);
+    }
 
 }

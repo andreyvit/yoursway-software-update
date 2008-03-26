@@ -1,5 +1,7 @@
 package com.yoursway.autoupdate.core.path;
 
+import java.io.File;
+
 /**
  * A path is an ordered collection of string segments,
  * separated by a standard separator character, "/".
@@ -419,6 +421,8 @@ public interface Path extends Cloneable {
 	 * @return the file corresponding to this path
 	 */
 	public java.io.File toFile();
+	
+	public java.io.File toFile(File parentFolder);
 
 	/**
 	 * Returns a string representation of this path which uses the

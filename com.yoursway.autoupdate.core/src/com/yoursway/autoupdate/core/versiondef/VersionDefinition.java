@@ -16,15 +16,15 @@ public class VersionDefinition {
 	private final Version nextVersion;
 
 	public VersionDefinition(Version version, String displayName,
-			Version nextVersion, String changesDescription, RemoteFile[] files) {
+			Version nextVersion, String changesDescription, Collection<RemoteFile> newer) {
 		Assert.isNotNull(version);
 		Assert.isNotNull(displayName);
-		Assert.isNotNull(files);
+		Assert.isNotNull(newer);
 		this.version = version;
 		this.nextVersion = nextVersion;
 		this.changes = changesDescription;
 		this.displayName = displayName;
-		this.files = files;
+		this.files = newer.toArray(new RemoteFile[0]);
 	}
 
 	public String displayName() {

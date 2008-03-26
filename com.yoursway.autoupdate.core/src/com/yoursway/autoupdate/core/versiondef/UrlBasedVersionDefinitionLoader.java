@@ -124,13 +124,10 @@ public class UrlBasedVersionDefinitionLoader implements
 	public VersionDefinition loadDefinition(Version currentVersion) throws VersionDefinitionNotAvailable {
 		try {
 			VersionDescriptionFile description = getDescription(currentVersion);
-			List<RemoteFile> appFiles = description.files;
-			RemoteFile[] files = appFiles
-					.toArray(new RemoteFile[appFiles.size()]);
 			return new VersionDefinition(currentVersion,
 					description.displayName, Version
 							.fromString(description.nextVersion),
-					description.changesDescription, files);
+					description.changesDescription, description.files);
 		} catch (IOException e) {
 			throw new VersionDefinitionNotAvailable(e);
 		}

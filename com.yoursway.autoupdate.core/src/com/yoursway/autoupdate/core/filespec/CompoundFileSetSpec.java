@@ -3,10 +3,13 @@ package com.yoursway.autoupdate.core.filespec;
 import static com.google.common.base.Functions.TO_STRING;
 import static com.google.common.base.Join.join;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.yoursway.autoupdate.core.fileset.FileSet;
 import com.yoursway.autoupdate.core.path.Path;
 
 public class CompoundFileSetSpec implements FileSetSpec {
@@ -35,5 +38,12 @@ public class CompoundFileSetSpec implements FileSetSpec {
 	public boolean isKnownToBeEmpty() {
 		return children.isEmpty();
 	}
+
+    public FileSet resolve(FileSet allFiles) {
+        Set<Path> result = newHashSet();
+        for (FileSetSpec child : children)
+            result.addAll(child.resolve(allFiles).asCollection());
+        return new FileSet(result);
+    }
 
 }

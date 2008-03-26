@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
-Bundle-SymbolicName: com.yoursway.autoupdate.core.tests
+Bundle-SymbolicName: com.yoursway.autoupdate.core.tests;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: com.yoursway.autoupdate.core.tests.Activator
 Bundle-Vendor: YourSway, Inc.

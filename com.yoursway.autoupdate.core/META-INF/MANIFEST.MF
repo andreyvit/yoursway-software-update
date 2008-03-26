@@ -11,6 +11,9 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.autoupdate.core,
+ com.yoursway.autoupdate.core.actions,
+ com.yoursway.autoupdate.core.dirs,
+ com.yoursway.autoupdate.core.fileset,
  com.yoursway.autoupdate.core.filespec,
  com.yoursway.autoupdate.core.path,
  com.yoursway.autoupdate.core.steps,

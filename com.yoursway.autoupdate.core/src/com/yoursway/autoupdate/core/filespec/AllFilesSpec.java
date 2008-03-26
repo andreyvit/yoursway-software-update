@@ -1,5 +1,6 @@
 package com.yoursway.autoupdate.core.filespec;
 
+import com.yoursway.autoupdate.core.fileset.FileSet;
 import com.yoursway.autoupdate.core.path.Path;
 
 public class AllFilesSpec implements FileSetSpec {
@@ -16,5 +17,9 @@ public class AllFilesSpec implements FileSetSpec {
 	public boolean isKnownToBeEmpty() {
 		return false;
 	}
+    
+    public FileSet resolve(FileSet allFiles) {
+        return allFiles;
+    }
 
 }

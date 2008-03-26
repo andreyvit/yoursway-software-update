@@ -1,12 +1,10 @@
 package com.yoursway.autoupdate.core.steps;
 
-import java.util.List;
-
 import com.yoursway.autoupdate.core.Action;
 import com.yoursway.autoupdate.core.UpdateRequest;
 
-public interface UpdateStep {
+public abstract class UpdateStepImpl {
     
-    void createActions(UpdateRequest request, List<Action> storeInto);
-
+    protected abstract Action instantiate(UpdateRequest request);
+    
 }

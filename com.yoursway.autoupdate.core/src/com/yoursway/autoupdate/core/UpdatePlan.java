@@ -12,7 +12,6 @@ import java.util.List;
 
 import com.yoursway.autoupdate.core.dirs.ApplicationDirectory;
 import com.yoursway.autoupdate.core.dirs.Directory;
-import com.yoursway.autoupdate.core.dirs.TemporaryDirectory;
 import com.yoursway.autoupdate.core.dirs.UpdaterDirectory;
 import com.yoursway.autoupdate.core.filespec.FileSetSpec;
 import com.yoursway.autoupdate.core.steps.CopyFilesStep;
@@ -68,8 +67,11 @@ public class UpdatePlan {
 		updaterLocation = new ApplicationDirectory();
 	}
 
-	public ExecutablePlan instantiate(UpdateRequest parameterObject) {
-		return null;
+	public ExecutablePlan instantiate(UpdateRequest request) {
+	    List<Action> actions = newArrayList();
+	    for (UpdateStep step : steps())
+	        step.createActions(request, actions);
+		return new ExecutablePlan(actions);
 	}
 	
 }

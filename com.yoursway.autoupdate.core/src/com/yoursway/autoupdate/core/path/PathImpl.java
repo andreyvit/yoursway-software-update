@@ -978,4 +978,9 @@ public class PathImpl implements Path, Cloneable {
 		System.arraycopy(segments, 0, newSegments, 0, count);
 		return new PathImpl(device, newSegments, separators);
 	}
+	
+    public java.io.File toFile(File parentFolder) {
+        return new java.io.File(parentFolder, toOSString());
+    }
+    
 }
