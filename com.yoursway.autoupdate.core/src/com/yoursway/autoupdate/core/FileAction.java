@@ -3,17 +3,18 @@ package com.yoursway.autoupdate.core;
 import java.io.File;
 
 import com.google.common.base.Function;
-import com.yoursway.autoupdate.core.actions.CopyFileAction;
-import com.yoursway.autoupdate.core.actions.RemoveFileAction;
-import com.yoursway.autoupdate.core.path.Path;
-import com.yoursway.autoupdate.core.versiondef.RemoteFile;
+import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.actions.concrete.CopyFileAction;
+import com.yoursway.autoupdate.core.actions.concrete.RemoveFileAction;
+import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public abstract class FileAction {
 	
-	private final Path file;
-    public static final Function<FileAction, Path> ACTION_TO_PATH = new Function<FileAction, Path>() {
+	private final RelativePath file;
+    public static final Function<FileAction, RelativePath> ACTION_TO_PATH = new Function<FileAction, RelativePath>() {
         
-        public Path apply(FileAction action) {
+        public RelativePath apply(FileAction action) {
             return action.file();
         }
         
@@ -21,7 +22,7 @@ public abstract class FileAction {
 
 	public static final class RemoveAction extends FileAction {
 		
-		public RemoveAction(Path file) {
+		public RemoveAction(RelativePath file) {
 			super(file);
 		}
 
@@ -45,7 +46,7 @@ public abstract class FileAction {
 		
 		private final RemoteFile replaceWith;
 
-		public ReplaceAction(Path file, RemoteFile replaceWith) {
+		public ReplaceAction(RelativePath file, RemoteFile replaceWith) {
 			super(file);
 			this.replaceWith = replaceWith;
 		}
@@ -62,7 +63,7 @@ public abstract class FileAction {
 	
 	public static final class AddAction extends ReplaceAction {
 
-		public AddAction(Path file, RemoteFile replaceWith) {
+		public AddAction(RelativePath file, RemoteFile replaceWith) {
 			super(file, replaceWith);
 		}
 
@@ -75,7 +76,7 @@ public abstract class FileAction {
 	
 	public static final class UpdateAction extends ReplaceAction {
 		
-		public UpdateAction(Path file, RemoteFile replaceWith) {
+		public UpdateAction(RelativePath file, RemoteFile replaceWith) {
 			super(file, replaceWith);
 		}
         @Override
@@ -85,11 +86,11 @@ public abstract class FileAction {
 
 	}
 	
-	public FileAction(Path file) {
+	public FileAction(RelativePath file) {
 		this.file = file;
 	}
 	
-	public Path file() {
+	public RelativePath file() {
 	    return file;
 	}
 	

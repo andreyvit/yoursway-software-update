@@ -1,13 +1,20 @@
 package com.yoursway.autoupdate.core;
 
-import com.yoursway.autoupdate.core.fileset.FileSet;
-import com.yoursway.autoupdate.core.path.Path;
-import com.yoursway.autoupdate.core.versiondef.AppFile;
+import java.io.File;
+
+import com.yoursway.autoupdate.core.versions.definitions.AppFile;
+import com.yoursway.utils.fileset.FileSet;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public interface FileContainer {
 	
-	AppFile resolve(Path path);
+	AppFile resolve(RelativePath relativePath);
 	
+    /**
+     * Implementations are encouraged to cache the results of this call.
+     */
 	FileSet allFiles();
+	
+	RelativePath relativePathOf(File file);
 
 }

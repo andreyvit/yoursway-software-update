@@ -2,36 +2,41 @@ package com.yoursway.autoupdate.core;
 
 import java.util.Collection;
 
-import com.yoursway.autoupdate.core.filespec.AllFilesSpec;
-import com.yoursway.autoupdate.core.filespec.CompoundFileSetSpec;
-import com.yoursway.autoupdate.core.filespec.ExcludedFileSpec;
-import com.yoursway.autoupdate.core.path.Path;
+import com.yoursway.utils.filespec.AllFilesSpec;
+import com.yoursway.utils.filespec.CompoundFileSetSpec;
+import com.yoursway.utils.filespec.ExcludedFileSpec;
+import com.yoursway.utils.filespec.FileSetSpec;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class UpdatePlanBuilder {
-
-	private final UpdaterConfiguration config;
 
 	private ReplaceStrategy overallReplaceStrategy = ReplaceStrategy.HOT_REPLACE;
 
 	private UpdaterFileHandling updaterFileHandling = UpdaterFileHandling.NO_UPDATE;
 
-	private final Collection<Path> modifiedFiles;
+	private final Collection<RelativePath> modifiedFiles;
 
-	public UpdatePlanBuilder(UpdaterConfiguration config,
-			Collection<Path> modifiedFiles) {
-		this.config = config;
-		this.modifiedFiles = modifiedFiles;
+    private final FileSetSpec updaterFiles;
+
+    private final ReplaceTester replaceTester;
+
+	public UpdatePlanBuilder(ReplaceTester replaceTester,
+			Collection<RelativePath> modifiedFiles,
+			FileSetSpec updaterFiles) {
+		this.replaceTester = replaceTester;
+        this.modifiedFiles = modifiedFiles;
+        this.updaterFiles = updaterFiles;
 	}
 
 	public UpdatePlan build() {
-		for (Path file : modifiedFiles)
+		for (RelativePath file : modifiedFiles)
 			process(file);
 		UpdatePlan plan = new UpdatePlan();
 		if (modifiedFiles.isEmpty())
 			return plan;
 		if (overallReplaceStrategy.needsUpdater()) {
 			CompoundFileSetSpec excludedFiles = new CompoundFileSetSpec();
-			updaterFileHandling.schedule(plan, config, excludedFiles);
+			updaterFileHandling.schedule(plan, updaterFiles, excludedFiles);
 			plan.scheduleUpdaterInvokation(new ExcludedFileSpec(
 					new AllFilesSpec(), excludedFiles));
 		} else {
@@ -40,10 +45,10 @@ public class UpdatePlanBuilder {
 		return plan;
 	}
 
-	private void process(Path file) {
-		ReplaceStrategy rs = config.replaceStrategy(file);
+	private void process(RelativePath file) {
+		ReplaceStrategy rs = replaceTester.replaceStrategy(file);
 		overallReplaceStrategy = overallReplaceStrategy.worst(rs);
-		if (config.isPartOfUpdater(file))
+		if (updaterFiles.contains(file))
 			updaterFileHandling = updaterFileHandling.worst(rs
 					.updaterHandlingStrategy());
 	}

@@ -7,14 +7,15 @@ Bundle-Activator: com.yoursway.autoupdate.core.internal.Activator
 Bundle-Vendor: YourSway, Inc.
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.4.0",
- com.google.collections;bundle-version="1.0.0"
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.autoupdate.core.actions;bundle-version="1.0.0",
+ com.yoursway.utils;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.autoupdate.core,
- com.yoursway.autoupdate.core.actions,
- com.yoursway.autoupdate.core.dirs,
- com.yoursway.autoupdate.core.fileset,
- com.yoursway.autoupdate.core.filespec,
- com.yoursway.autoupdate.core.path,
- com.yoursway.autoupdate.core.steps,
- com.yoursway.autoupdate.core.versiondef
+ com.yoursway.autoupdate.core.app.layout,
+ com.yoursway.autoupdate.core.execution,
+ com.yoursway.autoupdate.core.plan.dirs,
+ com.yoursway.autoupdate.core.plan.steps,
+ com.yoursway.autoupdate.core.versions,
+ com.yoursway.autoupdate.core.versions.definitions

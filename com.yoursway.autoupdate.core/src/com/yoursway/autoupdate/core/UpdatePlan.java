@@ -10,14 +10,15 @@ import static com.google.common.collect.Lists.transform;
 
 import java.util.List;
 
-import com.yoursway.autoupdate.core.dirs.ApplicationDirectory;
-import com.yoursway.autoupdate.core.dirs.Directory;
-import com.yoursway.autoupdate.core.dirs.UpdaterDirectory;
-import com.yoursway.autoupdate.core.filespec.FileSetSpec;
-import com.yoursway.autoupdate.core.steps.CopyFilesStep;
-import com.yoursway.autoupdate.core.steps.UpdateExternallyStep;
-import com.yoursway.autoupdate.core.steps.UpdateFilesStep;
-import com.yoursway.autoupdate.core.steps.UpdateStep;
+import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.plan.dirs.ApplicationDirectory;
+import com.yoursway.autoupdate.core.plan.dirs.Directory;
+import com.yoursway.autoupdate.core.plan.dirs.UpdaterDirectory;
+import com.yoursway.autoupdate.core.plan.steps.CopyFilesStep;
+import com.yoursway.autoupdate.core.plan.steps.UpdateExternallyStep;
+import com.yoursway.autoupdate.core.plan.steps.UpdateFilesStep;
+import com.yoursway.autoupdate.core.plan.steps.UpdateStep;
+import com.yoursway.utils.filespec.FileSetSpec;
 
 public class UpdatePlan {
 	

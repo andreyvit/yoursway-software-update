@@ -1,0 +1,9 @@
+<version>
+    <next-version>1.2.shit</next-version>
+    <display-name>Megashit 1.2</display-name>
+    <changes><b>Hello</b></changes>
+    <files>
+        <file md5="abc1" path="files/a.jar" installPath="plugins/a.jar" />
+        <file md5="def" path="files/b.jar" installPath="plugins/b.jar" role="updater-main" /> 
+    </files>
+</version>

@@ -6,10 +6,12 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-import com.yoursway.autoupdate.core.Action;
-import com.yoursway.autoupdate.core.EclipseStartInfo;
-import com.yoursway.autoupdate.core.Executor;
-import com.yoursway.autoupdate.core.versiondef.RemoteFile;
+import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
+import com.yoursway.autoupdate.core.actions.Executor;
+import com.yoursway.autoupdate.core.actions.RemoteSource;
+import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class MockExecutor implements Executor {
     
@@ -42,8 +44,8 @@ public class MockExecutor implements Executor {
         result.append("COPY " + source + " TO " + destination + "\n");
     }
     
-    public File download(RemoteFile remote) {
-        return new File(new File("/tmp/download"), remote.remoteUrl().getPath());
+    public File download(RemoteSource remote, RelativePath path) {
+        return new File(new File("/tmp/download"), remote.url().getPath());
     }
     
     public void deleteFile(File file) {

@@ -14,26 +14,27 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.yoursway.autoupdate.core.FileContainer;
-import com.yoursway.autoupdate.core.UpdaterConfiguration;
-import com.yoursway.autoupdate.core.filespec.ConcreteFilesSpec;
-import com.yoursway.autoupdate.core.path.Path;
-import com.yoursway.autoupdate.core.path.Pathes;
-import com.yoursway.autoupdate.core.versiondef.RemoteFile;
+import com.yoursway.autoupdate.core.actions.RemoteSource;
+import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
+import com.yoursway.utils.filespec.ConcreteFilesSpec;
+import com.yoursway.utils.relativepath.Pathes;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class MockAppBuilder {
     
-    private Map<Path, RemoteFile> files = newHashMap();
+    private Map<RelativePath, RemoteFile> files = newHashMap();
     
-    private Map<Path, Set<MockFileFlags>> flags = newHashMap();
+    private Map<RelativePath, Set<MockFileFlags>> flags = newHashMap();
     
-    private Map<Path, Integer> versions = newHashMap();
+    private Map<RelativePath, Integer> versions = newHashMap();
     
     public MockAppBuilder file(String path) {
         return file(path, noneOf(MockFileFlags.class));
     }
     
     public MockAppBuilder file(String path, Set<MockFileFlags> flags) {
-        Path p = Pathes.relativePath(path);
+        RelativePath p = Pathes.relativePath(path);
         if (files.containsKey(p))
             throw new IllegalArgumentException("File with path " + path + " already exists.");
         putNewFileAt(p, flags);
@@ -45,7 +46,7 @@ public class MockAppBuilder {
     }
     
     public MockAppBuilder update(String path, Set<MockFileFlags> flags) {
-        Path p = Pathes.relativePath(path);
+        RelativePath p = Pathes.relativePath(path);
         if (!files.containsKey(p))
             throw new IllegalArgumentException("File with path " + path + " does not exist.");
         if (flags == null)
@@ -55,7 +56,7 @@ public class MockAppBuilder {
     }
     
     public MockAppBuilder delete(String path) {
-        Path p = Pathes.relativePath(path);
+        RelativePath p = Pathes.relativePath(path);
         if (!files.containsKey(p))
             throw new IllegalArgumentException("File with path " + path + " does not exist.");
         files.remove(p);
@@ -70,21 +71,21 @@ public class MockAppBuilder {
         return newArrayList(files.values());
     }
     
-    private void putNewFileAt(Path p, Set<MockFileFlags> flags) {
+    private void putNewFileAt(RelativePath p, Set<MockFileFlags> flags) {
         files.put(p, newRemoteFile(p));
         this.flags.put(p, flags);
     }
     
-    private RemoteFile newRemoteFile(Path p) {
+    private RemoteFile newRemoteFile(RelativePath p) {
         String hash = fakeMd5(p, newVersion(p));
         try {
-            return new RemoteFile(p, hash, new URL("http://example.com/" + p + "#" + hash));
+            return new RemoteFile(p, hash, new RemoteSource(new URL("http://example.com/" + p + "#" + hash)));
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
     }
     
-    private int newVersion(Path p) {
+    private int newVersion(RelativePath p) {
         Integer version = versions.get(p);
         if (version == null)
             version = 1;
@@ -94,27 +95,27 @@ public class MockAppBuilder {
         return version;
     }
     
-    private static String fakeMd5(Path path, int version) {
+    private static String fakeMd5(RelativePath relativePath, int version) {
         return "v" + version;
     }
     
-    public UpdaterConfiguration updaterFiles() {
-        return new UpdaterConfiguration(new ConcreteFilesSpec(collectUpdaterFiles()), findMainUpdaterJar());
-    }
-
-    private Collection<Path> collectUpdaterFiles() {
-        Collection<Path> pathes = newArrayList();
-        for (Entry<Path, Set<MockFileFlags>> entry : flags.entrySet())
+    private Collection<RelativePath> collectUpdaterFiles() {
+        Collection<RelativePath> pathes = newArrayList();
+        for (Entry<RelativePath, Set<MockFileFlags>> entry : flags.entrySet())
             if (entry.getValue().contains(UPDATER))
                 pathes.add(entry.getKey());
         return pathes;
     }
     
-    private Path findMainUpdaterJar() {
-        for (Entry<Path, Set<MockFileFlags>> entry : flags.entrySet())
+    private RelativePath findMainUpdaterJar() {
+        for (Entry<RelativePath, Set<MockFileFlags>> entry : flags.entrySet())
             if (entry.getValue().contains(MAIN_UPDATER_JAR))
                 return entry.getKey();
         throw new AssertionError("Main updater JAR not found");
+    }
+
+    public UpdaterInfo createUpdaterInfo() {
+        return new UpdaterInfo(new ConcreteFilesSpec(collectUpdaterFiles()), findMainUpdaterJar());
     }
     
 }

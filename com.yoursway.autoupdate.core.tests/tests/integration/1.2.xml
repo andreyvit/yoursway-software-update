@@ -1,0 +1,9 @@
+<version>
+    <latest>true</latest>
+    <display-name>Megashit 1.2</display-name>
+    <files>
+        <file md5="abc1" path="files/a.jar" installPath="plugins/a.jar" />
+        <file md5="def2" path="files/b.jar" installPath="plugins/b.jar" role="updater-main" />
+        <file md5="fff2" path="files/c.jar" installPath="features/c.jar" /> 
+    </files>
+</version>

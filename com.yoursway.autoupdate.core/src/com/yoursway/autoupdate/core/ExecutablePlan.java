@@ -6,6 +6,9 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.actions.Executor;
+
 public class ExecutablePlan {
     
     private final List<Action> actions;

@@ -3,18 +3,18 @@ package com.yoursway.autoupdate.core;
 import static com.google.common.collect.Iterators.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.yoursway.autoupdate.core.path.Pathes.relativePath;
+import static com.yoursway.utils.relativepath.Pathes.relativePath;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
-import com.yoursway.autoupdate.core.fileset.FileSet;
-import com.yoursway.autoupdate.core.filespec.ConcreteFilesSpec;
-import com.yoursway.autoupdate.core.path.Path;
-import com.yoursway.autoupdate.core.versiondef.AppFile;
-import com.yoursway.autoupdate.core.versiondef.RemoteFile;
-import com.yoursway.autoupdate.core.versiondef.VersionDefinition;
+import com.yoursway.autoupdate.core.versions.definitions.AppFile;
+import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
+import com.yoursway.utils.fileset.FileSet;
+import com.yoursway.utils.filespec.ConcreteFilesSpec;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class FileStateBuilder {
     
@@ -22,15 +22,15 @@ public class FileStateBuilder {
             Collection<? extends RemoteFile> targetFiles) {
         Collection<FileAction> actions = newArrayList();
         for (RemoteFile file : targetFiles) {
-            AppFile existing = existingFilesContainer.resolve(file.path());
+            AppFile existing = existingFilesContainer.resolve(file.relativePath());
             if (existing == null)
-                actions.add(new FileAction.AddAction(file.path(), file));
+                actions.add(new FileAction.AddAction(file.relativePath(), file));
             else if (!existing.md5().equals(file.md5()))
-                actions.add(new FileAction.UpdateAction(file.path(), file));
+                actions.add(new FileAction.UpdateAction(file.relativePath(), file));
         }
-        Set<Path> existing = newHashSet(existingFilesContainer.allFiles().asCollection());
+        Set<RelativePath> existing = newHashSet(existingFilesContainer.allFiles().asCollection());
         existing.removeAll(newHashSet(transform(targetFiles.iterator(), AppFile.APPFILE_TO_PATH)));
-        for (Path file : existing)
+        for (RelativePath file : existing)
             actions.add(new FileAction.RemoveAction(file));
         return actions;
     }

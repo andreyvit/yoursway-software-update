@@ -10,10 +10,11 @@ import org.eclipse.core.runtime.Path;
 
 import com.google.common.collect.Lists;
 import com.yoursway.autoupdate.core.tests.Activator;
-import com.yoursway.autoupdate.core.versiondef.IVersionDefinitionLoader;
-import com.yoursway.autoupdate.core.versiondef.Version;
-import com.yoursway.autoupdate.core.versiondef.VersionDefinition;
-import com.yoursway.autoupdate.core.versiondef.VersionDefinitionNotAvailable;
+import com.yoursway.autoupdate.core.versions.Version;
+import com.yoursway.autoupdate.core.versions.definitions.IVersionDefinitionLoader;
+import com.yoursway.autoupdate.core.versions.definitions.InvalidVersionDefinitionException;
+import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
+import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAvailable;
 
 public class Testing {
 
@@ -53,7 +54,7 @@ public class Testing {
 	}
 
 	public static String findNewerVersions(
-			IVersionDefinitionLoader loader, Version current) throws VersionDefinitionNotAvailable {
+			IVersionDefinitionLoader loader, Version current) throws VersionDefinitionNotAvailable, InvalidVersionDefinitionException {
 		VersionDefinition definition = loader.loadDefinition(current);
 		List<Version> result = Lists.newArrayList();
 		for (Version next = definition.nextVersion(); next != null; next = definition

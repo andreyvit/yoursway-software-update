@@ -1,13 +1,13 @@
 package com.yoursway.autoupdate.core;
 
-import com.yoursway.autoupdate.core.filespec.CompoundFileSetSpec;
-import com.yoursway.autoupdate.core.filespec.FileSetSpec;
+import com.yoursway.utils.filespec.CompoundFileSetSpec;
+import com.yoursway.utils.filespec.FileSetSpec;
 
 public enum UpdaterFileHandling {
 	
 	NO_UPDATE {
 		
-		public void schedule(UpdatePlan plan, UpdaterConfiguration config, CompoundFileSetSpec excludedFiles) {
+		public void schedule(UpdatePlan plan, FileSetSpec updaterFiles, CompoundFileSetSpec excludedFiles) {
 			plan.useUpdaterAsIs();
 		}
 		
@@ -15,18 +15,17 @@ public enum UpdaterFileHandling {
 
 	REPLACE_INPLACE {
 		
-		public void schedule(UpdatePlan plan, UpdaterConfiguration config, CompoundFileSetSpec excludedFiles) {
-			FileSetSpec files = config.updaterFiles();
-			plan.scheduleInplaceUpdaterUpdate(files);
-			excludedFiles.add(files);
+		public void schedule(UpdatePlan plan, FileSetSpec updaterFiles, CompoundFileSetSpec excludedFiles) {
+			plan.scheduleInplaceUpdaterUpdate(updaterFiles);
+			excludedFiles.add(updaterFiles);
 		}
 		
 	},
 	
 	MAKE_COPY {
 		
-		public void schedule(UpdatePlan plan, UpdaterConfiguration config, CompoundFileSetSpec excludedFiles) {
-			plan.scheduleUpdaterCopy(config.updaterFiles());
+		public void schedule(UpdatePlan plan, FileSetSpec updaterFiles, CompoundFileSetSpec excludedFiles) {
+			plan.scheduleUpdaterCopy(updaterFiles);
 		}
 		
 	};
@@ -38,7 +37,7 @@ public enum UpdaterFileHandling {
 			return another;
 	}
 	
-	public abstract void schedule(UpdatePlan plan, UpdaterConfiguration config, CompoundFileSetSpec excludedFiles);
+	public abstract void schedule(UpdatePlan plan, FileSetSpec updaterFiles, CompoundFileSetSpec excludedFiles);
 
 	
 }

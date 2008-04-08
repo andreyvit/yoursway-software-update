@@ -8,12 +8,15 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
-import com.yoursway.autoupdate.core.dirs.Directory;
-import com.yoursway.autoupdate.core.dirs.DirectoryResolver;
-import com.yoursway.autoupdate.core.fileset.FileSet;
-import com.yoursway.autoupdate.core.filespec.FileSetSpec;
-import com.yoursway.autoupdate.core.path.Path;
-import com.yoursway.autoupdate.core.versiondef.RemoteFile;
+import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
+import com.yoursway.autoupdate.core.actions.Executor;
+import com.yoursway.autoupdate.core.plan.dirs.Directory;
+import com.yoursway.autoupdate.core.plan.dirs.DirectoryResolver;
+import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.utils.fileset.FileSet;
+import com.yoursway.utils.filespec.FileSetSpec;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class UpdateRequest implements DirectoryResolver {
     
@@ -40,8 +43,8 @@ public class UpdateRequest implements DirectoryResolver {
 	public Collection<File> resolve(FileSetSpec spec) {
 	    FileSet set = spec.resolve(allExistingFiles);
 	    List<File> result = newArrayList();
-	    for (Path path : set.asCollection())
-	        result.add(path.toFile(appRoot));
+	    for (RelativePath relativePath : set.asCollection())
+	        result.add(relativePath.toFile(appRoot));
         return result;
 	}
 	
@@ -72,7 +75,7 @@ public class UpdateRequest implements DirectoryResolver {
                 RemoteFile replacement = action.replacement();
                 File localReplacement = null;
                 if (replacement != null)
-                    localReplacement = executor.download(replacement);
+                    localReplacement = executor.download(replacement.source(), replacement.relativePath());
                 result.add(action.createReal(appRoot, localReplacement));
             }
         return result;
@@ -81,8 +84,8 @@ public class UpdateRequest implements DirectoryResolver {
     public Collection<FilePair> resolvePairs(FileSetSpec spec, File t) {
         FileSet set = spec.resolve(allExistingFiles);
         List<FilePair> result = newArrayList();
-        for (Path path : set.asCollection())
-            result.add(new FilePair(path.toFile(appRoot), path.toFile(t)));
+        for (RelativePath relativePath : set.asCollection())
+            result.add(new FilePair(relativePath.toFile(appRoot), relativePath.toFile(t)));
         return result;
     }
 	
