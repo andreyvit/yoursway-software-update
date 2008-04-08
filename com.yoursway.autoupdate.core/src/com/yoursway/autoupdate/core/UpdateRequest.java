@@ -14,6 +14,7 @@ import com.yoursway.autoupdate.core.actions.Executor;
 import com.yoursway.autoupdate.core.plan.dirs.Directory;
 import com.yoursway.autoupdate.core.plan.dirs.DirectoryResolver;
 import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.utils.fileset.FileSet;
 import com.yoursway.utils.filespec.FileSetSpec;
 import com.yoursway.utils.relativepath.RelativePath;
@@ -24,20 +25,21 @@ public class UpdateRequest implements DirectoryResolver {
 	public Collection<FileAction> actions;
     private final FileSet allExistingFiles;
     private final Executor executor;
-    private final UpdaterConfiguration config;
+    private final UpdaterInfo updaterInfo;
 
 	public UpdateRequest(File appRoot,
 	        FileSet allExistingFiles,
-			Collection<FileAction> actions, UpdaterConfiguration config, Executor executor) {
-        this.config = config;
+			Collection<FileAction> actions, UpdaterInfo updaterInfo, Executor executor) {
         Assert.isNotNull(appRoot);
 	    Assert.isNotNull(allExistingFiles);
 	    Assert.isNotNull(actions);
 	    Assert.isNotNull(executor);
+	    Assert.isNotNull(updaterInfo);
 		this.appRoot = appRoot;
         this.allExistingFiles = allExistingFiles;
 		this.actions = actions;
 		this.executor = executor;
+		this.updaterInfo = updaterInfo;
 	}
 	
 	public Collection<File> resolve(FileSetSpec spec) {
@@ -65,7 +67,7 @@ public class UpdateRequest implements DirectoryResolver {
     }
     
     public File resolveUpdaterJar(File root) {
-        return config.updaterJar().toFile(root);
+        return updaterInfo.mainJar().toFile(root);
     }
 
     public Collection<Action> resolveUpdate(FileSetSpec files) {

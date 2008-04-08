@@ -2,6 +2,7 @@ package com.yoursway.autoupdate.core.tests.mocks;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.autoupdate.core.tests.mocks.MockFileFlags.LOCKED;
 import static com.yoursway.autoupdate.core.tests.mocks.MockFileFlags.MAIN_UPDATER_JAR;
 import static com.yoursway.autoupdate.core.tests.mocks.MockFileFlags.UPDATER;
 import static java.util.EnumSet.noneOf;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.yoursway.autoupdate.core.FileContainer;
+import com.yoursway.autoupdate.core.ReplaceTester;
 import com.yoursway.autoupdate.core.actions.RemoteSource;
 import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
@@ -107,6 +109,14 @@ public class MockAppBuilder {
         return pathes;
     }
     
+    private Collection<RelativePath> collectLockedFiles() {
+        Collection<RelativePath> pathes = newArrayList();
+        for (Entry<RelativePath, Set<MockFileFlags>> entry : flags.entrySet())
+            if (entry.getValue().contains(LOCKED))
+                pathes.add(entry.getKey());
+        return pathes;
+    }
+    
     private RelativePath findMainUpdaterJar() {
         for (Entry<RelativePath, Set<MockFileFlags>> entry : flags.entrySet())
             if (entry.getValue().contains(MAIN_UPDATER_JAR))
@@ -116,6 +126,10 @@ public class MockAppBuilder {
 
     public UpdaterInfo createUpdaterInfo() {
         return new UpdaterInfo(new ConcreteFilesSpec(collectUpdaterFiles()), findMainUpdaterJar());
+    }
+    
+    public ReplaceTester createReplaceTester() {
+        return new MockReplaceTester(collectLockedFiles());
     }
     
 }
