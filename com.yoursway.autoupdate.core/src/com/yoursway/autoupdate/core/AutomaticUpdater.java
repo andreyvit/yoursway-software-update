@@ -11,16 +11,27 @@ import java.util.Collection;
 import org.eclipse.core.runtime.Platform;
 
 import com.yoursway.autoupdate.core.execution.RealExecutor;
+import com.yoursway.autoupdate.core.execution.RealExecutor9;
+import com.yoursway.autoupdate.core.execution.RealReplaceTester;
 import com.yoursway.autoupdate.core.versions.Version;
 import com.yoursway.autoupdate.core.versions.definitions.IVersionDefinitionLoader;
+import com.yoursway.autoupdate.core.versions.definitions.InvalidVersionDefinitionException;
 import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
+import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.UrlBasedVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAvailable;
 
 public class AutomaticUpdater {
     
-    public static void checkForUpdates(URL defaultUrl, Version currentVersion) throws UpdatesFoundExit {
+    public static void checkForUpdates(Version currentVersion, URL defaultUrl) throws UpdatesFoundExit {
+        File location = new File(Platform.getInstallLocation().getURL().getPath());
+        ApplicationInstallation install = new ApplicationInstallation(location);
+        checkForUpdates(install, currentVersion, defaultUrl);
+    }
+
+    public static void checkForUpdates(ApplicationInstallation install, Version currentVersion,
+            URL defaultUrl) throws UpdatesFoundExit {
         String overrideUrl = System.getProperty("updater.url.override");
         if (overrideUrl != null)
             try {
@@ -39,24 +50,25 @@ public class AutomaticUpdater {
             
             Collection<RemoteFile> freshFiles = freshDef.files();
             
-            File location = new File(Platform.getInstallLocation().getURL().getPath());
-            ApplicationInstallation install = new ApplicationInstallation(location);
-            
             Collection<FileAction> actions = buildActions(install.getFileContainer(), freshFiles);
             
-            File updaterBundle = install.resolvePluginJar("com.yoursway.autoupdate.core.extupdater");
-            UpdaterConfiguration config = new UpdaterConfiguration(null, null);
             RealExecutor executor = new RealExecutor();
+            RealReplaceTester replaceTester = new RealReplaceTester();
+            RealExecutor9 executor9 = new RealExecutor9();
             
-            UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(config, modifiedFiles(actions)
-                    .asCollection());
+            UpdaterInfo updaterInfo = freshDef.updaterInfo();
+            UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
+                    .asCollection(), updaterInfo.files());
             UpdatePlan plan = planBuilder.build();
             ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(new File("/IDE"), install
-                    .getFileContainer().allFiles(), actions, config, executor));
+                    .getFileContainer().allFiles(), actions, updaterInfo, executor9));
             executablePlan.execute(executor);
             
             throw new UpdatesFoundExit();
         } catch (VersionDefinitionNotAvailable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (InvalidVersionDefinitionException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

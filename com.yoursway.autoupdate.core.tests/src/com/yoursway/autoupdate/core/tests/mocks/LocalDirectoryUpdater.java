@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.yoursway.autoupdate.core.tests.Activator;
+import com.yoursway.autoupdate.core.tests.internal.Activator;
 import com.yoursway.autoupdate.core.versions.definitions.UrlBasedVersionDefinitionLoader;
 
 public final class LocalDirectoryUpdater extends

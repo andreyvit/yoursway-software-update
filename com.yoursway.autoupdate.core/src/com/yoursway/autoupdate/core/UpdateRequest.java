@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.Assert;
 
 import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
-import com.yoursway.autoupdate.core.actions.Executor;
 import com.yoursway.autoupdate.core.plan.dirs.Directory;
 import com.yoursway.autoupdate.core.plan.dirs.DirectoryResolver;
 import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
@@ -24,12 +23,12 @@ public class UpdateRequest implements DirectoryResolver {
 	public File appRoot;
 	public Collection<FileAction> actions;
     private final FileSet allExistingFiles;
-    private final Executor executor;
+    private final Executor9 executor;
     private final UpdaterInfo updaterInfo;
 
 	public UpdateRequest(File appRoot,
 	        FileSet allExistingFiles,
-			Collection<FileAction> actions, UpdaterInfo updaterInfo, Executor executor) {
+			Collection<FileAction> actions, UpdaterInfo updaterInfo, Executor9 executor) {
         Assert.isNotNull(appRoot);
 	    Assert.isNotNull(allExistingFiles);
 	    Assert.isNotNull(actions);

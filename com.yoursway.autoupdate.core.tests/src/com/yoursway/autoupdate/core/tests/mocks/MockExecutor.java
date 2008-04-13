@@ -6,14 +6,14 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import com.yoursway.autoupdate.core.Executor9;
 import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
 import com.yoursway.autoupdate.core.actions.Executor;
 import com.yoursway.autoupdate.core.actions.RemoteSource;
-import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.utils.relativepath.RelativePath;
 
-public class MockExecutor implements Executor {
+public class MockExecutor implements Executor, Executor9 {
     
     private int nextTempDir = 1;
     

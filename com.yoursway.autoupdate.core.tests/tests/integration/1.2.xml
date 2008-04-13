@@ -1,6 +1,7 @@
 <version>
     <latest>true</latest>
     <display-name>Megashit 1.2</display-name>
+    <date>2008-01-25 14:59 +0600</date>
     <files>
         <file md5="abc1" path="files/a.jar" installPath="plugins/a.jar" />
         <file md5="def2" path="files/b.jar" installPath="plugins/b.jar" role="updater-main" />

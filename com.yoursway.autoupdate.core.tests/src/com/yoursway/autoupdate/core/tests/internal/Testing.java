@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import com.google.common.collect.Lists;
-import com.yoursway.autoupdate.core.tests.Activator;
 import com.yoursway.autoupdate.core.versions.Version;
 import com.yoursway.autoupdate.core.versions.definitions.IVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.versions.definitions.InvalidVersionDefinitionException;

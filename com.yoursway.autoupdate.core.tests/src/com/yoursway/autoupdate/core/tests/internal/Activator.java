@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core.tests;
+package com.yoursway.autoupdate.core.tests.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -20,6 +20,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+
+    private static BundleContext theContext;
 	
 	/**
 	 * The constructor
@@ -34,7 +36,12 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		theContext = context;
 	}
+	
+	public static BundleContext getContext() {
+        return theContext;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -42,6 +49,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		theContext = null;
 		super.stop(context);
 	}
 

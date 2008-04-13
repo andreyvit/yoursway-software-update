@@ -1,8 +1,6 @@
 package com.yoursway.autoupdate.core.internal;
 
-import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.ui.internal.Workbench;
 import org.osgi.framework.BundleContext;
 
 /**

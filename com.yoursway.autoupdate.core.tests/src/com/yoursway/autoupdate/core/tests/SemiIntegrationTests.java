@@ -21,7 +21,6 @@ import com.yoursway.autoupdate.core.ReplaceTester;
 import com.yoursway.autoupdate.core.UpdatePlan;
 import com.yoursway.autoupdate.core.UpdatePlanBuilder;
 import com.yoursway.autoupdate.core.UpdateRequest;
-import com.yoursway.autoupdate.core.actions.Executor;
 import com.yoursway.autoupdate.core.tests.mocks.MockAppBuilder;
 import com.yoursway.autoupdate.core.tests.mocks.MockExecutor;
 import com.yoursway.autoupdate.core.versions.Version;
@@ -33,7 +32,7 @@ public class SemiIntegrationTests {
     
     @Test
     public void fooChanged() throws ParseException {
-        Executor executor = new MockExecutor();
+        MockExecutor executor = new MockExecutor();
         MockAppBuilder builder = new MockAppBuilder();
         builder.file("eclipse.exe").file("jre/java.exe", of(LOCKED, UPDATER)).file("plugins/app.jar",
                 of(LOCKED)).file("plugins/updater.jar", of(UPDATER, MAIN_UPDATER_JAR));

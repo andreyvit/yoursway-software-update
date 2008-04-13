@@ -33,7 +33,37 @@ import com.yoursway.utils.filespec.ConcreteFilesSpec;
 import com.yoursway.utils.relativepath.RelativePath;
 
 public class VersionDefinitionParser {
-    
+
+    enum UpdaterAffiliation {
+        
+        NONE {
+            
+            public boolean isUpdater() {
+                return false;
+            }
+
+        },
+        
+        UPDATER {
+            
+            public boolean isUpdater() {
+                return true;
+            }
+            
+        },
+        
+        UPDATER_MAIN {
+            
+            public boolean isUpdater() {
+                return true;
+            }
+            
+        };
+        
+        public abstract boolean isUpdater(); 
+        
+    }
+
     static class VersionInfo {
         public String nextVersion;
         public String displayName;
