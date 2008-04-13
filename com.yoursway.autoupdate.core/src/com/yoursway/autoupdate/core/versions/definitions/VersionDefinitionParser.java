@@ -204,7 +204,7 @@ public class VersionDefinitionParser {
      * Public for usage in tests.
      */
     public static Date parseDate(String textContent) throws ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm Z").parse(textContent);
+        return VersionDefinition.createDateFormat().parse(textContent);
     }
     
     public VersionDefinition parse(URL repositoryURL, Version currentVersion, InputStream stream)

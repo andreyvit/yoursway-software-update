@@ -3,6 +3,7 @@ package com.yoursway.autoupdate.core.tests.layouts;
 import static com.google.common.collect.Iterators.forEnumeration;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
+import static com.yoursway.utils.relativepath.Pathes.relativePath;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,8 +12,9 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import com.yoursway.autoupdate.core.app.layout.MacBundlePlatformLayout;
+import com.yoursway.autoupdate.core.ApplicationInstallation;
 import com.yoursway.autoupdate.core.tests.internal.Activator;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class WritableMacBundleLayout {
     
@@ -41,17 +43,15 @@ public class WritableMacBundleLayout {
         source.putJar(id, plugins);
     }
     
-    public void copyPlugin(String id) throws IOException {
-        source.putPlugin(id, plugins);
+    public RelativePath copyPlugin(String id) throws IOException {
+        String fullName = source.putPlugin(id, plugins);
+        return relativePath("Resources/Java/plugins/" + fullName);
     }
     
-    public MacBundlePlatformLayout toLayout() {
-        MacBundlePlatformLayout result = MacBundlePlatformLayout.explore(plugins.getParentFile());
-        if (result == null)
-            throw new AssertionError("Incorrect platform built by WritableMacBundleLayout");
-        return result;
+    public ApplicationInstallation toInstallation() {
+        return new ApplicationInstallation(plugins.getParentFile());
     }
-    
+
     public static void copyFromBundleTo(Bundle bundle, String path, File root) throws IOException {
         if (!path.endsWith("/"))
             path = path + "/";

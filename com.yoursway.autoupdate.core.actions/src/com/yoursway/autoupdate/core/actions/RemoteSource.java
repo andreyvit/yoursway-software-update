@@ -1,6 +1,9 @@
 package com.yoursway.autoupdate.core.actions;
 
+import java.io.IOException;
 import java.net.URL;
+
+import com.yoursway.utils.XmlWriter;
 
 public final class RemoteSource {
     
@@ -14,6 +17,10 @@ public final class RemoteSource {
     
     public URL url() {
         return url;
+    }
+
+    public void writeTo(XmlWriter w) throws IOException {
+        w.attr("path", url.toString());
     }
     
 }

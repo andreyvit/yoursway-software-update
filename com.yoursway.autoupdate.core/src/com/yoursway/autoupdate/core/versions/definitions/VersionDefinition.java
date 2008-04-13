@@ -2,12 +2,16 @@ package com.yoursway.autoupdate.core.versions.definitions;
 
 import static java.util.Arrays.asList;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
 import org.eclipse.core.runtime.Assert;
 
 import com.yoursway.autoupdate.core.versions.Version;
+import com.yoursway.utils.XmlWriter;
 
 public class VersionDefinition {
     
@@ -71,6 +75,31 @@ public class VersionDefinition {
     @Override
     public String toString() {
         return version + " -> " + nextVersion;
+    }
+    
+    public void writeTo(XmlWriter w) throws IOException {
+        w.start("version");
+        w.tag("display-name", displayName);
+        w.tag("date", createDateFormat().format(date));
+        if (!hasNewerVersion()) 
+            w.tag("latest-version");
+        else {
+            w.tag("next-version", nextVersion.versionString());
+            w.tag("changes", changes);
+        }
+        writeFilesTo(w);
+        w.end();
+    }
+
+    private void writeFilesTo(XmlWriter w) throws IOException {
+        w.start("files");
+        for (RemoteFile file : files) 
+            file.writeTo(w, updaterInfo);
+        w.end();
+    }
+
+    public static DateFormat createDateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
     }
     
 }

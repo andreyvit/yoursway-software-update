@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Extupdater
+Bundle-SymbolicName: com.yoursway.autoupdate.core.extupdater
+Bundle-Version: 1.0.0
+Export-Package: com.yoursway.autoupdate.core.extupdater

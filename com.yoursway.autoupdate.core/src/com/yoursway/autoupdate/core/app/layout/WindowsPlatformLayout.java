@@ -7,6 +7,7 @@ import java.io.File;
 
 import com.yoursway.autoupdate.core.FileContainer;
 import com.yoursway.autoupdate.core.LocalFileContainer;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class WindowsPlatformLayout extends PlatformLayoutImpl {
     
@@ -28,6 +29,15 @@ public class WindowsPlatformLayout extends PlatformLayoutImpl {
     
     public FileContainer createFileContainer() {
         return new LocalFileContainer(root);
+    }
+    
+    public File resolve(RelativePath path) {
+        return path.toFile(root);
+    }
+    
+    @Override
+    protected File getExecutable() {
+        throw new UnsupportedOperationException();
     }
     
 }

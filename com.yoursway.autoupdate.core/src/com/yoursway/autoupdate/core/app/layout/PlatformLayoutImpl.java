@@ -38,4 +38,11 @@ public abstract class PlatformLayoutImpl implements PlatformLayout {
         return YsFileUtils.findEclipsePluginJar(pluginsFolder, bundleName);
     }
     
+    public Process launch() throws IOException {
+        File executable = getExecutable();
+        return Runtime.getRuntime().exec(new String[] {executable.toString()});
+    }
+    
+    protected abstract File getExecutable();
+    
 }

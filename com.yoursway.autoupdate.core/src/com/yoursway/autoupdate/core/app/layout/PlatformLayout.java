@@ -4,8 +4,10 @@
 package com.yoursway.autoupdate.core.app.layout;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.yoursway.autoupdate.core.FileContainer;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public interface PlatformLayout {
     
@@ -14,5 +16,9 @@ public interface PlatformLayout {
     FileContainer createFileContainer();
 
     File resolvePluginJar(String bundleName);
+
+    File resolve(RelativePath path);
+
+    Process launch() throws IOException;
     
 }

@@ -7,6 +7,7 @@ import java.io.File;
 
 import com.yoursway.autoupdate.core.FileContainer;
 import com.yoursway.autoupdate.core.LocalFileContainer;
+import com.yoursway.utils.relativepath.RelativePath;
 
 public class MacBundlePlatformLayout extends PlatformLayoutImpl {
     
@@ -28,6 +29,15 @@ public class MacBundlePlatformLayout extends PlatformLayoutImpl {
 
     public FileContainer createFileContainer() {
         return new LocalFileContainer(bundleContentsFolder);
+    }
+
+    public File resolve(RelativePath path) {
+        return path.toFile(bundleContentsFolder);
+    }
+
+    @Override
+    protected File getExecutable() {
+        return new File(bundleContentsFolder, "MacOS/eclipse");
     }
 
 }

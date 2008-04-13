@@ -3,7 +3,6 @@ package com.yoursway.autoupdate.core.tests.layouts;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.utils.YsFileUtils.addPluginIfMatches;
 import static com.yoursway.utils.YsFileUtils.chooseLatestVersion;
-import static com.yoursway.utils.YsFileUtils.cp_r;
 import static com.yoursway.utils.YsFileUtils.cp_r_children;
 import static com.yoursway.utils.YsFileUtils.findEclipsePluginJar;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
@@ -11,9 +10,7 @@ import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
@@ -33,7 +30,7 @@ public class CurrentPlatformSource implements PluginSource {
         YsFileUtils.cp_r(latestFolderOrJar, destinationFolder);
     }
 
-    public void putPlugin(String id, File destinationFolder) throws IOException {
+    public String putPlugin(String id, File destinationFolder) throws IOException {
         ISiteEntry[] sites = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfiguredSites();
         Collection<File> result = newArrayList();
         for(ISiteEntry site : sites) {
@@ -69,6 +66,7 @@ public class CurrentPlatformSource implements PluginSource {
             }
         }
         YsFileUtils.cp_r_exclude(latestFolderOrJar, destinationFolder, excluded);
+        return latestFolderOrJar.getName();
     }
     
 }

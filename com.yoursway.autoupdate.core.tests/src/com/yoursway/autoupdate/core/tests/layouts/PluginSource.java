@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public interface PluginSource {
     
-    void putPlugin(String id, File destinationFolder) throws IOException;
+    String putPlugin(String id, File destinationFolder) throws IOException;
 
     void putJar(String id, File destinationFolder) throws IOException;
     
