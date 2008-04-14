@@ -81,6 +81,8 @@ public class IntegrationTests {
             YsFileUtils.deleteRecursively(appRoot);
             
             WritableMacBundleLayout lll = new WritableMacBundleLayout(appRoot, new CurrentPlatformSource());
+            lll.overrideUpdateUrl(updateUrl);
+            
             // platform
             lll.copyPlugin("javax.servlet");
             lll.copyPlugin("org.eclipse.core.contenttype");

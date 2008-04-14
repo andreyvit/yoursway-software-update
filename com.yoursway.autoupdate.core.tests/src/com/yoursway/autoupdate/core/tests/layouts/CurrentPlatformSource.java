@@ -4,8 +4,10 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.utils.YsFileUtils.addPluginIfMatches;
 import static com.yoursway.utils.YsFileUtils.chooseLatestVersion;
 import static com.yoursway.utils.YsFileUtils.cp_r_children;
+import static com.yoursway.utils.YsFileUtils.deleteRecursively;
 import static com.yoursway.utils.YsFileUtils.findEclipsePluginJar;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
+import static com.yoursway.utils.YsFileUtils.zipFolderContents;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +65,10 @@ public class CurrentPlatformSource implements PluginSource {
                         cp_r_children(f, new File(destinationFolder, latestFolderOrJar.getName()));
                         excluded.add(f);
                     }
+                File unjared = latestFolderOrJar;
+                latestFolderOrJar = new File(unjared.toString() + ".jar");
+                zipFolderContents(unjared, latestFolderOrJar);
+                deleteRecursively(unjared);
             }
         }
         YsFileUtils.cp_r_exclude(latestFolderOrJar, destinationFolder, excluded);

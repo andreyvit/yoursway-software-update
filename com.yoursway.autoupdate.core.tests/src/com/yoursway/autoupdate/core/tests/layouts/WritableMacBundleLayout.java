@@ -2,12 +2,15 @@ package com.yoursway.autoupdate.core.tests.layouts;
 
 import static com.google.common.collect.Iterators.forEnumeration;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.yoursway.utils.YsFileUtils.readAsString;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
+import static com.yoursway.utils.YsFileUtils.writeString;
 import static com.yoursway.utils.relativepath.Pathes.relativePath;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -20,12 +23,14 @@ public class WritableMacBundleLayout {
     
     private File plugins;
     private final PluginSource source;
+    private File contents;
     
     public WritableMacBundleLayout(File root, PluginSource source) throws IOException {
         this.source = source;
         Bundle bundle = Activator.getDefault().getBundle();
         copyFromBundleTo(bundle, "osgi_templates/mac_bundle", root);
-        plugins = new File(root, "Contents/Resources/Java/plugins");
+        contents = new File(root, "Contents");
+        plugins = new File(contents, "Resources/Java/plugins");
         plugins.mkdirs();
         
         Process proc = Runtime.getRuntime().exec(
@@ -79,6 +84,17 @@ public class WritableMacBundleLayout {
         if (pos < 0)
             return elem;
         return elem.substring(pos + 1);
+    }
+
+    public void overrideUpdateUrl(URL updateUrl) {
+        try {
+            File eclipseIni = new File(contents, "MacOS/eclipse.ini");
+            String data = readAsString(eclipseIni).trim();
+            data = data + "\n-Dupdater.url.override=" + updateUrl + "\n";
+            writeString(eclipseIni, data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
 }
