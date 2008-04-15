@@ -17,14 +17,14 @@ public class FakeUpdaterApplication implements IApplication {
         String version = (String) Activator.getDefault().getBundle().getHeaders().get(
                 Constants.BUNDLE_VERSION);
         Activator.log("Version of fakeapp: " + version);
-        if (!version.startsWith("42."))
-            try {
-                Activator.log("Starting update check.");
-                AutomaticUpdater.checkForUpdates(new Version("1.0"), url);
-            } catch (UpdatesFoundExit e) {
+        try {
+            AutomaticUpdater.checkForUpdates(new Version(version), url);
+        } catch (UpdatesFoundExit e) {
+            if (e.shouldRestart())
                 return IApplication.EXIT_RESTART;
-            }
-        AutomaticUpdater.notifyTestsThatNoUpdatesExist(url);
+            else
+                return IApplication.EXIT_OK;
+        }
         return IApplication.EXIT_OK;
     }
     

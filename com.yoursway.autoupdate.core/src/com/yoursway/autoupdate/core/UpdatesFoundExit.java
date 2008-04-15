@@ -3,13 +3,15 @@ package com.yoursway.autoupdate.core;
 public class UpdatesFoundExit extends Exception {
 
     private static final long serialVersionUID = 1L;
+    
+    private final boolean shouldRestart;
 
-    public UpdatesFoundExit() {
-        super();
+    public UpdatesFoundExit(boolean shouldRestart) {
+        this.shouldRestart = shouldRestart;
     }
-
-    public UpdatesFoundExit(String message) {
-        super(message);
+    
+    public boolean shouldRestart() {
+        return shouldRestart;
     }
 
 }

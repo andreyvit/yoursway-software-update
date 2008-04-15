@@ -31,6 +31,7 @@ import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionParser;
+import com.yoursway.utils.URLs;
 import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.fileset.FileSet;
 import com.yoursway.utils.filespec.ConcreteFilesSpec;
@@ -64,6 +65,7 @@ public class IntegrationTests {
             
             WritableMacBundleLayout lll = new WritableMacBundleLayout(appRoot, new CurrentPlatformSource());
             lll.overrideUpdateUrl(updateUrl);
+            lll.enableTestsPingback(URLs.appendPath(updateUrl, "/update-done"));
             
             // platform
             lll.copyPlugin("javax.servlet");
@@ -87,8 +89,8 @@ public class IntegrationTests {
             RelativePath fakeAppPlugin = lll.copyPlugin("com.yoursway.autoupdater.core.tests.fakeapp");
             RelativePath utilsPlugin = lll.copyPlugin("com.yoursway.utils");
             
-            Version currentVersion = new Version("1.0");
-            Version nextVersion = new Version("1.1");
+            Version currentVersion = new Version("1.0.0.qualifier");
+            Version nextVersion = new Version("1.1.0.qualifier");
             
             ApplicationInstallation install = lll.toInstallation();
             FileSet allFiles = install.getFileContainer().allFiles();
@@ -133,7 +135,7 @@ public class IntegrationTests {
         SimpleMounter mounter = new SimpleMounterImpl(updateUrl, nextVersion, webServer);
         NewPluginVersionCreator creator = new NewPluginVersionCreator(mounter, install);
         creator.updateManifestVersion("com.yoursway.utils", "42.1.2.3.qualifier");
-        creator.updateManifestVersion("com.yoursway.autoupdater.core.tests.fakeapp", "42.1.2.3.qualifier");
+        creator.updateManifestVersion("com.yoursway.autoupdater.core.tests.fakeapp", "1.1.0.qualifier");
         creator.execute();
         
         Collection<RemoteFile> files = createRemoteFiles(install, allFiles, updateUrl, nextVersion, mounter

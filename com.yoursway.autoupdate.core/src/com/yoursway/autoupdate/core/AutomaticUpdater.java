@@ -23,9 +23,12 @@ import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.UrlBasedVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAvailable;
-import com.yoursway.utils.URLs;
 
 public class AutomaticUpdater {
+    
+    private static final String PROPERTY_URL_OVERRIDE = "updater.url.override";
+    
+    private static final String PROPERTY_TESTS_PING_URL = "updater.tests.ping.url";
     
     public static void checkForUpdates(Version currentVersion, URL defaultUrl) throws UpdatesFoundExit {
         ApplicationInstallation install = new ApplicationInstallation(urlToFileWithProtocolCheck(Platform
@@ -35,12 +38,16 @@ public class AutomaticUpdater {
     
     public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
             throws UpdatesFoundExit {
+        if (!forcedUpdateCheckBecauseOfTests() && !shouldCheckForUpdates())
+            return;
         updateUrl = determineUpdateUrl(updateUrl);
         IVersionDefinitionLoader loader = new UrlBasedVersionDefinitionLoader(updateUrl);
         try {
             VersionDefinition currentDef = loader.loadDefinition(currentVersion);
-            if (!currentDef.hasNewerVersion())
+            if (!currentDef.hasNewerVersion()) {
+                pingTestRunnerAndExitIfRequested();
                 return;
+            }
             
             Version freshVersion = currentDef.nextVersion();
             VersionDefinition freshDef = loader.loadDefinition(freshVersion);
@@ -61,7 +68,7 @@ public class AutomaticUpdater {
                     .getFileContainer().allFiles(), actions, updaterInfo, executor9));
             executablePlan.execute(executor);
             
-            throw new UpdatesFoundExit();
+            throw new UpdatesFoundExit(true);
         } catch (VersionDefinitionNotAvailable e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -70,26 +77,41 @@ public class AutomaticUpdater {
             throw new RuntimeException(e);
         }
     }
+    
+    private static boolean shouldCheckForUpdates() {
+        // TODO: once a day etc
+        return true;
+    }
 
+    private static boolean forcedUpdateCheckBecauseOfTests() {
+        return System.getProperty(PROPERTY_TESTS_PING_URL) != null;
+    }
+    
+    private static void pingTestRunnerAndExitIfRequested() throws UpdatesFoundExit {
+        String pingUrl = System.getProperty(PROPERTY_TESTS_PING_URL);
+        if (pingUrl != null) {
+            try {
+                URL url = new URL(pingUrl);
+                url.openStream().close();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            throw new UpdatesFoundExit(false);
+        }
+    }
+    
     private static URL determineUpdateUrl(URL updateUrl) {
-        String overrideUrl = System.getProperty("updater.url.override");
+        String overrideUrl = System.getProperty(PROPERTY_URL_OVERRIDE);
         if (overrideUrl != null)
             try {
-                updateUrl = new URL(overrideUrl);
-                log("Override URL is " + updateUrl);
+                log("Override update URL is " + overrideUrl);
+                return new URL(overrideUrl);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
         return updateUrl;
-    }
-
-    public static void notifyTestsThatNoUpdatesExist(URL updateUrl) throws UpdatesFoundExit {
-        updateUrl = determineUpdateUrl(updateUrl);
-        try {
-            URL notificationUrl = URLs.appendPath(updateUrl, "/update-done");
-            notificationUrl.openStream().close();
-        } catch (IOException e) {
-        }
     }
     
 }

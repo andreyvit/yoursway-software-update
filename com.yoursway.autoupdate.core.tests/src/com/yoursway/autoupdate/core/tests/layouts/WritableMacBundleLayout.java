@@ -87,10 +87,18 @@ public class WritableMacBundleLayout {
     }
 
     public void overrideUpdateUrl(URL updateUrl) {
+        setSystemProperty("updater.url.override", updateUrl.toString());
+    }
+    
+    public void enableTestsPingback(URL pingUrl) {
+        setSystemProperty("updater.tests.ping.url", pingUrl.toString());
+    }
+    
+    public void setSystemProperty(String name, String value) {
         try {
             File eclipseIni = new File(contents, "MacOS/eclipse.ini");
             String data = readAsString(eclipseIni).trim();
-            data = data + "\n-Dupdater.url.override=" + updateUrl + "\n";
+            data = data + "\n-D" + name + "=" + value + "\n";
             writeString(eclipseIni, data);
         } catch (IOException e) {
             throw new RuntimeException(e);
