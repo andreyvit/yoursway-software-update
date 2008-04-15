@@ -117,7 +117,7 @@ public class IntegrationTests {
             
             ApplicationInstallation install = lll.toInstallation();
             FileSet allFiles = install.getFileContainer().allFiles();
-            mountVersionOneDefinition(webServer, updateUrl, install, allFiles, currentVersion, nextVersion,
+            Collection<RemoteFile> originalFiles = mountVersionOneDefinition(webServer, updateUrl, install, allFiles, currentVersion, nextVersion,
                     extUpdaterJar, fakeAppPlugin);
             
             File utilsPluginLocation = install.resolve(utilsPlugin);
@@ -125,12 +125,12 @@ public class IntegrationTests {
             Collection<RemoteFile> correctFiles = mountVersionTwo(webServer, updateUrl, nextVersion, install,
                     allFiles, extUpdaterJar, fakeAppPlugin, utilsPlugin, utilsPluginLocation);
             
+            install.launchAndWait();
+            
             ApplicationInstallation installation = lll.toInstallation();
             installation.getFileContainer().allFiles();
             Collection<RemoteFile> realFiles = createRemoteFiles(installation, allFiles, updateUrl,
                     nextVersion);
-            
-            install.launchAndWait();
             
             String expected = join("\n", sortedCopy(toStringList(correctFiles)));
             String actual = join("\n", sortedCopy(toStringList(realFiles)));
@@ -176,23 +176,26 @@ public class IntegrationTests {
         VersionDefinition def2 = new VersionDefinition(nextVersion, "R1.1", null, null, files2,
                 VersionDefinitionParser.parseDate("2008-01-20 22:53 +0600"), new UpdaterInfo(
                         new ConcreteFilesSpec(updaterFiles.asCollection()), extUpdaterJar));
-        webServer.mount("1.1.xml", versionDefinitionToString(def2));
+        String s = versionDefinitionToString(def2);
+        System.out.println(s);
+        webServer.mount("1.1.xml", s);
         return files2;
     }
     
-    private void mountVersionOneDefinition(WebServer webServer, URL updateUrl,
+    private Collection<RemoteFile> mountVersionOneDefinition(WebServer webServer, URL updateUrl,
             ApplicationInstallation install, FileSet allFiles, Version currentVersion, Version nextVersion,
             RelativePath extUpdaterJar, RelativePath fakeAppPlugin) throws MalformedURLException,
             ParseException, IOException {
-        Collection<RemoteFile> files1 = createRemoteFiles(install, allFiles, updateUrl, currentVersion);
+        Collection<RemoteFile> files = createRemoteFiles(install, allFiles, updateUrl, currentVersion);
         
         FileSet updaterFiles = calculateUpdaterFiles(allFiles, fakeAppPlugin);
         
         VersionDefinition def1 = new VersionDefinition(currentVersion, "R1.0", nextVersion,
-                "Everything changed", files1, VersionDefinitionParser.parseDate("2008-01-18 21:43 +0600"),
+                "Everything changed", files, VersionDefinitionParser.parseDate("2008-01-18 21:43 +0600"),
                 new UpdaterInfo(new ConcreteFilesSpec(updaterFiles.asCollection()), extUpdaterJar));
         
         webServer.mount("1.0.xml", versionDefinitionToString(def1));
+        return files;
     }
     
     private FileSet calculateUpdaterFiles(FileSet allFiles, RelativePath fakeAppPlugin) {

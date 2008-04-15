@@ -1,7 +1,5 @@
 package com.yoursway.autoupdate.core.tests.versiondef;
 
-import static com.yoursway.utils.YsStrings.sortedToString;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +37,11 @@ public class VariousInformationLoadingTests extends AbstractVersionDefinitionLoa
     @Test
     public void displayName() throws Exception {
         assertEquals("Megashit 1.2", def.displayName());
+    }
+    
+    @Test
+    public void url() throws Exception {
+        assertEquals("files/a.jar", def.files().iterator().next().source().url().toString());
     }
     
     @Test

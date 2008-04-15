@@ -82,7 +82,7 @@ public class VersionDefinition {
         w.tag("display-name", displayName);
         w.tag("date", createDateFormat().format(date));
         if (!hasNewerVersion()) 
-            w.tag("latest-version");
+            w.tag("latest", "true");
         else {
             w.tag("next-version", nextVersion.versionString());
             w.tag("changes", changes);

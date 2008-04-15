@@ -170,7 +170,7 @@ public class VersionDefinitionParser {
                         if (role != null)
                             parseRole(role, fi);
                         fi.installationPath = attrs.getNamedItem("installPath").getNodeValue();
-                        String serverPath = attrs.getNamedItem("path").getNodeName();
+                        String serverPath = attrs.getNamedItem("path").getNodeValue();
                         URL remoteUrl = new URL(repositoryURL, serverPath);
                         fi.source = new RemoteSource(remoteUrl);
                         fi.addTo(file);

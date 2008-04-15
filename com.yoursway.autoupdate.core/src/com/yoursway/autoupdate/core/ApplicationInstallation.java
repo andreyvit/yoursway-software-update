@@ -1,5 +1,7 @@
 package com.yoursway.autoupdate.core;
 
+import static com.yoursway.utils.relativepath.Pathes.relativePath;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -7,6 +9,7 @@ import com.yoursway.autoupdate.core.app.layout.MacBundlePlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.MacRegularPlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.PlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.WindowsPlatformLayout;
+import com.yoursway.utils.relativepath.Pathes;
 import com.yoursway.utils.relativepath.RelativePath;
 
 public class ApplicationInstallation {
@@ -27,6 +30,10 @@ public class ApplicationInstallation {
 	
 	public File resolve(RelativePath path) {
 	    return layout.resolve(path);
+	}
+	
+	public File root() {
+	    return layout.resolve(relativePath(""));
 	}
 
     public static PlatformLayout determineLayout(File platformLocation) {

@@ -2,8 +2,9 @@ package com.yoursway.autoupdate.core;
 
 import static com.yoursway.autoupdate.core.FileStateBuilder.buildActions;
 import static com.yoursway.autoupdate.core.FileStateBuilder.modifiedFiles;
+import static com.yoursway.autoupdate.core.internal.Activator.log;
+import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -25,17 +26,18 @@ import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAva
 public class AutomaticUpdater {
     
     public static void checkForUpdates(Version currentVersion, URL defaultUrl) throws UpdatesFoundExit {
-        File location = new File(Platform.getInstallLocation().getURL().getPath());
-        ApplicationInstallation install = new ApplicationInstallation(location);
+        ApplicationInstallation install = new ApplicationInstallation(urlToFileWithProtocolCheck(Platform
+                .getInstallLocation().getURL()));
         checkForUpdates(install, currentVersion, defaultUrl);
     }
-
-    public static void checkForUpdates(ApplicationInstallation install, Version currentVersion,
-            URL defaultUrl) throws UpdatesFoundExit {
+    
+    public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL defaultUrl)
+            throws UpdatesFoundExit {
         String overrideUrl = System.getProperty("updater.url.override");
         if (overrideUrl != null)
             try {
                 defaultUrl = new URL(overrideUrl);
+                log("Override URL is " + defaultUrl);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -60,7 +62,7 @@ public class AutomaticUpdater {
             UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
                     .asCollection(), updaterInfo.files());
             UpdatePlan plan = planBuilder.build();
-            ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(new File("/IDE"), install
+            ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(install.root(), install
                     .getFileContainer().allFiles(), actions, updaterInfo, executor9));
             executablePlan.execute(executor);
             

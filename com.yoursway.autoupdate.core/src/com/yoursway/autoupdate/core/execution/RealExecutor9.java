@@ -30,6 +30,7 @@ public class RealExecutor9 implements Executor9 {
             downloadDir = createTemporaryDirectory();
         try {
             File temp = path.toFile(downloadDir);
+            temp.getParentFile().mkdirs();
             YsFileUtils.download(remote.url(), temp);
             return temp;
         } catch (IOException e) {

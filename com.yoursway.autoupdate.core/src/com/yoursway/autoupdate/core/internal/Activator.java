@@ -1,6 +1,7 @@
 package com.yoursway.autoupdate.core.internal;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -45,6 +46,10 @@ public class Activator extends Plugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	public static void log(String message) {
+	    getDefault().getLog().log(new Status(Status.INFO, PLUGIN_ID, message));
 	}
 
 }
