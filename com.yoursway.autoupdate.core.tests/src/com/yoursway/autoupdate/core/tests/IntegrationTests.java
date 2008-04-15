@@ -3,12 +3,16 @@ package com.yoursway.autoupdate.core.tests;
 import static com.google.common.base.Join.join;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.utils.YsFileUtils.readFileOrZipAsString;
+import static com.yoursway.utils.YsFileUtils.rewriteZip;
 import static com.yoursway.utils.YsStrings.sortedCopy;
 import static com.yoursway.utils.YsStrings.sortedToString;
 import static com.yoursway.utils.YsStrings.toStringList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +48,7 @@ import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionParser;
+import com.yoursway.utils.StringInputStream;
 import com.yoursway.utils.URLs;
 import com.yoursway.utils.XmlWriter;
 import com.yoursway.utils.YsDigest;
@@ -56,6 +61,8 @@ import com.yoursway.utils.filespec.FileSetSpec;
 import com.yoursway.utils.relativepath.RelativePath;
 
 public class IntegrationTests {
+    
+    private static final String META_INF_MANIFEST_MF = "META-INF/MANIFEST.MF";
     
     @Test
     public void fooChanged() throws IOException, InterruptedException, ParseException {
@@ -120,7 +127,8 @@ public class IntegrationTests {
             
             ApplicationInstallation installation = lll.toInstallation();
             installation.getFileContainer().allFiles();
-            Collection<RemoteFile> realFiles = createRemoteFiles(installation, allFiles, updateUrl, nextVersion);
+            Collection<RemoteFile> realFiles = createRemoteFiles(installation, allFiles, updateUrl,
+                    nextVersion);
             
             install.launchAndWait();
             
@@ -137,17 +145,28 @@ public class IntegrationTests {
             ApplicationInstallation install, FileSet allFiles, RelativePath extUpdaterJar,
             RelativePath fakeAppPlugin, RelativePath utilsPlugin, File utilsPluginLocation)
             throws MalformedURLException, ParseException, IOException {
-        String manifestMfPath = "META-INF/MANIFEST.MF";
-        File manifest = new File(utilsPluginLocation, manifestMfPath);
-        RelativePath manifestRelPath = utilsPlugin.append(manifestMfPath);
-        String m = YsFileUtils.readAsString(manifest);
-        String m2 = m.replaceAll("Bundle-Version: \\d+\\.\\d+\\.\\d+\\.qualifier",
+        String m = readFileOrZipAsString(utilsPluginLocation, META_INF_MANIFEST_MF);
+        m = m.replaceAll("Bundle-Version: \\d+\\.\\d+\\.\\d+\\.qualifier",
                 "Bundle-Version: 42.1.2.3.qualifier");
-        webServer.mount(remotePathOf(nextVersion, manifestRelPath), m2);
-        
-        String md5 = YsDigest.md5(m2);
         Map<RelativePath, RemoteFile> overrides = newHashMap();
-        overrides.put(manifestRelPath, createRemoteFile(updateUrl, nextVersion, manifestRelPath, md5));
+        if (utilsPluginLocation.isDirectory()) {
+            RelativePath manifestRelPath = utilsPlugin.append(META_INF_MANIFEST_MF);
+            webServer.mount(remotePathOf(nextVersion, manifestRelPath), m);
+            
+            String md5 = YsDigest.md5(m);
+            overrides.put(manifestRelPath, createRemoteFile(updateUrl, nextVersion, manifestRelPath, md5));
+        } else {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Map<String, InputStream> rewrites = newHashMap();
+            rewrites.put(META_INF_MANIFEST_MF, new StringInputStream(m, YsFileUtils.UTF8_ENCODING));
+            rewriteZip(utilsPluginLocation, out, rewrites);
+            byte[] newJar = out.toByteArray();
+            
+            webServer.mount(remotePathOf(nextVersion, utilsPlugin), newJar);
+            
+            String md5 = YsDigest.md5(new ByteArrayInputStream(newJar));
+            overrides.put(utilsPlugin, createRemoteFile(updateUrl, nextVersion, utilsPlugin, md5));
+        }
         
         Collection<RemoteFile> files2 = createRemoteFiles(install, allFiles, updateUrl, nextVersion,
                 overrides);
@@ -184,8 +203,7 @@ public class IntegrationTests {
     }
     
     private Collection<RemoteFile> createRemoteFiles(ApplicationInstallation install, FileSet allFiles,
-            URL baseUrl, Version version)
-            throws MalformedURLException {
+            URL baseUrl, Version version) throws MalformedURLException {
         Map<RelativePath, RemoteFile> overrides = newHashMap();
         return createRemoteFiles(install, allFiles, baseUrl, version, overrides);
     }

@@ -2,6 +2,7 @@ package com.yoursway.autoupdate.core.tests;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -16,6 +17,8 @@ public class WebServer {
     private SimpleHttpServer server;
     
     private Map<String, String> mountedStrings = newHashMap();
+    
+    private Map<String, byte[]> mountedBytes = newHashMap();
  
     public WebServer() {
        SimpleServlet servlet = new SimpleServlet() {
@@ -28,8 +31,10 @@ public class WebServer {
                 String value = mountedStrings.get(path);
                 if (value != null)
                     return new StringInputStream(value);
+                byte [] bytes = mountedBytes.get(path);
+                if (bytes != null)
+                    return new ByteArrayInputStream(bytes);
                 throw new IOException("404, blya: " + path);
-//                return Activator.openResource("tests/integration/" + path);
             }
             
         };
@@ -47,6 +52,10 @@ public class WebServer {
 
     public void mount(String path, String value) {
         mountedStrings.put(path, value);
+    }
+
+    public void mount(String path, byte[] value) {
+        mountedBytes.put(path, value);
     }
     
 }
