@@ -41,7 +41,7 @@ public class VariousInformationLoadingTests extends AbstractVersionDefinitionLoa
     
     @Test
     public void url() throws Exception {
-        assertEquals("files/a.jar", def.files().iterator().next().source().url().toString());
+        assertEquals("http://botva/files/a.jar", def.files().iterator().next().source().url().toString());
     }
     
     @Test
