@@ -9,6 +9,7 @@ import com.yoursway.autoupdate.core.app.layout.MacBundlePlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.MacRegularPlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.PlatformLayout;
 import com.yoursway.autoupdate.core.app.layout.WindowsPlatformLayout;
+import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.relativepath.Pathes;
 import com.yoursway.utils.relativepath.RelativePath;
 
@@ -24,8 +25,12 @@ public class ApplicationInstallation {
 		return layout.createFileContainer();
 	}
 	
-	public File resolvePluginJar(String bundleName) {
-	    return layout.resolvePluginJar(bundleName);
+	public File resolveOsgiBundle(String bundleName) {
+	    return layout.resolveOsgiBundle(bundleName);
+	}
+	
+	public RelativePath resolveOsgiBundleAsPath(String bundleName) {
+	    return unresolve(layout.resolveOsgiBundle(bundleName));
 	}
 	
 	public File resolve(RelativePath path) {
@@ -34,6 +39,10 @@ public class ApplicationInstallation {
 	
 	public File root() {
 	    return layout.resolve(relativePath(""));
+	}
+	
+	public RelativePath unresolve(File path) {
+	    return YsFileUtils.calculateRelativePath(root(), path);
 	}
 
     public static PlatformLayout determineLayout(File platformLocation) {

@@ -3,28 +3,18 @@ package com.yoursway.autoupdate.core.tests;
 import static com.google.common.base.Join.join;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.yoursway.utils.YsFileUtils.readFileOrZipAsString;
-import static com.yoursway.utils.YsFileUtils.rewriteZip;
 import static com.yoursway.utils.YsStrings.sortedCopy;
-import static com.yoursway.utils.YsStrings.sortedToString;
 import static com.yoursway.utils.YsStrings.toStringList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
@@ -32,14 +22,7 @@ import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 import com.yoursway.autoupdate.core.ApplicationInstallation;
-import com.yoursway.autoupdate.core.AutomaticUpdater;
-import com.yoursway.autoupdate.core.UpdatesFoundExit;
-import com.yoursway.autoupdate.core.actions.RemoteSource;
-import com.yoursway.autoupdate.core.app.layout.MacBundlePlatformLayout;
-import com.yoursway.autoupdate.core.app.layout.PlatformLayout;
 import com.yoursway.autoupdate.core.tests.internal.Activator;
-import com.yoursway.autoupdate.core.tests.internal.SimpleHttpServer;
-import com.yoursway.autoupdate.core.tests.internal.SimpleServlet;
 import com.yoursway.autoupdate.core.tests.layouts.CurrentPlatformSource;
 import com.yoursway.autoupdate.core.tests.layouts.WritableMacBundleLayout;
 import com.yoursway.autoupdate.core.versions.Version;
@@ -48,21 +31,13 @@ import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionParser;
-import com.yoursway.utils.StringInputStream;
-import com.yoursway.utils.URLs;
-import com.yoursway.utils.XmlWriter;
-import com.yoursway.utils.YsDigest;
 import com.yoursway.utils.YsFileUtils;
-import com.yoursway.utils.YsStrings;
 import com.yoursway.utils.fileset.FileSet;
 import com.yoursway.utils.filespec.ConcreteFilesSpec;
 import com.yoursway.utils.filespec.ExcludedFileSpec;
-import com.yoursway.utils.filespec.FileSetSpec;
 import com.yoursway.utils.relativepath.RelativePath;
 
 public class IntegrationTests {
-    
-    private static final String META_INF_MANIFEST_MF = "META-INF/MANIFEST.MF";
     
     @Test
     public void fooChanged() throws IOException, InterruptedException, ParseException {
@@ -117,15 +92,25 @@ public class IntegrationTests {
             
             ApplicationInstallation install = lll.toInstallation();
             FileSet allFiles = install.getFileContainer().allFiles();
-            Collection<RemoteFile> originalFiles = mountVersionOneDefinition(webServer, updateUrl, install, allFiles, currentVersion, nextVersion,
+            mountVersionOneDefinition(webServer, updateUrl, install, allFiles, currentVersion, nextVersion,
                     extUpdaterJar, fakeAppPlugin);
             
-            File utilsPluginLocation = install.resolve(utilsPlugin);
-            
             Collection<RemoteFile> correctFiles = mountVersionTwo(webServer, updateUrl, nextVersion, install,
-                    allFiles, extUpdaterJar, fakeAppPlugin, utilsPlugin, utilsPluginLocation);
+                    allFiles, extUpdaterJar, fakeAppPlugin, utilsPlugin);
             
             install.launchAndWait();
+            
+//            install.launchAndWait();
+            
+            long end = System.currentTimeMillis() + 10000;
+            boolean timeout = false;
+            while (!webServer.requestDetected("update-done")) {
+                if (System.currentTimeMillis() > end) {
+                    timeout = true;
+                    break;
+                }
+                Thread.sleep(200);
+            }
             
             ApplicationInstallation installation = lll.toInstallation();
             installation.getFileContainer().allFiles();
@@ -133,7 +118,7 @@ public class IntegrationTests {
                     nextVersion);
             
             String expected = join("\n", sortedCopy(toStringList(correctFiles)));
-            String actual = join("\n", sortedCopy(toStringList(realFiles)));
+            String actual = (timeout ? "TIMEOUT\n" : "") + join("\n", sortedCopy(toStringList(realFiles)));
             assertEquals(expected, actual);
         } finally {
             webServer.dispose();
@@ -143,49 +128,31 @@ public class IntegrationTests {
     
     private Collection<RemoteFile> mountVersionTwo(WebServer webServer, URL updateUrl, Version nextVersion,
             ApplicationInstallation install, FileSet allFiles, RelativePath extUpdaterJar,
-            RelativePath fakeAppPlugin, RelativePath utilsPlugin, File utilsPluginLocation)
-            throws MalformedURLException, ParseException, IOException {
-        String m = readFileOrZipAsString(utilsPluginLocation, META_INF_MANIFEST_MF);
-        m = m.replaceAll("Bundle-Version: \\d+\\.\\d+\\.\\d+\\.qualifier",
-                "Bundle-Version: 42.1.2.3.qualifier");
-        Map<RelativePath, RemoteFile> overrides = newHashMap();
-        if (utilsPluginLocation.isDirectory()) {
-            RelativePath manifestRelPath = utilsPlugin.append(META_INF_MANIFEST_MF);
-            webServer.mount(remotePathOf(nextVersion, manifestRelPath), m);
-            
-            String md5 = YsDigest.md5(m);
-            overrides.put(manifestRelPath, createRemoteFile(updateUrl, nextVersion, manifestRelPath, md5));
-        } else {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Map<String, InputStream> rewrites = newHashMap();
-            rewrites.put(META_INF_MANIFEST_MF, new StringInputStream(m, YsFileUtils.UTF8_ENCODING));
-            rewriteZip(utilsPluginLocation, out, rewrites);
-            byte[] newJar = out.toByteArray();
-            
-            webServer.mount(remotePathOf(nextVersion, utilsPlugin), newJar);
-            
-            String md5 = YsDigest.md5(new ByteArrayInputStream(newJar));
-            overrides.put(utilsPlugin, createRemoteFile(updateUrl, nextVersion, utilsPlugin, md5));
-        }
+            RelativePath fakeAppPlugin, RelativePath utilsPlugin) throws MalformedURLException,
+            ParseException, IOException {
+        SimpleMounter mounter = new SimpleMounterImpl(updateUrl, nextVersion, webServer);
+        NewPluginVersionCreator creator = new NewPluginVersionCreator(mounter, install);
+        creator.updateManifestVersion("com.yoursway.utils", "42.1.2.3.qualifier");
+        creator.updateManifestVersion("com.yoursway.autoupdater.core.tests.fakeapp", "42.1.2.3.qualifier");
+        creator.execute();
         
-        Collection<RemoteFile> files2 = createRemoteFiles(install, allFiles, updateUrl, nextVersion,
-                overrides);
+        Collection<RemoteFile> files = createRemoteFiles(install, allFiles, updateUrl, nextVersion, mounter
+                .overrides());
         
         FileSet updaterFiles = calculateUpdaterFiles(allFiles, fakeAppPlugin);
         
-        VersionDefinition def2 = new VersionDefinition(nextVersion, "R1.1", null, null, files2,
+        VersionDefinition def2 = new VersionDefinition(nextVersion, "R1.1", null, null, files,
                 VersionDefinitionParser.parseDate("2008-01-20 22:53 +0600"), new UpdaterInfo(
                         new ConcreteFilesSpec(updaterFiles.asCollection()), extUpdaterJar));
-        String s = versionDefinitionToString(def2);
-        System.out.println(s);
-        webServer.mount("1.1.xml", s);
-        return files2;
+        mounter.mount(def2);
+        return files;
     }
     
     private Collection<RemoteFile> mountVersionOneDefinition(WebServer webServer, URL updateUrl,
             ApplicationInstallation install, FileSet allFiles, Version currentVersion, Version nextVersion,
             RelativePath extUpdaterJar, RelativePath fakeAppPlugin) throws MalformedURLException,
             ParseException, IOException {
+        SimpleMounter mounter = new SimpleMounterImpl(updateUrl, currentVersion, webServer);
         Collection<RemoteFile> files = createRemoteFiles(install, allFiles, updateUrl, currentVersion);
         
         FileSet updaterFiles = calculateUpdaterFiles(allFiles, fakeAppPlugin);
@@ -194,7 +161,7 @@ public class IntegrationTests {
                 "Everything changed", files, VersionDefinitionParser.parseDate("2008-01-18 21:43 +0600"),
                 new UpdaterInfo(new ConcreteFilesSpec(updaterFiles.asCollection()), extUpdaterJar));
         
-        webServer.mount("1.0.xml", versionDefinitionToString(def1));
+        mounter.mount(def1);
         return files;
     }
     
@@ -219,34 +186,11 @@ public class IntegrationTests {
             RemoteFile remote = overrides.get(path);
             if (remote == null) {
                 AppFile file = install.getFileContainer().resolve(path);
-                remote = createRemoteFile(baseUrl, version, path, file.md5());
+                remote = SimpleMounterImpl.createRemoteFile(baseUrl, version, path, file.md5());
             }
             files.add(remote);
         }
         return files;
-    }
-    
-    private RemoteFile createRemoteFile(URL baseUrl, Version version, RelativePath path, String md5)
-            throws MalformedURLException {
-        return new RemoteFile(path, md5, new RemoteSource(remoteUrlOf(baseUrl, version, path)));
-    }
-    
-    private static URL remoteUrlOf(URL baseUrl, Version version, RelativePath path)
-            throws MalformedURLException {
-        return URLs.appendPath(baseUrl, remotePathOf(version, path));
-    }
-    
-    private static String remotePathOf(Version version, RelativePath path) {
-        return version.versionString() + "/" + path.toPortableString();
-    }
-    
-    private static String versionDefinitionToString(VersionDefinition def1) throws IOException {
-        StringWriter sw = new StringWriter();
-        XmlWriter xw = new XmlWriter(sw);
-        def1.writeTo(xw);
-        xw.close();
-        String xml1 = sw.toString();
-        return xml1;
     }
     
 }

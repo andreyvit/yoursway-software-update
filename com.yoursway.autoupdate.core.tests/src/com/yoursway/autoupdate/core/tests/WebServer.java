@@ -1,10 +1,12 @@
 package com.yoursway.autoupdate.core.tests;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Map;
 
 import com.yoursway.autoupdate.core.tests.internal.SimpleHttpServer;
@@ -19,6 +21,8 @@ public class WebServer {
     private Map<String, String> mountedStrings = newHashMap();
     
     private Map<String, byte[]> mountedBytes = newHashMap();
+    
+    private Collection<String> notFoundPaths = newArrayList();
  
     public WebServer() {
        SimpleServlet servlet = new SimpleServlet() {
@@ -34,6 +38,7 @@ public class WebServer {
                 byte [] bytes = mountedBytes.get(path);
                 if (bytes != null)
                     return new ByteArrayInputStream(bytes);
+                notFoundPaths.add(path);
                 throw new IOException("404, blya: " + path);
             }
             
@@ -56,6 +61,13 @@ public class WebServer {
 
     public void mount(String path, byte[] value) {
         mountedBytes.put(path, value);
+    }
+    
+    public boolean requestDetected(String subpath) {
+        for (String path : notFoundPaths)
+            if (path.contains(subpath))
+                return true;
+        return false;
     }
     
 }

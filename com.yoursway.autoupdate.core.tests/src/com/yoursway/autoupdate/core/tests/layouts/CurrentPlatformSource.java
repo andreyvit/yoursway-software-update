@@ -4,7 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.utils.YsFileUtils.addPluginIfMatches;
 import static com.yoursway.utils.YsFileUtils.chooseLatestVersion;
 import static com.yoursway.utils.YsFileUtils.cp_r;
-import static com.yoursway.utils.YsFileUtils.findEclipsePluginJar;
+import static com.yoursway.utils.YsFileUtils.findLatestOsgiBundle;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 import static com.yoursway.utils.YsFileUtils.zip;
 
@@ -27,7 +27,7 @@ public class CurrentPlatformSource implements PluginSource {
     public void putJar(String id, File destinationFolder) throws IOException {
         URL url = Platform.getInstallLocation().getURL();
         File path = urlToFileWithProtocolCheck(url);
-        File latestFolderOrJar = findEclipsePluginJar(new File(path, "plugins"), id);
+        File latestFolderOrJar = findLatestOsgiBundle(new File(path, "plugins"), id);
         if (latestFolderOrJar == null)
             throw new IllegalArgumentException("Jar " + id + " not found.");
         YsFileUtils.cp_r(latestFolderOrJar, destinationFolder);

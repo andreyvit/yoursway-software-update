@@ -15,7 +15,7 @@ public interface PlatformLayout {
 
     FileContainer createFileContainer();
 
-    File resolvePluginJar(String bundleName);
+    File resolveOsgiBundle(String bundleName);
 
     File resolve(RelativePath path);
 

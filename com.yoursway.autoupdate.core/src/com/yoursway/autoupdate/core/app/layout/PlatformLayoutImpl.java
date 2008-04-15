@@ -27,15 +27,15 @@ public abstract class PlatformLayoutImpl implements PlatformLayout {
     }
     
     private void putBundleJar(String bundleName, File destinationFile) throws IOException {
-        File jar = YsFileUtils.findEclipsePluginJar(pluginsFolder, bundleName);
+        File jar = YsFileUtils.findLatestOsgiBundle(pluginsFolder, bundleName);
         if (jar == null)
             throw new IllegalArgumentException("Cannot find JAR for " + bundleName + " in "
                     + pluginsFolder);
         YsFileUtils.fileCopy(jar, destinationFile);
     }
     
-    public File resolvePluginJar(String bundleName) {
-        return YsFileUtils.findEclipsePluginJar(pluginsFolder, bundleName);
+    public File resolveOsgiBundle(String bundleName) {
+        return YsFileUtils.findLatestOsgiBundle(pluginsFolder, bundleName);
     }
     
     public Process launch() throws IOException {

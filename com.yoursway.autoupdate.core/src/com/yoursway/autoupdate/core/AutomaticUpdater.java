@@ -5,6 +5,7 @@ import static com.yoursway.autoupdate.core.FileStateBuilder.modifiedFiles;
 import static com.yoursway.autoupdate.core.internal.Activator.log;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.UrlBasedVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAvailable;
+import com.yoursway.utils.URLs;
 
 public class AutomaticUpdater {
     
@@ -31,17 +33,10 @@ public class AutomaticUpdater {
         checkForUpdates(install, currentVersion, defaultUrl);
     }
     
-    public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL defaultUrl)
+    public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
             throws UpdatesFoundExit {
-        String overrideUrl = System.getProperty("updater.url.override");
-        if (overrideUrl != null)
-            try {
-                defaultUrl = new URL(overrideUrl);
-                log("Override URL is " + defaultUrl);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        IVersionDefinitionLoader loader = new UrlBasedVersionDefinitionLoader(defaultUrl);
+        updateUrl = determineUpdateUrl(updateUrl);
+        IVersionDefinitionLoader loader = new UrlBasedVersionDefinitionLoader(updateUrl);
         try {
             VersionDefinition currentDef = loader.loadDefinition(currentVersion);
             if (!currentDef.hasNewerVersion())
@@ -73,6 +68,27 @@ public class AutomaticUpdater {
         } catch (InvalidVersionDefinitionException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    private static URL determineUpdateUrl(URL updateUrl) {
+        String overrideUrl = System.getProperty("updater.url.override");
+        if (overrideUrl != null)
+            try {
+                updateUrl = new URL(overrideUrl);
+                log("Override URL is " + updateUrl);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        return updateUrl;
+    }
+
+    public static void notifyTestsThatNoUpdatesExist(URL updateUrl) throws UpdatesFoundExit {
+        updateUrl = determineUpdateUrl(updateUrl);
+        try {
+            URL notificationUrl = URLs.appendPath(updateUrl, "/update-done");
+            notificationUrl.openStream().close();
+        } catch (IOException e) {
         }
     }
     
