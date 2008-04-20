@@ -33,7 +33,7 @@ import com.yoursway.utils.filespec.ConcreteFilesSpec;
 import com.yoursway.utils.relativepath.RelativePath;
 
 public class VersionDefinitionParser {
-
+    
     enum UpdaterAffiliation {
         
         NONE {
@@ -41,7 +41,7 @@ public class VersionDefinitionParser {
             public boolean isUpdater() {
                 return false;
             }
-
+            
         },
         
         UPDATER {
@@ -60,10 +60,10 @@ public class VersionDefinitionParser {
             
         };
         
-        public abstract boolean isUpdater(); 
+        public abstract boolean isUpdater();
         
     }
-
+    
     static class VersionInfo {
         public String nextVersion;
         public String displayName;
@@ -177,12 +177,54 @@ public class VersionDefinitionParser {
                     }
                 }
             } else if (nodeName.equals("changes")) {
-                file.changesDescription = node.getTextContent();
+                file.changesDescription = innerXml((Element) node);
             }
         }
         return file;
     }
-
+    
+    private static String innerXml(Element node) {
+        StringBuilder result = new StringBuilder();
+        innerXmlChildren(node, result);
+        return result.toString();
+    }
+    
+    private static void innerXmlChildren(Element node, StringBuilder result) {
+        NodeList list = node.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++)
+            innerXmlNode(list.item(i), result);
+    }
+    
+    private static void innerXmlNode(Node node, StringBuilder result) {
+        switch (node.getNodeType()) {
+        case Node.TEXT_NODE:
+        case Node.CDATA_SECTION_NODE:
+            result.append(node.getNodeValue());
+            break;
+        case Node.ELEMENT_NODE:
+            innerXmlElement((Element) node, result);
+            break;
+        }
+    }
+    
+    private static void innerXmlElement(Element node, StringBuilder result) {
+        result.append('<').append(node.getTagName());
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node attr = attributes.item(i);
+            result.append(' ').append(attr.getNodeName()).append("=\"").append(attr.getNodeValue()).append(
+                    '"');
+        }
+        NodeList children = node.getChildNodes();
+        if (children.getLength() == 0)
+            result.append(" />");
+        else {
+            result.append('>');
+            innerXmlChildren(node, result);
+            result.append("</").append(node.getTagName()).append(">");
+        }
+    }
+    
     private String get(NamedNodeMap attrs, String n) {
         Node item = attrs.getNamedItem(n);
         if (item == null)
