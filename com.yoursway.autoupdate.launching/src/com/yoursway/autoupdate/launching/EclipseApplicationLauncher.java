@@ -9,10 +9,6 @@ import org.eclipse.core.runtime.Platform;
 
 import com.yoursway.autoupdate.internal.launching.IVMRunner;
 import com.yoursway.autoupdate.internal.launching.LaunchHelper;
-import com.yoursway.autoupdate.internal.launching.MacOSXJavaVM;
-import com.yoursway.autoupdate.internal.launching.MacOSXVMRunner;
-import com.yoursway.autoupdate.internal.launching.StandardJavaVM;
-import com.yoursway.autoupdate.internal.launching.StandardVMRunner;
 import com.yoursway.autoupdate.internal.launching.VMRunnerConfiguration;
 
 public class EclipseApplicationLauncher {
@@ -48,7 +44,7 @@ public class EclipseApplicationLauncher {
 
 			monitor.worked(1);
 
-			IVMRunner runner = createRunner();
+			IVMRunner runner = VmRunners.createRunner();
 			if (runner != null)
 				runner.run(runnerConfig, launch, monitor);
 			else
@@ -85,13 +81,6 @@ public class EclipseApplicationLauncher {
 	 */
 	public String getMainClass() {
 		return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
-	}
-
-	private IVMRunner createRunner() {
-		if (Platform.getOS().equals(Platform.OS_MACOSX))
-			return new MacOSXVMRunner(new MacOSXJavaVM());
-		return new StandardVMRunner(new StandardJavaVM());
-
 	}
 
 	/*

@@ -1,8 +1,8 @@
 package com.yoursway.autoupdate.core.execution;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.autoupdate.core.actions.Action;
@@ -19,21 +19,33 @@ public class RealExecutor implements Executor {
             throw new RuntimeException(e);
         }
     }
-
+    
     public void deleteFile(File file) {
         YsFileUtils.deleteFile(file);
     }
-
+    
     public void deleteRecursively(File directory) {
         YsFileUtils.deleteRecursively(directory);
     }
-
-    public void restartIntoUpdater(File workingDir, File jar, Collection<Action> actions) {
-        System.out.println("RealExecutor.restartIntoUpdater()");
-    }
-
+    
     public void startMainEclipse(EclipseStartInfo info, List<Action> pendingActions) {
-        System.out.println("RealExecutor.startMainEclipse()");
+        try {
+            new FileOutputStream("/tmp/update-ran").close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        RealEclipseStartupInfo realInfo = (RealEclipseStartupInfo) info;
+        File launcher = realInfo.getLauncher();
+        try {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Runtime.getRuntime().exec(new String[] {launcher.toString()});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

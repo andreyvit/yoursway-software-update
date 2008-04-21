@@ -1,10 +1,12 @@
 package com.yoursway.autoupdate.core;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -12,6 +14,7 @@ import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
 import com.yoursway.autoupdate.core.plan.dirs.Directory;
 import com.yoursway.autoupdate.core.plan.dirs.DirectoryResolver;
+import com.yoursway.autoupdate.core.plan.dirs.TemporaryDirectory;
 import com.yoursway.autoupdate.core.versions.definitions.RemoteFile;
 import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.utils.fileset.FileSet;
@@ -25,6 +28,7 @@ public class UpdateRequest implements DirectoryResolver {
     private final FileSet allExistingFiles;
     private final Executor9 executor;
     private final UpdaterInfo updaterInfo;
+    private Map<TemporaryDirectory, File> temporaryDirectories = newHashMap();
 
 	public UpdateRequest(File appRoot,
 	        FileSet allExistingFiles,
@@ -61,8 +65,13 @@ public class UpdateRequest implements DirectoryResolver {
         return appRoot;
     }
 
-    public File resolveTemporaryDirectory() {
-        return executor.createTemporaryDirectory();
+    public File resolveTemporaryDirectory(TemporaryDirectory temporaryDirectory) {
+        File result = temporaryDirectories.get(temporaryDirectory);
+        if (result == null) {
+            result = executor.createTemporaryDirectory();
+            temporaryDirectories.put(temporaryDirectory, result);
+        }
+        return result;
     }
     
     public File resolveUpdaterJar(File root) {
@@ -87,6 +96,14 @@ public class UpdateRequest implements DirectoryResolver {
         List<FilePair> result = newArrayList();
         for (RelativePath relativePath : set.asCollection())
             result.add(new FilePair(relativePath.toFile(appRoot), relativePath.toFile(t)));
+        return result;
+    }
+
+    public Collection<File> resolveUpdaterFiles(File loc) {
+        FileSet set = updaterInfo.files().resolve(allExistingFiles);
+        List<File> result = newArrayList();
+        for (RelativePath relativePath : set.asCollection())
+            result.add(relativePath.toFile(loc));
         return result;
     }
 	

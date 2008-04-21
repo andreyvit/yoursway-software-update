@@ -9,6 +9,7 @@ import static java.util.EnumSet.of;
 import static junit.framework.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 
@@ -31,7 +32,7 @@ import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionParser
 public class SemiIntegrationTests {
     
     @Test
-    public void fooChanged() throws ParseException {
+    public void fooChanged() throws ParseException, IOException {
         MockExecutor executor = new MockExecutor();
         MockAppBuilder builder = new MockAppBuilder();
         builder.file("eclipse.exe").file("jre/java.exe", of(LOCKED, UPDATER)).file("plugins/app.jar",

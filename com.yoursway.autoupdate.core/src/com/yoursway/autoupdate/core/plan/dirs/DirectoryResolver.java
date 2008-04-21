@@ -6,6 +6,6 @@ public interface DirectoryResolver {
     
     File resolveApplicationDirectory();
     
-    File resolveTemporaryDirectory();
+    File resolveTemporaryDirectory(TemporaryDirectory temporaryDirectory);
     
 }

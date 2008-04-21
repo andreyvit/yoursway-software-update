@@ -11,7 +11,7 @@ public abstract class TemporaryDirectory implements Directory {
 	}
 	
 	public File resolve(DirectoryResolver resolver) {
-	    return resolver.resolveTemporaryDirectory();
+	    return resolver.resolveTemporaryDirectory(this);
 	}
 	
 	public boolean isTemporary() {

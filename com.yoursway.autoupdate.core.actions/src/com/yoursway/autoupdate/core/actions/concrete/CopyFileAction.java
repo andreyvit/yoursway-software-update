@@ -6,6 +6,8 @@ import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.Executor;
 
 public class CopyFileAction implements Action {
+    
+    private static final long serialVersionUID = 1L;
 
     private final File source;
     private final File destination;

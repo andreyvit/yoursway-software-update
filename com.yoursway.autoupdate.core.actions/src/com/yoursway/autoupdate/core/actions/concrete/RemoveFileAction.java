@@ -9,7 +9,9 @@ import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.Executor;
 
 public final class RemoveFileAction implements Action {
-	
+    
+    private static final long serialVersionUID = 1L;
+
 	private final File file;
 
     public RemoveFileAction(File file) {

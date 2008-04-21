@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 
-import com.yoursway.autoupdate.core.execution.RealExecutor;
+import com.yoursway.autoupdate.core.execution.RealExecutor42;
 import com.yoursway.autoupdate.core.execution.RealExecutor9;
 import com.yoursway.autoupdate.core.execution.RealReplaceTester;
 import com.yoursway.autoupdate.core.versions.Version;
@@ -41,6 +41,7 @@ public class AutomaticUpdater {
     
     public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
             throws UpdatesFoundExit {
+        log("checkForUpdates is running for version " + currentVersion);
         if (!forcedUpdateCheckBecauseOfTests() && !shouldCheckForUpdates())
             return;
         updateUrl = determineUpdateUrl(updateUrl);
@@ -59,7 +60,7 @@ public class AutomaticUpdater {
             
             Collection<FileAction> actions = buildActions(install.getFileContainer(), freshFiles);
             
-            RealExecutor executor = new RealExecutor();
+            RealExecutor42 executor = new RealExecutor42();
             RealReplaceTester replaceTester = new RealReplaceTester();
             RealExecutor9 executor9 = new RealExecutor9();
             
@@ -74,7 +75,12 @@ public class AutomaticUpdater {
             }
             ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(install.root(), install
                     .getFileContainer().allFiles(), actions, updaterInfo, executor9));
-            executablePlan.execute(executor);
+            try {
+                executablePlan.execute(executor);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
             
             throw new UpdatesFoundExit(true);
         } catch (VersionDefinitionNotAvailable e) {

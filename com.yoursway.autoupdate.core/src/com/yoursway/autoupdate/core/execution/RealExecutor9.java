@@ -22,7 +22,20 @@ public class RealExecutor9 implements Executor9 {
     }
 
     public EclipseStartInfo determineCurrentEclipseStartInfo() {
-        return new RealEclipseStartupInfo();
+        // "eclipse.launcher" is OS X-only
+//        String launcher = System.getProperty("eclipse.launcher");
+        String launcher = null;
+        String args[] = System.getProperty("eclipse.commands").split("\n");
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("-launcher")) { 
+                launcher = args[i+1];
+                break;
+            }
+        }
+        if (launcher == null)
+            throw new AssertionError("-launcher not found in eclipse.commands = " + System.getProperty("eclipse.commands"));
+        return new RealEclipseStartupInfo(new File(launcher));
     }
 
     public File download(RemoteSource remote, RelativePath path) {

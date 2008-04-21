@@ -1,8 +1,10 @@
 package com.yoursway.autoupdate.core.actions;
 
+import java.io.IOException;
+import java.io.Serializable;
 
-public interface Action {
+public interface Action extends Serializable {
     
-    void execute(Executor executor);
+    void execute(Executor executor) throws IOException;
     
 }

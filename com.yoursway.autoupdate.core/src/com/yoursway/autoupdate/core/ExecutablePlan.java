@@ -4,6 +4,7 @@ import static com.google.common.base.Predicates.isNull;
 import static com.google.common.collect.Iterators.any;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.yoursway.autoupdate.core.actions.Action;
@@ -19,7 +20,7 @@ public class ExecutablePlan {
         this.actions = newArrayList(actions);
     }
 
-	public void execute(Executor executor) {
+	public void execute(Executor executor) throws IOException {
 	    for (Action action : actions)
 	        action.execute(executor);
 	}

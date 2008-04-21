@@ -1,5 +1,7 @@
 package com.yoursway.autoupdate.core.actions;
 
-public interface EclipseStartInfo {
+import java.io.Serializable;
+
+public interface EclipseStartInfo extends Serializable {
     
 }

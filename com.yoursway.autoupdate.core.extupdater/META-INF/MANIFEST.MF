@@ -4,3 +4,5 @@ Bundle-Name: Extupdater
 Bundle-SymbolicName: com.yoursway.autoupdate.core.extupdater
 Bundle-Version: 1.0.0
 Export-Package: com.yoursway.autoupdate.core.extupdater
+Require-Bundle: com.yoursway.utils;bundle-version="1.0.0",
+ com.yoursway.autoupdate.core.actions;bundle-version="1.0.0"

@@ -3,6 +3,8 @@ package com.yoursway.autoupdate.core.tests;
 import static com.google.common.base.Join.join;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.utils.YsFileUtils.readAsString;
+import static com.yoursway.utils.YsFileUtils.writeString;
 import static com.yoursway.utils.YsStrings.sortedCopy;
 import static com.yoursway.utils.YsStrings.toStringList;
 import static org.junit.Assert.assertEquals;
@@ -18,7 +20,6 @@ import java.util.Map;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
@@ -45,6 +46,11 @@ public class IntegrationTests {
     @Test
 //    @Ignore
     public void aaa() throws Exception {
+        File f = new File("/tmp/foo/1.1.0.qualifier.xml");
+        String s = readAsString(f);
+        s = s.replaceAll("http://\\w+(:\\d+)?/", "");
+        writeString(f, s);
+        
         ApplicationInstallation install = new ApplicationInstallation(
                 new File(
                         "/Users/andreyvit/Documents/junit-workspace/.metadata/.plugins/com.yoursway.autoupdate.core.tests/Fake.app/Contents/Resources/Java"));
@@ -81,9 +87,15 @@ public class IntegrationTests {
             
             // platform
             lll.copyPlugin("javax.servlet");
+            lll.copyPlugin("com.ibm.icu");
+            lll.copyPlugin("org.eclipse.debug.core");
             lll.copyPlugin("org.eclipse.core.contenttype");
+            lll.copyPlugin("org.eclipse.core.expressions");
+            lll.copyPlugin("org.eclipse.core.filesystem");
             lll.copyPlugin("org.eclipse.core.jobs");
+            lll.copyPlugin("org.eclipse.core.resources");
             lll.copyPlugin("org.eclipse.core.runtime");
+            lll.copyPlugin("org.eclipse.core.variables");
             lll.copyPlugin("org.eclipse.equinox.app");
             lll.copyPlugin("org.eclipse.equinox.common");
             lll.copyPlugin("org.eclipse.equinox.preferences");
@@ -99,6 +111,7 @@ public class IntegrationTests {
             lll.copyPlugin("com.yoursway.autoupdate.core.actions");
             RelativePath extUpdaterJar = lll.copyPlugin("com.yoursway.autoupdate.core.extupdater");
             RelativePath fakeAppPlugin = lll.copyPlugin("com.yoursway.autoupdater.core.tests.fakeapp");
+            lll.copyPlugin("com.yoursway.autoupdate.launching");
             RelativePath utilsPlugin = lll.copyPlugin("com.yoursway.utils");
             
             Version currentVersion = new Version("1.0.0.qualifier");
@@ -146,7 +159,7 @@ public class IntegrationTests {
             ParseException, IOException {
         SimpleMounter mounter = new SimpleMounterImpl(updateUrl, nextVersion, webServer);
         NewPluginVersionCreator creator = new NewPluginVersionCreator(mounter, install);
-        creator.updateManifestVersion("com.yoursway.utils", "42.1.2.3.qualifier");
+        creator.updateManifestVersion("com.yoursway.utils", "1.1.0.qualifier");
         creator.updateManifestVersion("com.yoursway.autoupdater.core.tests.fakeapp", "1.1.0.qualifier");
         creator.execute();
         

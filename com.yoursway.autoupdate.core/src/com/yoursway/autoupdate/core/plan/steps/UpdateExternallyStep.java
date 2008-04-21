@@ -3,13 +3,14 @@ package com.yoursway.autoupdate.core.plan.steps;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.autoupdate.core.UpdateRequest;
 import com.yoursway.autoupdate.core.actions.Action;
+import com.yoursway.autoupdate.core.actions.UpdateExternallyAction;
 import com.yoursway.autoupdate.core.actions.concrete.RemoveRecursivelyAction;
 import com.yoursway.autoupdate.core.actions.concrete.StartMainEclipseAction;
-import com.yoursway.autoupdate.core.actions.concrete.UpdateExternallyAction;
 import com.yoursway.autoupdate.core.plan.dirs.Directory;
 import com.yoursway.utils.filespec.FileSetSpec;
 
@@ -37,7 +38,8 @@ public class UpdateExternallyStep implements UpdateStep {
         List<Action> pending = newArrayList();
         pending.addAll(request.resolveUpdate(files));
         pending.add(new StartMainEclipseAction(request.determineCurrentEclipseStartInfo(), cleanup));
-        storeInto.add(new UpdateExternallyAction(loc, request.resolveUpdaterJar(loc), pending));
+        Collection<File> updaterFiles = request.resolveUpdaterFiles(loc);
+        storeInto.add(new UpdateExternallyAction(loc, request.resolveUpdaterJar(loc), updaterFiles, pending));
     }
     
 }

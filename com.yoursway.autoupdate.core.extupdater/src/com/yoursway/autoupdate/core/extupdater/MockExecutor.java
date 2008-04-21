@@ -1,20 +1,17 @@
-package com.yoursway.autoupdate.core.tests.mocks;
+package com.yoursway.autoupdate.core.extupdater;
 
-import static com.google.common.base.Join.join;
+import static com.yoursway.autoupdate.core.extupdater.Join.join;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import com.yoursway.autoupdate.core.Executor9;
 import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.EclipseStartInfo;
-import com.yoursway.autoupdate.core.actions.Executor42;
-import com.yoursway.autoupdate.core.actions.RemoteSource;
-import com.yoursway.utils.relativepath.RelativePath;
+import com.yoursway.autoupdate.core.actions.Executor;
 
-public class MockExecutor implements Executor42, Executor9 {
+public class MockExecutor implements Executor {
     
     private int nextTempDir = 1;
     
@@ -45,16 +42,8 @@ public class MockExecutor implements Executor42, Executor9 {
         result.append("COPY " + source + " TO " + destination + "\n");
     }
     
-    public File download(RemoteSource remote, RelativePath path) {
-        return new File(new File("/tmp/download"), remote.url().getPath());
-    }
-    
     public void deleteFile(File file) {
         result.append("DELETE ").append(file).append("\n");
-    }
-    
-    public EclipseStartInfo determineCurrentEclipseStartInfo() {
-        return new MockStartInfo();
     }
     
     public void startMainEclipse(EclipseStartInfo info, List<Action> pendingActions) throws IOException {
