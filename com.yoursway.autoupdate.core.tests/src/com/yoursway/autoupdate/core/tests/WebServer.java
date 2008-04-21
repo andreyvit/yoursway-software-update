@@ -2,8 +2,10 @@ package com.yoursway.autoupdate.core.tests;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.utils.YsFileUtils.saveToFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -56,10 +58,22 @@ public class WebServer {
     }
 
     public void mount(String path, String value) {
+        saveForDebugging(path, new StringInputStream(value));
         mountedStrings.put(path, value);
     }
 
+    private void saveForDebugging(String path, InputStream inputStream) {
+        File file = new File(new File("/tmp/foo"), path);
+        file.getParentFile().mkdirs();
+        try {
+            saveToFile(inputStream, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void mount(String path, byte[] value) {
+        saveForDebugging(path, new ByteArrayInputStream(value));
         mountedBytes.put(path, value);
     }
     

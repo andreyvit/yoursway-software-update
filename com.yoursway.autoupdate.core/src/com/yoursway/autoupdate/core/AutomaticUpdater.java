@@ -3,8 +3,10 @@ package com.yoursway.autoupdate.core;
 import static com.yoursway.autoupdate.core.FileStateBuilder.buildActions;
 import static com.yoursway.autoupdate.core.FileStateBuilder.modifiedFiles;
 import static com.yoursway.autoupdate.core.internal.Activator.log;
+import static com.yoursway.utils.YsFileUtils.saveToFile;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +25,7 @@ import com.yoursway.autoupdate.core.versions.definitions.UpdaterInfo;
 import com.yoursway.autoupdate.core.versions.definitions.UrlBasedVersionDefinitionLoader;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinitionNotAvailable;
+import com.yoursway.utils.StringInputStream;
 
 public class AutomaticUpdater {
     
@@ -64,6 +67,11 @@ public class AutomaticUpdater {
             UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
                     .asCollection(), updaterInfo.files());
             UpdatePlan plan = planBuilder.build();
+            try {
+                saveToFile(new StringInputStream(plan.toString()), new File("/tmp/plan.txt"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(install.root(), install
                     .getFileContainer().allFiles(), actions, updaterInfo, executor9));
             executablePlan.execute(executor);

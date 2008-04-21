@@ -10,7 +10,7 @@ public class RealReplaceTester implements ReplaceTester {
     }
 
     public ReplaceStrategy replaceStrategy(RelativePath file) {
-        return ReplaceStrategy.HOT_REPLACE;
+        return ReplaceStrategy.REPLACE_AFTER_SHUTDOWN;
     }
     
 }

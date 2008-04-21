@@ -18,10 +18,12 @@ import java.util.Map;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 import com.yoursway.autoupdate.core.ApplicationInstallation;
+import com.yoursway.autoupdate.core.AutomaticUpdater;
 import com.yoursway.autoupdate.core.tests.internal.Activator;
 import com.yoursway.autoupdate.core.tests.layouts.CurrentPlatformSource;
 import com.yoursway.autoupdate.core.tests.layouts.WritableMacBundleLayout;
@@ -41,6 +43,16 @@ import com.yoursway.utils.relativepath.RelativePath;
 public class IntegrationTests {
     
     @Test
+//    @Ignore
+    public void aaa() throws Exception {
+        ApplicationInstallation install = new ApplicationInstallation(
+                new File(
+                        "/Users/andreyvit/Documents/junit-workspace/.metadata/.plugins/com.yoursway.autoupdate.core.tests/Fake.app/Contents/Resources/Java"));
+        AutomaticUpdater.checkForUpdates(install, new Version("1.0.0.qualifier"), new URL("file:///tmp/foo/"));
+    }
+    
+    @Test
+//    @Ignore
     public void fooChanged() throws IOException, InterruptedException, ParseException {
         
         Bundle[] bundles = Activator.getContext().getBundles();
@@ -102,7 +114,7 @@ public class IntegrationTests {
             
             install.launchAndWait();
             
-//            install.launchAndWait();
+            //            install.launchAndWait();
             
             long end = System.currentTimeMillis() + 10000;
             boolean timeout = false;

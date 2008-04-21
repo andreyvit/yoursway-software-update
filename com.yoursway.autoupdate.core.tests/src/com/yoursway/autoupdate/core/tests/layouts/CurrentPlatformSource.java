@@ -43,7 +43,7 @@ public class CurrentPlatformSource implements PluginSource {
                 File root = new File(url.getPath());
                 for (String plugin : plugins) {
                     File folderOrJar = new File(root, plugin);
-                    System.out.println("Found: " + folderOrJar);
+//                    System.out.println("Found: " + folderOrJar);
                     addPluginIfMatches(folderOrJar, id, result);
                 }
             } else {

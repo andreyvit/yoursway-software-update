@@ -16,6 +16,9 @@ public class CopyFileAction implements Action {
     }
 
     public void execute(Executor executor) {
+        File dir = destination.getParentFile();
+        if (!dir.isDirectory())
+            dir.mkdirs();
         executor.copy(source, destination);
     }
     
