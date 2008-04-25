@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Glue Plug-in
+Bundle-SymbolicName: com.yoursway.autoupdate.core.glue
+Bundle-Version: 1.0.0
+Bundle-Activator: com.yoursway.autoupdate.core.glue.internal.Activator
+Bundle-Vendor: YourSway
+Require-Bundle: org.eclipse.core.runtime,
+ com.yoursway.utils;bundle-version="1.0.0",
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.autoupdate.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: com.yoursway.autoupdate.core.glue,
+ com.yoursway.autoupdate.core.glue.checkres,
+ com.yoursway.autoupdate.core.glue.ext,
+ com.yoursway.autoupdate.core.glue.internal,
+ com.yoursway.autoupdate.core.glue.sheduling,
+ com.yoursway.autoupdate.core.glue.state.overall,
+ com.yoursway.autoupdate.core.glue.state.schedule,
+ com.yoursway.autoupdate.core.glue.state.users
