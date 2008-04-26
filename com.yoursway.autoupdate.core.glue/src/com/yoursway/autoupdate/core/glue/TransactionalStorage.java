@@ -22,7 +22,7 @@ public class TransactionalStorage implements Storage {
     
     private int readers = 0;
     
-    public TransactionalStorage(File mainFile, File logFile) {
+    public TransactionalStorage(File mainFile, File logFile) throws IOException {
         if (mainFile == null)
             throw new NullPointerException("mainFile is null");
         if (logFile == null)
@@ -32,11 +32,11 @@ public class TransactionalStorage implements Storage {
         restoreFromPossibleCrash();
     }
     
-    private void restoreFromPossibleCrash() {
+    private void restoreFromPossibleCrash() throws IOException {
         if (mainFile.exists()) {
             if (logFile.exists()) {
                 if (!logFile.delete())
-                    throw new TransactionalStorageNonOperational("Cannot delete " + logFile);
+                    throw new IOException("Cannot delete " + logFile);
             }
         } else {
             if (logFile.exists())
@@ -44,12 +44,12 @@ public class TransactionalStorage implements Storage {
         }
     }
     
-    private void renameLogIntoMain() {
+    private void renameLogIntoMain() throws IOException {
         if (!logFile.renameTo(mainFile))
-            throw new TransactionalStorageNonOperational("Cannot rename " + logFile + " into " + mainFile);
+            throw new IOException("Cannot rename " + logFile + " into " + mainFile);
     }
     
-    public InputStream openRead() {
+    public InputStream openRead() throws IOException {
         enterReader();
         try {
             try {
@@ -74,11 +74,13 @@ public class TransactionalStorage implements Storage {
                 throw e;
             }
         } catch (FileNotFoundException e) {
+            if (mainFile.exists())
+                throw e;
             return new ByteArrayInputStream(new byte[0]);
         }
     }
     
-    public OutputStream openWrite() {
+    public OutputStream openWrite() throws IOException {
         enterWriter();
         try {
             try {
@@ -106,14 +108,23 @@ public class TransactionalStorage implements Storage {
                 throw e;
             }
         } catch (IOException e) {
-            throw new TransactionalStorageNonOperational(e);
+            throw e;
         }
     }
     
-    protected void commit() {
-        if (!mainFile.delete())
-            throw new TransactionalStorageNonOperational("Cannot delete " + mainFile);
+    protected void commit() throws IOException {
+        deleteMainFile();
         renameLogIntoMain();
+    }
+
+    private void deleteMainFile() throws IOException {
+        if (!mainFile.delete())
+            throw new IOException("Cannot delete " + mainFile);
+    }
+    
+    private void deleteLogFile() throws IOException {
+        if (!logFile.delete())
+            throw new IOException("Cannot delete " + logFile);
     }
     
     private synchronized void enterReader() {
@@ -142,6 +153,11 @@ public class TransactionalStorage implements Storage {
         if (readers > 0)
             throw new AssertionError("readers >  0");
         isWriting = false;
+    }
+
+    public void trash() throws IOException {
+        deleteMainFile();
+        deleteLogFile();
     }
     
 }

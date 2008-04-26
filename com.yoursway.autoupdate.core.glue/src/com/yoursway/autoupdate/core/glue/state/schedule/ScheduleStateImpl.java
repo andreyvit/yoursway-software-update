@@ -2,15 +2,27 @@ package com.yoursway.autoupdate.core.glue.state.schedule;
 
 import static com.yoursway.utils.Listeners.newListenersByIdentity;
 
+import java.io.Serializable;
+
 import com.yoursway.utils.Listeners;
 
 public class ScheduleStateImpl implements ScheduleState {
     
-    private long lastScheduleChangeTime = -1;
+    private long lastScheduleChangeTime;
     
-    private Schedule schedule = Schedule.DAILY;
+    private Schedule schedule;
 
     private transient Listeners<ScheduleStateListener> listeners = newListenersByIdentity();
+    
+    public ScheduleStateImpl() {
+        lastScheduleChangeTime = -1;
+        schedule = Schedule.DAILY;
+    }
+    
+    public ScheduleStateImpl(ScheduleStateMemento memento) {
+        lastScheduleChangeTime = memento.lastChange;
+        schedule = memento.schedule;
+    }
     
     public synchronized void addListener(ScheduleStateListener listener) {
         listeners.add(listener);
@@ -34,6 +46,10 @@ public class ScheduleStateImpl implements ScheduleState {
     
     public synchronized long lastScheduleChangeTime() {
         return lastScheduleChangeTime;
+    }
+
+    public ScheduleStateMemento createMemento() {
+        return new ScheduleStateMemento(schedule, lastScheduleChangeTime);
     }
     
 }

@@ -8,12 +8,14 @@ import static com.yoursway.autoupdate.core.glue.state.overall.Mode.NO_UPDATES;
 import static com.yoursway.autoupdate.core.glue.state.overall.Mode.UPDATE_FOUND_ACTIONS_UNDECIDED;
 import static com.yoursway.utils.Listeners.newListenersByIdentity;
 
+import java.io.Serializable;
+
 import com.yoursway.autoupdate.core.glue.checkres.CheckResult;
 import com.yoursway.autoupdate.core.glue.checkres.ShutdownOccuredCheckResult;
 import com.yoursway.autoupdate.core.glue.ext.Clocks;
 import com.yoursway.utils.Listeners;
 
-public class OverallStateImpl implements OverallState {
+public class OverallStateImpl implements OverallState, Cloneable {
     
     Mode mode = Mode.NO_UPDATES;
     
@@ -28,6 +30,19 @@ public class OverallStateImpl implements OverallState {
     private long firstFailedCheckAfterLastSuccessfulCheckTime = -1;
     
     private transient Listeners<OverallStateListener> listeners = newListenersByIdentity();
+    
+    public OverallStateImpl() {
+    }
+    
+    public OverallStateImpl(Serializable memento) {
+        OverallStateImpl x = (OverallStateImpl) memento;
+        mode = x.mode;
+        startUpTime = x.startUpTime;
+        firstRunTime = x.firstRunTime;
+        lastSuccessfulCheckTime = x.lastSuccessfulCheckTime;
+        lastCheckAttempTime = x.lastCheckAttempTime;
+        firstFailedCheckAfterLastSuccessfulCheckTime = x.firstFailedCheckAfterLastSuccessfulCheckTime;
+    }
     
     public synchronized void addListener(OverallStateListener listener) {
         listeners.add(listener);
@@ -116,6 +131,14 @@ public class OverallStateImpl implements OverallState {
     
     public long lastCheckAttemptTime() {
         return lastCheckAttempTime;
+    }
+    
+    public synchronized Serializable createMemento() {
+        try {
+            return (Serializable) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
     }
     
 }

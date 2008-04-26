@@ -82,4 +82,8 @@ public class Variable<T> {
         return null;
     }
     
+    public static <T> Variable<T> create(Class<T> klass) {
+        return new Variable<T>(klass);
+    }
+    
 }
