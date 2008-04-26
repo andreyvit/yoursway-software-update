@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses( { AutomaticUpdatesSchedulerTests.class })
+@SuiteClasses( { OverallStateTests.class, AutomaticUpdatesSchedulerTests.class })
 public class AllTests {
     
 }

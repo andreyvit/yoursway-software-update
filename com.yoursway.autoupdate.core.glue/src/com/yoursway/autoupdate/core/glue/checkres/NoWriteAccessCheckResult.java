@@ -8,7 +8,7 @@ public class NoWriteAccessCheckResult extends CheckResultImpl {
     }
 
     public boolean isSuccess() {
-        return true;
+        return false;
     }
     
     public boolean isNoWriteAccessResult() {

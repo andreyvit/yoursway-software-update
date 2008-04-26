@@ -32,4 +32,9 @@ public class Attempt {
         return Clocks.isAfter(time, otherTime);
     }
     
+    @Override
+    public String toString() {
+        return Clocks.toString(time) + (failed ? "<F>" : "");
+    }
+    
 }

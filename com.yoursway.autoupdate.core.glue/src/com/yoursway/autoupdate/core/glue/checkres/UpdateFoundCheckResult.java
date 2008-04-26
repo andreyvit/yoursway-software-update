@@ -14,5 +14,9 @@ public class UpdateFoundCheckResult extends CheckResultImpl {
     public void accept(CheckResultVisitor visitor) {
         visitor.updateFound(this);
     }
+    
+    public boolean updatesFound() {
+        return true;
+    }
 
 }

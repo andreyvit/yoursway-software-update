@@ -108,6 +108,7 @@ public class AutomaticUpdatesSchedulerTests {
         verifyAll();
     }
     
+    @Test
     public void cannotStartInitialCheck() {
         initialScheduling();
         

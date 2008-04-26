@@ -10,15 +10,16 @@ import static com.yoursway.utils.Listeners.newListenersByIdentity;
 
 import com.yoursway.autoupdate.core.glue.checkres.CheckResult;
 import com.yoursway.autoupdate.core.glue.checkres.ShutdownOccuredCheckResult;
+import com.yoursway.autoupdate.core.glue.ext.Clocks;
 import com.yoursway.utils.Listeners;
 
 public class OverallStateImpl implements OverallState {
     
-    private Mode mode = Mode.NO_UPDATES;
+    Mode mode = Mode.NO_UPDATES;
     
     private long startUpTime = -1;
     
-    private long firstRunTime = -1;
+    long firstRunTime = -1;
     
     private long lastSuccessfulCheckTime = -1;
     
@@ -68,7 +69,10 @@ public class OverallStateImpl implements OverallState {
         if (result.isSuccess()) {
             lastSuccessfulCheckTime = lastCheckAttempTime;
             firstFailedCheckAfterLastSuccessfulCheckTime = -1;
-            mode = UPDATE_FOUND_ACTIONS_UNDECIDED;
+            if (result.updatesFound())
+                mode = UPDATE_FOUND_ACTIONS_UNDECIDED;
+            else
+                mode = NO_UPDATES;
         } else {
             if (firstFailedCheckAfterLastSuccessfulCheckTime < 0)
                 firstFailedCheckAfterLastSuccessfulCheckTime = lastCheckAttempTime;
@@ -81,7 +85,16 @@ public class OverallStateImpl implements OverallState {
     }
     
     public synchronized Attempt lastCheckAttempt() {
-        return new Attempt(lastCheckAttempTime, isAfter(lastCheckAttempTime, lastSuccessfulCheckTime));
+        return new Attempt(lastCheckAttempTime, Clocks.isNotConcrete(lastSuccessfulCheckTime)
+                || isAfter(lastCheckAttempTime, lastSuccessfulCheckTime));
+    }
+    
+    public synchronized Attempt lastSuccessfulCheckAttempt() {
+        return new Attempt(lastSuccessfulCheckTime, true);
+    }
+    
+    public synchronized Attempt firstFailedCheckAttempt() {
+        return new Attempt(firstFailedCheckAfterLastSuccessfulCheckTime, false);
     }
     
     public synchronized long startUpTime() {
@@ -91,6 +104,18 @@ public class OverallStateImpl implements OverallState {
     private void notifyStateChanged(long now) {
         for (OverallStateListener listener : listeners)
             listener.overallStateChanged(now);
+    }
+    
+    public Mode mode() {
+        return mode;
+    }
+    
+    public long firstRunTime() {
+        return firstRunTime;
+    }
+    
+    public long lastCheckAttemptTime() {
+        return lastCheckAttempTime;
     }
     
 }

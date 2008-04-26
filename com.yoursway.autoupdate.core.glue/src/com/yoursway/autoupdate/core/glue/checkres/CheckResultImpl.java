@@ -9,4 +9,8 @@ public abstract class CheckResultImpl implements CheckResult {
         return false;
     }
     
+    public boolean updatesFound() {
+        return false;
+    }
+    
 }

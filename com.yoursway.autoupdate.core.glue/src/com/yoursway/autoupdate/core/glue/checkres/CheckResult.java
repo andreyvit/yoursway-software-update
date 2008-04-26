@@ -7,5 +7,7 @@ public interface CheckResult {
     boolean isNoWriteAccessResult();
     
     void accept(CheckResultVisitor visitor);
+
+    boolean updatesFound();
     
 }
