@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core.glue;
+package com.yoursway.autoupdate.core.glue.persister;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import com.yoursway.autoupdate.core.glue.persister.RetryTimer;
 import com.yoursway.autoupdate.core.glue.sheduling.RelativeScheduler;
 
 public class Persister {

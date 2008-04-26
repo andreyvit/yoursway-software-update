@@ -16,7 +16,7 @@ import java.io.OutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.glue.TransactionalStorage;
+import com.yoursway.autoupdate.core.glue.persister.TransactionalStorage;
 import com.yoursway.utils.DelegatingOutputStream;
 
 public class TransactionalStorageTests {

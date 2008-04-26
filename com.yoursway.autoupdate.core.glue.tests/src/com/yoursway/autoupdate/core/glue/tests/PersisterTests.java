@@ -17,12 +17,12 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.glue.PersistentState;
-import com.yoursway.autoupdate.core.glue.Persister;
-import com.yoursway.autoupdate.core.glue.PersisterNonOperational;
-import com.yoursway.autoupdate.core.glue.StateFactory;
-import com.yoursway.autoupdate.core.glue.StateListener;
-import com.yoursway.autoupdate.core.glue.Storage;
+import com.yoursway.autoupdate.core.glue.persister.PersistentState;
+import com.yoursway.autoupdate.core.glue.persister.Persister;
+import com.yoursway.autoupdate.core.glue.persister.PersisterNonOperational;
+import com.yoursway.autoupdate.core.glue.persister.StateFactory;
+import com.yoursway.autoupdate.core.glue.persister.StateListener;
+import com.yoursway.autoupdate.core.glue.persister.Storage;
 import com.yoursway.autoupdate.core.glue.sheduling.RelativeScheduler;
 
 public class PersisterTests {

@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core.glue;
+package com.yoursway.autoupdate.core.glue.persister;
 
 import java.io.IOException;
 import java.io.InputStream;
