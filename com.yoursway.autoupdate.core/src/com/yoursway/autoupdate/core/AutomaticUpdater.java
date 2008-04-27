@@ -14,6 +14,11 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 
+import com.yoursway.autoupdate.core.checkres.CheckResult;
+import com.yoursway.autoupdate.core.checkres.CommunicationErrorCheckResult;
+import com.yoursway.autoupdate.core.checkres.InternalFailureCheckResult;
+import com.yoursway.autoupdate.core.checkres.NoUpdatesCheckResult;
+import com.yoursway.autoupdate.core.checkres.UpdateFoundCheckResult;
 import com.yoursway.autoupdate.core.execution.RealExecutor42;
 import com.yoursway.autoupdate.core.execution.RealExecutor9;
 import com.yoursway.autoupdate.core.execution.RealReplaceTester;
@@ -39,8 +44,33 @@ public class AutomaticUpdater {
         checkForUpdates(install, currentVersion, defaultUrl);
     }
     
+    public static CheckResult checkForUpdates1(Version currentVersion, URL updateUrl) {
+        log("checkForUpdates is running for version " + currentVersion);
+        updateUrl = determineUpdateUrl(updateUrl);
+        IVersionDefinitionLoader loader = new UrlBasedVersionDefinitionLoader(updateUrl);
+        try {
+            VersionDefinition currentDef = loader.loadDefinition(currentVersion);
+            if (!currentDef.hasNewerVersion())
+                return new NoUpdatesCheckResult();
+            
+            Version freshVersion = currentDef.nextVersion();
+            VersionDefinition freshDef = loader.loadDefinition(freshVersion);
+            
+            ProposedUpdateImpl update = new ProposedUpdateImpl(currentDef, freshDef);
+            return new UpdateFoundCheckResult(update);
+        } catch (VersionDefinitionNotAvailable e) {
+            return new CommunicationErrorCheckResult();
+        } catch (InvalidVersionDefinitionException e) {
+            return new CommunicationErrorCheckResult();
+        } catch (RuntimeException e) {
+            return new InternalFailureCheckResult(e);
+        } catch (Error e) {
+            return new InternalFailureCheckResult(e);
+        }
+    }
+    
     public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
-            throws UpdatesFoundExit {
+    throws UpdatesFoundExit {
         log("checkForUpdates is running for version " + currentVersion);
         if (!forcedUpdateCheckBecauseOfTests() && !shouldCheckForUpdates())
             return;
@@ -96,7 +126,7 @@ public class AutomaticUpdater {
         // TODO: once a day etc
         return true;
     }
-
+    
     private static boolean forcedUpdateCheckBecauseOfTests() {
         return System.getProperty(PROPERTY_TESTS_PING_URL) != null;
     }

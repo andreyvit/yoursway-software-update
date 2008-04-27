@@ -1,4 +1,6 @@
-package com.yoursway.autoupdate.core.glue.checkres;
+package com.yoursway.autoupdate.core.checkres;
+
+import com.yoursway.autoupdate.core.ProposedUpdate;
 
 public interface CheckResult {
     
@@ -9,5 +11,7 @@ public interface CheckResult {
     void accept(CheckResultVisitor visitor);
 
     boolean updatesFound();
+    
+    ProposedUpdate foundUpdateOrNull();
     
 }

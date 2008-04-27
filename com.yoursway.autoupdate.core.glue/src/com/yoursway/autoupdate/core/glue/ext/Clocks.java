@@ -73,5 +73,10 @@ public class Clocks {
             return "ANYTIME";
         return "" + time;
     }
+
+    public static long sub(long a, long b) {
+        mustBeConcrete(a, b);
+        return a - b;
+    }
     
 }

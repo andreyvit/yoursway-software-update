@@ -10,13 +10,15 @@ import static com.yoursway.utils.Listeners.newListenersByIdentity;
 
 import java.io.Serializable;
 
-import com.yoursway.autoupdate.core.glue.checkres.CheckResult;
-import com.yoursway.autoupdate.core.glue.checkres.ShutdownOccuredCheckResult;
+import com.yoursway.autoupdate.core.checkres.CheckResult;
+import com.yoursway.autoupdate.core.checkres.ShutdownOccuredCheckResult;
 import com.yoursway.autoupdate.core.glue.ext.Clocks;
 import com.yoursway.utils.Listeners;
 
-public class OverallStateImpl implements OverallState, Cloneable {
+public class OverallStateImpl implements OverallState, Serializable, Cloneable {
     
+    private static final long serialVersionUID = 1L;
+
     Mode mode = Mode.NO_UPDATES;
     
     private long startUpTime = -1;
@@ -121,7 +123,7 @@ public class OverallStateImpl implements OverallState, Cloneable {
             listener.overallStateChanged(now);
     }
     
-    public Mode mode() {
+    public Mode state() {
         return mode;
     }
     

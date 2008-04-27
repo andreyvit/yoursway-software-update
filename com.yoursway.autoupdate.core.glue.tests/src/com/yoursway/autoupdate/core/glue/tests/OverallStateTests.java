@@ -10,12 +10,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdate.core.glue.checkres.CommunicationErrorCheckResult;
-import com.yoursway.autoupdate.core.glue.checkres.InternalFailureCheckResult;
-import com.yoursway.autoupdate.core.glue.checkres.NoUpdatesCheckResult;
-import com.yoursway.autoupdate.core.glue.checkres.NoWriteAccessCheckResult;
-import com.yoursway.autoupdate.core.glue.checkres.UpdateFoundCheckResult;
+import com.yoursway.autoupdate.core.ProposedUpdate;
+import com.yoursway.autoupdate.core.checkres.CommunicationErrorCheckResult;
+import com.yoursway.autoupdate.core.checkres.InternalFailureCheckResult;
+import com.yoursway.autoupdate.core.checkres.NoUpdatesCheckResult;
+import com.yoursway.autoupdate.core.checkres.NoWriteAccessCheckResult;
+import com.yoursway.autoupdate.core.checkres.UpdateFoundCheckResult;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallStateImpl;
+import com.yoursway.autoupdate.core.versions.Version;
 
 public class OverallStateTests {
     
@@ -28,14 +30,14 @@ public class OverallStateTests {
     
     @Test
     public void initiallyInNoUpdates() {
-        assertEquals(NO_UPDATES, os.mode());
+        assertEquals(NO_UPDATES, os.state());
     }
     
     @Test
     public void recordsStartupTime() {
         os.startup(123);
         assertEquals(123l, os.startUpTime());
-        assertEquals(NO_UPDATES, os.mode());
+        assertEquals(NO_UPDATES, os.state());
     }
     
     @Test
@@ -48,7 +50,7 @@ public class OverallStateTests {
     public void startsManualCheck() {
         boolean res = os.startCheckingForUpdatesManually(300);
         assertEquals(true, res);
-        assertEquals(MANUAL_CHECK, os.mode());
+        assertEquals(MANUAL_CHECK, os.state());
         assertEquals(300, os.lastCheckAttemptTime());
     }
     
@@ -56,7 +58,7 @@ public class OverallStateTests {
     public void startsAutomaticCheck() {
         boolean res = os.startCheckingForUpdatesAutomatically(300);
         assertEquals(true, res);
-        assertEquals(AUTOMATIC_CHECK, os.mode());
+        assertEquals(AUTOMATIC_CHECK, os.state());
         assertEquals(300, os.lastCheckAttemptTime());
     }
     
@@ -65,7 +67,7 @@ public class OverallStateTests {
         startsManualCheck();
         boolean res = os.startCheckingForUpdatesAutomatically(400);
         assertEquals(false, res);
-        assertEquals(MANUAL_CHECK, os.mode());
+        assertEquals(MANUAL_CHECK, os.state());
     }
     
     @Test
@@ -73,14 +75,14 @@ public class OverallStateTests {
         startsAutomaticCheck();
         boolean res = os.startCheckingForUpdatesManually(400);
         assertEquals(false, res);
-        assertEquals(AUTOMATIC_CHECK, os.mode());
+        assertEquals(AUTOMATIC_CHECK, os.state());
     }
     
     @Test
     public void interpretsNoWriteAccessResult() {
         startsAutomaticCheck();
         os.finishedCheckingForUpdates(500, new NoWriteAccessCheckResult());
-        assertEquals(DISABLED, os.mode());
+        assertEquals(DISABLED, os.state());
         assertEquals(true, os.lastCheckAttempt().hasFailed());
     }
     
@@ -88,7 +90,7 @@ public class OverallStateTests {
     public void interpretsCommunicationErrorResult() {
         startsAutomaticCheck();
         os.finishedCheckingForUpdates(500, new CommunicationErrorCheckResult());
-        assertEquals(NO_UPDATES, os.mode());
+        assertEquals(NO_UPDATES, os.state());
         assertEquals(true, os.lastCheckAttempt().hasFailed());
     }
     
@@ -96,7 +98,7 @@ public class OverallStateTests {
     public void interpretsInternalFailureResult() {
         startsAutomaticCheck();
         os.finishedCheckingForUpdates(500, new InternalFailureCheckResult(new AssertionError("foo")));
-        assertEquals(NO_UPDATES, os.mode());
+        assertEquals(NO_UPDATES, os.state());
         assertEquals(true, os.lastCheckAttempt().hasFailed());
     }
     
@@ -104,7 +106,7 @@ public class OverallStateTests {
     public void interpretsNoUpdatesResult() {
         startsAutomaticCheck();
         os.finishedCheckingForUpdates(500, new NoUpdatesCheckResult());
-        assertEquals(NO_UPDATES, os.mode());
+        assertEquals(NO_UPDATES, os.state());
         assertEquals(false, os.lastCheckAttempt().hasFailed());
         assertEquals(300, os.lastCheckAttempt().time());
     }
@@ -112,8 +114,22 @@ public class OverallStateTests {
     @Test
     public void interpretsUpdateFoundResult() {
         startsAutomaticCheck();
-        os.finishedCheckingForUpdates(500, new UpdateFoundCheckResult());
-        assertEquals(UPDATE_FOUND_ACTIONS_UNDECIDED, os.mode());
+        os.finishedCheckingForUpdates(500, new UpdateFoundCheckResult(new ProposedUpdate() {
+
+            public String changesDescription() {
+                throw new UnsupportedOperationException();
+            }
+
+            public Version targetVersion() {
+                throw new UnsupportedOperationException();
+            }
+
+            public String targetVersionDisplayName() {
+                throw new UnsupportedOperationException();
+            }
+            
+        }));
+        assertEquals(UPDATE_FOUND_ACTIONS_UNDECIDED, os.state());
         assertEquals(false, os.lastCheckAttempt().hasFailed());
         assertEquals(300, os.lastCheckAttempt().time());
     }

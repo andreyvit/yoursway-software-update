@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.autoupdate.core.glue,
- com.yoursway.autoupdate.core.glue.checkres,
  com.yoursway.autoupdate.core.glue.ext,
  com.yoursway.autoupdate.core.glue.internal,
  com.yoursway.autoupdate.core.glue.persister,

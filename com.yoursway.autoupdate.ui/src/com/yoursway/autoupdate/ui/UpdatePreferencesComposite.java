@@ -13,11 +13,14 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.ProgressBar;
 
 import com.google.common.collect.BiMap;
+import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 import com.yoursway.common.ui.animatedimage.SpinnerControl;
 
 public class UpdatePreferencesComposite extends Composite {
@@ -32,6 +35,10 @@ public class UpdatePreferencesComposite extends Composite {
     private BiMap<Schedule, Button> schedulesToRadios;
     private Boolean spinnerShown;
     private UpdatePreferencesCallback callback;
+    private Composite progressComposite;
+    private ProgressBar progressBar;
+    private Link actionLabel;
+    private Button stopUpdate;
     
     public UpdatePreferencesComposite(Composite parent, int style) {
         super(parent, style);
@@ -116,10 +123,33 @@ public class UpdatePreferencesComposite extends Composite {
         spinner.setDelayOverrideMs(100);
         
         label = new Link(buttonAndLabel, SWT.NONE);
-        label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true).create());
+        label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
+                .create());
         label.setText("Last check 5 hours ago");
         
         GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(buttonAndLabel);
+        
+        progressComposite = new Composite(parent, SWT.NONE);
+        progressComposite.setLayoutData(GridDataFactory.defaultsFor(buttonAndLabel).indent(0, 20).grab(true,
+                false).create());
+        
+        actionLabel = new Link(progressComposite, SWT.NONE);
+        actionLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
+                .span(2, 1).create());
+        actionLabel.setText("Downloading updates...");
+        
+        progressBar = new ProgressBar(progressComposite, SWT.NONE);
+        progressBar.setSelection(20);
+        progressBar.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER)
+                .create());
+        
+        stopUpdate = new Button(progressComposite, SWT.PUSH);
+        stopUpdate.setText("Stop");
+        
+        GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).margins(10, 0).generateLayout(
+                progressComposite);
+        
+        ((GridData) stopUpdate.getLayoutData()).horizontalIndent = 5;
         
         GridLayoutFactory.swtDefaults().generateLayout(parent);
     }

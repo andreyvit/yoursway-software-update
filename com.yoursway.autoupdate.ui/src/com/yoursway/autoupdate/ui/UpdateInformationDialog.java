@@ -31,7 +31,8 @@ public class UpdateInformationDialog extends Dialog {
         this.dialogSettings = dialogSettings;
         createContent(getShell());
         // without SWT.APPLICATION_MODAL
-        setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE | getDefaultOrientation());
+        // | SWT.MAX | SWT.RESIZE
+        setShellStyle(SWT.DIALOG_TRIM  | getDefaultOrientation());
     }
     
     @Override
@@ -41,7 +42,7 @@ public class UpdateInformationDialog extends Dialog {
     
     @Override
     protected void configureShell(Shell newShell) {
-        // TODO Auto-generated method stub
+        newShell.setText("Updates found");
         super.configureShell(newShell);
     }
     

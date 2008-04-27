@@ -11,8 +11,6 @@ public class AutomaticUpdatesScheduler implements OverallStateListener, UpdateTi
     
     private final UpdateTimingConfiguration timing;
     
-    private final RunnableWithTime updateRunnable;
-    
     private OverallState overallState;
     
     private CancellingScheduler scheduler;
@@ -25,18 +23,15 @@ public class AutomaticUpdatesScheduler implements OverallStateListener, UpdateTi
         
     };
     
-    public AutomaticUpdatesScheduler(Scheduler scheduler, RunnableWithTime updateRunnable, 
+    public AutomaticUpdatesScheduler(Scheduler scheduler, 
             UpdateTimingConfiguration timing, OverallState overallState) {
         if (scheduler == null)
             throw new NullPointerException("scheduler is null");
-        if (updateRunnable == null)
-            throw new NullPointerException("updateRunnable is null");
         if (timing == null)
             throw new NullPointerException("timing is null");
         if (overallState == null)
             throw new NullPointerException("overallState is null");
         this.scheduler = new CancellingScheduler(scheduler);
-        this.updateRunnable = updateRunnable;
         this.timing = timing;
         this.overallState = overallState;
         overallState.addListener(this);
@@ -54,9 +49,7 @@ public class AutomaticUpdatesScheduler implements OverallStateListener, UpdateTi
     }
     
     void startAutomaticCheck(long now) {
-        if (!overallState.startCheckingForUpdatesAutomatically(now))
-            return;
-        updateRunnable.run(now);
+        overallState.startCheckingForUpdatesAutomatically(now);
     }
 
     public void overallStateChanged(long now) {

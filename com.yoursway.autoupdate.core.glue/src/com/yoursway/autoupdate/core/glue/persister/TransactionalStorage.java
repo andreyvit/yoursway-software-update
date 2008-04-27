@@ -74,6 +74,7 @@ public class TransactionalStorage implements Storage {
                 throw e;
             }
         } catch (FileNotFoundException e) {
+            leaveReader();
             if (mainFile.exists())
                 throw e;
             return new ByteArrayInputStream(new byte[0]);
@@ -108,6 +109,7 @@ public class TransactionalStorage implements Storage {
                 throw e;
             }
         } catch (IOException e) {
+            leaveWriter();
             throw e;
         }
     }

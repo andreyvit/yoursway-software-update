@@ -48,6 +48,10 @@ public class Persister {
         });
     }
     
+    public PersistentState state() {
+        return state;
+    }
+    
     synchronized void scheduleWriteOnChange(Object memento) {
         this.memento = memento;
         if (writeScheduled)
@@ -96,11 +100,11 @@ public class Persister {
     
     private Object doRead() throws IOException, ClassNotFoundException {
         InputStream in = storage.openRead();
-        in.mark(1);
-        if (-1 == in.read())
-            return null;
-        in.reset();
         try {
+            in.mark(1);
+            if (-1 == in.read())
+                return null;
+            in.reset();
             ObjectInputStream oin = new ObjectInputStream(in);
             return oin.readObject();
         } finally {

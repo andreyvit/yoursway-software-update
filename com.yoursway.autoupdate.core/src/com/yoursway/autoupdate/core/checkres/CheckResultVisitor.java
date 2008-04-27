@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core.glue.checkres;
+package com.yoursway.autoupdate.core.checkres;
 
 public interface CheckResultVisitor {
     

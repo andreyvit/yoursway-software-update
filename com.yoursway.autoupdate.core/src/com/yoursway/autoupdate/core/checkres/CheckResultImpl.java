@@ -1,4 +1,6 @@
-package com.yoursway.autoupdate.core.glue.checkres;
+package com.yoursway.autoupdate.core.checkres;
+
+import com.yoursway.autoupdate.core.ProposedUpdate;
 
 public abstract class CheckResultImpl implements CheckResult {
     
@@ -11,6 +13,10 @@ public abstract class CheckResultImpl implements CheckResult {
     
     public boolean updatesFound() {
         return false;
+    }
+    
+    public ProposedUpdate foundUpdateOrNull() {
+        return null;
     }
     
 }

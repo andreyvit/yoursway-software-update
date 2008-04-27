@@ -23,7 +23,6 @@ import com.yoursway.autoupdate.core.glue.state.overall.OverallStateListener;
 public class AutomaticUpdatesSchedulerTests {
     
     private Scheduler scheduler;
-    private RunnableWithTime startCheckRunnable;
     private UpdateTimingConfiguration timing;
     private OverallState overallState;
     private AutomaticUpdatesScheduler aus;
@@ -32,29 +31,28 @@ public class AutomaticUpdatesSchedulerTests {
     @Before
     public void setUp() {
         scheduler = createMock(Scheduler.class);
-        startCheckRunnable = createMock(RunnableWithTime.class);
         timing = createMock(UpdateTimingConfiguration.class);
         overallState = createMock(OverallState.class);
         
         timing.addListener((UpdateTimingConfigurationListener) anyObject());
         overallState.addListener((OverallStateListener) anyObject());
         replayAll();
-        aus = new AutomaticUpdatesScheduler(scheduler, startCheckRunnable, timing, overallState);
+        aus = new AutomaticUpdatesScheduler(scheduler, timing, overallState);
         verifyAll();
         
         scheduledRunnable = new Variable<RunnableWithTime>(RunnableWithTime.class);
     }
     
     protected void replayAll() {
-        replay(timing, scheduler, startCheckRunnable, overallState);
+        replay(timing, scheduler, overallState);
     }
     
     protected void resetAll() {
-        reset(timing, scheduler, startCheckRunnable, overallState);
+        reset(timing, scheduler, overallState);
     }
     
     protected void verifyAll() {
-        verify(timing, scheduler, startCheckRunnable, overallState);
+        verify(timing, scheduler, overallState);
         resetAll();
     }
     
@@ -75,7 +73,6 @@ public class AutomaticUpdatesSchedulerTests {
         
         overallState.startCheckingForUpdatesAutomatically(1300);
         expectLastCall().andReturn(true);
-        this.startCheckRunnable.run(1300);
         replayAll();
         
         scheduledRunnable.extractValue().run(1300);
@@ -101,7 +98,6 @@ public class AutomaticUpdatesSchedulerTests {
         
         overallState.startCheckingForUpdatesAutomatically(1500);
         expectLastCall().andReturn(true);
-        this.startCheckRunnable.run(1500);
         replayAll();
         
         scheduledRunnable.extractValue().run(1500);

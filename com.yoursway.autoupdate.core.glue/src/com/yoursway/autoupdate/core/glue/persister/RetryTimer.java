@@ -43,7 +43,7 @@ public class RetryTimer {
     }
 
     public int delayUntilNextAttempOrZero() {
-        return isActive() ? delayUntilNextAttempOrZero() : 0;
+        return (int) (isActive() ? delayUntilNextAttemp() : 0);
     }
     
 }

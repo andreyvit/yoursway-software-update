@@ -15,6 +15,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.autoupdate.core,
  com.yoursway.autoupdate.core.actions,
  com.yoursway.autoupdate.core.app.layout,
+ com.yoursway.autoupdate.core.checkres,
  com.yoursway.autoupdate.core.execution,
  com.yoursway.autoupdate.core.plan.dirs,
  com.yoursway.autoupdate.core.plan.steps,

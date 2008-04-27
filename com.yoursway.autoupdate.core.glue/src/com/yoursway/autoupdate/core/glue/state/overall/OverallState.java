@@ -1,6 +1,6 @@
 package com.yoursway.autoupdate.core.glue.state.overall;
 
-import com.yoursway.autoupdate.core.glue.checkres.CheckResult;
+import com.yoursway.autoupdate.core.checkres.CheckResult;
 
 public interface OverallState {
     
@@ -19,5 +19,7 @@ public interface OverallState {
     long startUpTime();
 
     Attempt lastCheckAttempt();
+
+    Mode state();
     
 }
