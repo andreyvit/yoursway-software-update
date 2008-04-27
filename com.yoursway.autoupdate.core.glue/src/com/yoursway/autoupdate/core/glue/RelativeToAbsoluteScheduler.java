@@ -20,14 +20,19 @@ public class RelativeToAbsoluteScheduler implements Scheduler {
         this.clock = clock;
     }
 
-    public void schedule(final RunnableWithTime runnable, long at) {
+    public void schedule(final RunnableWithTime runnable, final long at) {
         long delay = sub(at, clock.now());
         if (delay < 0)
             delay = 0;
         relativeScheduler.schedule(new Runnable() {
 
             public void run() {
-                runnable.run(clock.now());
+                long now = clock.now();
+                long delay = sub(at, clock.now());
+                if (delay <= 0)
+                    runnable.run(now);
+                else
+                    relativeScheduler.schedule(this, (int) delay);
             }
             
         }, (int) delay);

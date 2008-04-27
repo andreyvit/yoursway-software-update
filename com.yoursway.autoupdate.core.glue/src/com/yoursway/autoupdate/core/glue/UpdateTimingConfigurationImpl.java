@@ -38,7 +38,7 @@ public class UpdateTimingConfigurationImpl implements UpdateTimingConfiguration,
     private long noChecksCriticalWarningRearm = 3 * MONTH;
     
     private long delayAfterSchedule = 5 * SECOND;
-    private long delayAfterStartup = 5 * MINUTE;
+    private long delayAfterStartup = 4 * SECOND; //5 * MINUTE;
     private long dailyUpdateInterval = DAY;
     private long weeklyUpdateInterval = WEEK;
     private long warningToUpdateMinimumDelay = 5 * MINUTE;

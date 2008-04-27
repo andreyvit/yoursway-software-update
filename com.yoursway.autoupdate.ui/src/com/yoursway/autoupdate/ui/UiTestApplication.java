@@ -2,6 +2,8 @@ package com.yoursway.autoupdate.ui;
 
 import static com.yoursway.autoupdate.core.glue.state.schedule.Schedule.DAILY;
 
+import java.util.Date;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,7 +36,7 @@ public class UiTestApplication implements IApplication {
                 Display.getDefault().timerExec(2000, new Runnable() {
                     
                     public void run() {
-                        prefs.reportNoUpdatesFound();
+                        prefs.reportLastCheck(new Date());
                         
                         UpdateInformationDialog dialog = new UpdateInformationDialog(shell, DialogUtils
                                 .lookup(Activator.getDefault().getDialogSettings(), "updateDialog"));

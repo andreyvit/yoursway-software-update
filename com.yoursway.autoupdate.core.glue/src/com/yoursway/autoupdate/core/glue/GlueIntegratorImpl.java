@@ -16,6 +16,7 @@ import com.yoursway.autoupdate.core.glue.persister.StateMemento;
 import com.yoursway.autoupdate.core.glue.persister.Storage;
 import com.yoursway.autoupdate.core.glue.sheduling.RelativeScheduler;
 import com.yoursway.autoupdate.core.glue.sheduling.Scheduler;
+import com.yoursway.autoupdate.core.glue.state.overall.Attempt;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallStateListener;
 import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 import com.yoursway.autoupdate.core.glue.state.version.VersionStateListener;
@@ -99,6 +100,10 @@ public class GlueIntegratorImpl implements GlueIntegrator, OverallStateListener,
         if (undecidedUpdate != null)
             for(GlueIntegratorListener listener : listeners)
                 listener.askUserDecision(undecidedUpdate);
+    }
+
+    public Attempt getLastCheckAttemp() {
+        return state.overallState().lastCheckAttempt();
     }
     
 }

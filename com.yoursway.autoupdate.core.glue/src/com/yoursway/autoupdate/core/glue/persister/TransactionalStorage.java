@@ -29,6 +29,8 @@ public class TransactionalStorage implements Storage {
             throw new NullPointerException("logFile is null");
         this.mainFile = mainFile;
         this.logFile = logFile;
+        mainFile.getParentFile().mkdirs();
+        logFile.getParentFile().mkdirs();
         restoreFromPossibleCrash();
     }
     
@@ -120,13 +122,15 @@ public class TransactionalStorage implements Storage {
     }
 
     private void deleteMainFile() throws IOException {
-        if (!mainFile.delete())
-            throw new IOException("Cannot delete " + mainFile);
+        if (mainFile.exists())
+            if (!mainFile.delete())
+                throw new IOException("Cannot delete " + mainFile);
     }
     
     private void deleteLogFile() throws IOException {
-        if (!logFile.delete())
-            throw new IOException("Cannot delete " + logFile);
+        if (logFile.exists())
+            if (!logFile.delete())
+                throw new IOException("Cannot delete " + logFile);
     }
     
     private synchronized void enterReader() {

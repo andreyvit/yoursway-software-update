@@ -85,15 +85,21 @@ public class UpdatePreferencesComposite extends Composite {
         throw new AssertionError("No radio button is selected");
     }
     
-    public void reportLastUpdate(Date date) {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    public void reportLastCheck(Date date) {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         hideSpinner();
-        label.setText("Last updated at " + dateFormat.format(date));
+        label.setText("Last check at " + dateFormat.format(date));
     }
     
-    public void reportNoUpdatesFound() {
+    public void reportLastFailedCheck(Date date) {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         hideSpinner();
-        label.setText("No updates found.");
+        label.setText("Last failed check at " + dateFormat.format(date));
+    }
+
+    public void reportNeverChecked() {
+        hideSpinner();
+        label.setText("");
     }
     
     public void reportChecking() {
@@ -125,7 +131,7 @@ public class UpdatePreferencesComposite extends Composite {
         label = new Link(buttonAndLabel, SWT.NONE);
         label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
                 .create());
-        label.setText("Last check 5 hours ago");
+//        label.setText("Last check 5 hours ago");
         
         GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(buttonAndLabel);
         
@@ -136,7 +142,7 @@ public class UpdatePreferencesComposite extends Composite {
         actionLabel = new Link(progressComposite, SWT.NONE);
         actionLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
                 .span(2, 1).create());
-        actionLabel.setText("Downloading updates...");
+//        actionLabel.setText("Downloading updates...");
         
         progressBar = new ProgressBar(progressComposite, SWT.NONE);
         progressBar.setSelection(20);

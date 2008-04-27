@@ -1,5 +1,6 @@
 package com.yoursway.autoupdate.core.glue.persister;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -92,14 +93,16 @@ public class Persister {
         try {
             return doRead();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace(System.err);
             return doTrashAndRetryRead();
         } catch (IOException e) {
+            e.printStackTrace(System.err);
             return doTrashAndRetryRead();
         }
     }
     
     private Object doRead() throws IOException, ClassNotFoundException {
-        InputStream in = storage.openRead();
+        InputStream in = new BufferedInputStream(storage.openRead());
         try {
             in.mark(1);
             if (-1 == in.read())

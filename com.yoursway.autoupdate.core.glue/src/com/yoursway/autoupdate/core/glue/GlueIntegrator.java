@@ -1,5 +1,6 @@
 package com.yoursway.autoupdate.core.glue;
 
+import com.yoursway.autoupdate.core.glue.state.overall.Attempt;
 import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 
 public interface GlueIntegrator {
@@ -15,5 +16,7 @@ public interface GlueIntegrator {
     void checkForUpdates();
 
     boolean isCheckingForUpdates();
+
+    Attempt getLastCheckAttemp();
     
 }

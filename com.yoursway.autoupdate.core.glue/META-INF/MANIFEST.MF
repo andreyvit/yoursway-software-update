@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.autoupdate.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Eclipse-BuddyPolicy: dependent
 Export-Package: com.yoursway.autoupdate.core.glue,
  com.yoursway.autoupdate.core.glue.ext,
  com.yoursway.autoupdate.core.glue.internal,

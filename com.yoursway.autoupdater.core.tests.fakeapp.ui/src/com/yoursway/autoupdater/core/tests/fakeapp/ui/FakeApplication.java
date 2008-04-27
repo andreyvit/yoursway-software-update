@@ -48,12 +48,12 @@ public class FakeApplication implements IApplication {
         GlueIntegrator glue = new GlueIntegratorImpl(new SystemClock(), new FakeCheckEngine(), executor,
                 new SwtRelativeScheduler(display), storage);
         
-        GlueToUiBinding binding = new GlueToUiBinding(glue);
+        GlueToPreferences glueToPreferences = new GlueToPreferences(glue);
+        new GlueToDialog(glue, Activator.getDefault().getDialogSettings());
         
         final Shell shell = new Shell(display, SWT.DIALOG_TRIM);
         final UpdatePreferencesComposite prefs = new UpdatePreferencesComposite(shell, SWT.NONE);
-        binding.hook(prefs);
-        prefs.setSchedule(schedule);
+        glueToPreferences.hook(prefs);
 //        prefs.setCallback(new UpdatePreferencesCallback() {
 //            
 //            public void checkNow() {
@@ -85,6 +85,7 @@ public class FakeApplication implements IApplication {
         GridLayoutFactory.swtDefaults().generateLayout(shell);
         
         shell.setSize(500, 300);
+        DialogUtils.centerWindow(shell);
         shell.open();
         
         while (!shell.isDisposed())
