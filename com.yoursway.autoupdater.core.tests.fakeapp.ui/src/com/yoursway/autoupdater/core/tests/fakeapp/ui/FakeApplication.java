@@ -1,7 +1,5 @@
 package com.yoursway.autoupdater.core.tests.fakeapp.ui;
 
-import static com.yoursway.autoupdate.core.glue.state.schedule.Schedule.DAILY;
-
 import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.SynchronousQueue;
@@ -20,10 +18,7 @@ import com.yoursway.autoupdate.core.glue.GlueIntegrator;
 import com.yoursway.autoupdate.core.glue.GlueIntegratorImpl;
 import com.yoursway.autoupdate.core.glue.persister.Storage;
 import com.yoursway.autoupdate.core.glue.persister.TransactionalStorage;
-import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 import com.yoursway.autoupdate.ui.DialogUtils;
-import com.yoursway.autoupdate.ui.UpdateInformationDialog;
-import com.yoursway.autoupdate.ui.UpdatePreferencesCallback;
 import com.yoursway.autoupdate.ui.UpdatePreferencesComposite;
 import com.yoursway.autoupdater.core.tests.fakeapp.ui.internal.Activator;
 
@@ -38,11 +33,7 @@ public class FakeApplication implements IApplication {
         Storage storage = new TransactionalStorage(new File(stateDir, "state.bin"), new File(stateDir,
                 "state.upd"));
         
-        Activator.getDefault().getPreferenceStore().setDefault(UPDATE_SCHEDULE_PREF, DAILY.toString());
-        String scheduleName = Activator.getDefault().getPreferenceStore().getString(UPDATE_SCHEDULE_PREF);
-        Schedule schedule = Schedule.valueOf(scheduleName);
-        
-        Executor executor = new ThreadPoolExecutor(1, 1, 10000, TimeUnit.MILLISECONDS,
+        Executor executor = new ThreadPoolExecutor(0, 1, 10000, TimeUnit.MILLISECONDS,
                 new SynchronousQueue<Runnable>());
         
         GlueIntegrator glue = new GlueIntegratorImpl(new SystemClock(), new FakeCheckEngine(), executor,
