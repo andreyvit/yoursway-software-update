@@ -14,7 +14,11 @@ public enum Mode {
         public boolean canStartManualCheckingForUpdates() {
             return true;
         }
-        
+
+        public boolean isTemporary() {
+            return false;
+        }
+
     },
     
     NO_UPDATES {
@@ -22,7 +26,11 @@ public enum Mode {
         public boolean canStartAutomaticCheckingForUpdates() {
             return true;
         }
-        
+
+        public boolean isTemporary() {
+            return false;
+        }
+
     },
     
     MANUAL_CHECK {
@@ -85,6 +93,10 @@ public enum Mode {
     
     public boolean isExpectingUpdateCheckResult() {
         return false;
+    }
+
+    public boolean isTemporary() {
+        return true;
     }
    
 }

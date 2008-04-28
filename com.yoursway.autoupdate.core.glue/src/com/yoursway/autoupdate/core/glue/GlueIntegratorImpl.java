@@ -50,6 +50,10 @@ public class GlueIntegratorImpl implements GlueIntegrator, OverallStateListener,
                 
             });
             state = (StateImpl) persister.state();
+            
+            if (state.overallState().state() == Mode.UPDATING)
+                doCleanupAfterUpdating();
+            
             timing = new UpdateTimingConfigurationImpl(state.overallState(), state.scheduleState());
             scheduler = new RelativeToAbsoluteScheduler(relativeScheduler, clock);
             AutomaticUpdatesScheduler automatic = new AutomaticUpdatesScheduler(scheduler, timing, state.overallState());
@@ -67,6 +71,10 @@ public class GlueIntegratorImpl implements GlueIntegrator, OverallStateListener,
         }
     }
     
+    private void doCleanupAfterUpdating() {
+        // TODO Auto-generated method stub
+    }
+
     public synchronized void addListener(GlueIntegratorListener listener) {
         listeners.add(listener);
     }

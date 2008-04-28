@@ -60,6 +60,8 @@ public class OverallStateImpl implements OverallState, Serializable, Cloneable {
             firstRunTime = startUpTime;
         if (mode.isExpectingUpdateCheckResult())
             finishedCheckingForUpdates(startUpTime, new ShutdownOccuredCheckResult());
+        if (mode.isTemporary())
+            mode = Mode.NO_UPDATES;
     }
     
     public synchronized boolean startCheckingForUpdatesManually(long now) {
