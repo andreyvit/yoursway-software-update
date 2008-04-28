@@ -15,6 +15,8 @@ public interface OverallState {
     boolean startCheckingForUpdatesAutomatically(long now);
     
     void finishedCheckingForUpdates(long now, CheckResult result);
+    
+    void startInstallation(long now);
 
     long startUpTime();
 

@@ -3,6 +3,7 @@ package com.yoursway.autoupdate.ui;
 import static com.google.common.collect.Maps.immutableBiMap;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -106,7 +107,13 @@ public class UpdatePreferencesComposite extends Composite {
         showSpinner();
         label.setText("Checking for updates...");
     }
-    
+
+    public void reportInstalling(int progress) {
+        showSpinner();
+        label.setText("Installing updates...");
+        actionLabel.setText(format("%d%% done", progress));
+    }
+
     private void createContent(Composite parent) {
         checkDaily = new Button(parent, SWT.RADIO);
         checkDaily.setText("Check for updates daily");

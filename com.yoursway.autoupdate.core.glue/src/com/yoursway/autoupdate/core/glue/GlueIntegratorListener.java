@@ -7,5 +7,7 @@ public interface GlueIntegratorListener {
     void startedOrStoppedCheckingForUpdates();
 
     void askUserDecision(ProposedUpdate undecidedUpdate);
+
+    void startedOrStoppedInstalling();
     
 }

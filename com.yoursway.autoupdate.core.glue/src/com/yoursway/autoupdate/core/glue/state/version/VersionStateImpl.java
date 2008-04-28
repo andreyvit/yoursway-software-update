@@ -44,17 +44,21 @@ public class VersionStateImpl {
         fireChanged(now);
     }
     
-    public synchronized void skip(long now) {
+    public synchronized void skip(ProposedUpdate updateToSkip, long now) {
         if (update == null)
             throw new IllegalStateException("No update");
+        if (update != updateToSkip)
+            return; // silently ignore
         if (!decision.canSkipOrPostpone())
             throw new IllegalStateException("Invalid decision: " + decision);
         setDecision(now, SKIPPED);
     }
     
-    public synchronized void postpone(long now) {
+    public synchronized void postpone(ProposedUpdate updateToPostpone, long now) {
         if (update == null)
             throw new IllegalStateException("No update");
+        if (update != updateToPostpone)
+            return; // silently ignore
         if (!decision.canSkipOrPostpone())
             throw new IllegalStateException("Invalid decision: " + decision);
         setDecision(now, POSTPONED);
@@ -68,10 +72,13 @@ public class VersionStateImpl {
         fireChanged(now);
     }
     
-    public synchronized void install(long now) {
+    public synchronized boolean install(ProposedUpdate updateToInstall, long now) {
         if (update == null)
             throw new IllegalStateException("No update");
+        if (update != updateToInstall)
+            return false;
         setDecision(now, INSTALLING);
+        return true;
     }
     
     public synchronized void installationFailed(long now) {

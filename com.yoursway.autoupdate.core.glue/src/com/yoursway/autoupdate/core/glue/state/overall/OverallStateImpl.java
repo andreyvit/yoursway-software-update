@@ -142,5 +142,10 @@ public class OverallStateImpl implements OverallState, Serializable, Cloneable {
             throw new AssertionError(e);
         }
     }
+
+    public synchronized void startInstallation(long now) {
+        this.mode = Mode.UPDATING;
+        notifyStateChanged(now);
+    }
     
 }

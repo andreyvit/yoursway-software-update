@@ -9,6 +9,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,7 +24,7 @@ import com.yoursway.autoupdate.core.ProposedUpdate;
 
 public class UpdateInformationDialog extends Dialog {
     
-    private static final int UPDATE_ID = IDialogConstants.OK_ID;
+    private static final int UPDATE_ID = IDialogConstants.CLIENT_ID + 0;
     
     private static final int LATER_ID = IDialogConstants.CLIENT_ID + 1;
     
@@ -34,13 +38,22 @@ public class UpdateInformationDialog extends Dialog {
     
     private Browser browser;
     
+    UpdateInformationDialogCallback callback;
+    
     public UpdateInformationDialog(Shell parentShell, IDialogSettings dialogSettings) {
         super(parentShell);
+        if (dialogSettings == null)
+            throw new NullPointerException("dialogSettings is null");
         this.dialogSettings = dialogSettings;
         createContent(getShell());
-        // without SWT.APPLICATION_MODAL
-        // | SWT.MAX | SWT.RESIZE
+        // without SWT.APPLICATION_MODAL | SWT.MAX | SWT.RESIZE
         setShellStyle(SWT.DIALOG_TRIM | getDefaultOrientation());
+    }
+    
+    public void setCallback(UpdateInformationDialogCallback callback) {
+        if (callback == null)
+            throw new NullPointerException("callback is null");
+        this.callback = callback;
     }
     
     @Override
@@ -51,6 +64,14 @@ public class UpdateInformationDialog extends Dialog {
     @Override
     protected void configureShell(Shell newShell) {
         newShell.setText("Updates found");
+        newShell.addShellListener(new ShellAdapter() {
+
+            public void shellClosed(ShellEvent e) {
+                // note: this is not called when Window.close() is called
+                callback.postpone();
+            }
+
+        });
         super.configureShell(newShell);
     }
     
@@ -94,10 +115,31 @@ public class UpdateInformationDialog extends Dialog {
     
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, LATER_ID, "Remind &Later", false);
-        createButton(parent, SKIP_ID, "&Skip This Version", false);
+        createButton(parent, LATER_ID, "Remind &Later", false).addSelectionListener(new SelectionAdapter() {
+            
+            public void widgetSelected(SelectionEvent e) {
+                callback.postpone();
+                close();
+            }
+            
+        });
+        createButton(parent, SKIP_ID, "&Skip This Version", false).addSelectionListener(new SelectionAdapter() {
+            
+            public void widgetSelected(SelectionEvent e) {
+                callback.skip();
+                close();
+            }
+            
+        });;
         createSpacer(parent);
-        createButton(parent, UPDATE_ID, "&Update Now", true);
+        createButton(parent, UPDATE_ID, "&Update Now", true).addSelectionListener(new SelectionAdapter() {
+            
+            public void widgetSelected(SelectionEvent e) {
+                callback.install();
+                close();
+            }
+            
+        });
     }
     
     private void createSpacer(Composite parent) {

@@ -43,16 +43,24 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
         updateWorkIndicator();
     }
     
+    public void startedOrStoppedInstalling() {
+        updateWorkIndicator();
+    }
+    
     private synchronized void updateWorkIndicator() {
         if (updatePreferences != null) {
             final boolean isChecking = integrator.isCheckingForUpdates();
+            final boolean isInstalling = integrator.isInstallingUpdates();
+            final int updateProgress = (isInstalling ? integrator.updatesInstallationProgress() : 0);
             final UpdatePreferencesComposite composite = updatePreferences;
             Runnable runnable = new Runnable() {
                 
                 public void run() {
                     if (isChecking)
                         composite.reportChecking();
-                    else {
+                    else if (isInstalling) {
+                        composite.reportInstalling(updateProgress);
+                    } else {
                         Attempt attempt = integrator.getLastCheckAttemp();
                         if (!attempt.exists())
                             composite.reportNeverChecked();
