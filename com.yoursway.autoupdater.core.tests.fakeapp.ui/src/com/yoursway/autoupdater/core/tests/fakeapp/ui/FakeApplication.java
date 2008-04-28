@@ -19,8 +19,14 @@ import com.yoursway.autoupdate.core.glue.GlueIntegratorImpl;
 import com.yoursway.autoupdate.core.glue.persister.Storage;
 import com.yoursway.autoupdate.core.glue.persister.TransactionalStorage;
 import com.yoursway.autoupdate.ui.DialogUtils;
+import com.yoursway.autoupdate.ui.GlueToDialog;
+import com.yoursway.autoupdate.ui.GlueToPreferences;
+import com.yoursway.autoupdate.ui.SwtRelativeScheduler;
+import com.yoursway.autoupdate.ui.SystemClock;
 import com.yoursway.autoupdate.ui.UpdatePreferencesComposite;
 import com.yoursway.autoupdater.core.tests.fakeapp.ui.internal.Activator;
+import com.yoursway.autoupdater.fake.FakeCheckEngine;
+import com.yoursway.autoupdater.fake.FakeUpdateEngine;
 
 public class FakeApplication implements IApplication {
     

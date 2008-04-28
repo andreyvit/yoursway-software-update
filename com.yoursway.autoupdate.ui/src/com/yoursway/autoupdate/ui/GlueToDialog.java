@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdate.ui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Display;
@@ -6,9 +6,6 @@ import org.eclipse.swt.widgets.Display;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.glue.GlueIntegrator;
 import com.yoursway.autoupdate.core.glue.GlueIntegratorListener;
-import com.yoursway.autoupdate.ui.DialogUtils;
-import com.yoursway.autoupdate.ui.UpdateInformationDialog;
-import com.yoursway.autoupdate.ui.UpdateInformationDialogCallback;
 
 public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDialogCallback {
     

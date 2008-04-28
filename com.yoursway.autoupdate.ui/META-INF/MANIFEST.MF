@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.ui,
  com.yoursway.autoupdate.core.glue;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.yoursway.autoupdate.ui
+Export-Package: com.yoursway.autoupdate.ui,
+ com.yoursway.autoupdater.fake

@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdate.ui;
 
 import java.util.Date;
 
@@ -10,10 +10,9 @@ import com.yoursway.autoupdate.core.glue.GlueIntegrator;
 import com.yoursway.autoupdate.core.glue.GlueIntegratorListener;
 import com.yoursway.autoupdate.core.glue.state.overall.Attempt;
 import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
-import com.yoursway.autoupdate.ui.UpdatePreferencesCallback;
-import com.yoursway.autoupdate.ui.UpdatePreferencesComposite;
 
-public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferencesCallback, InstallationProgressMonitor {
+public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferencesCallback,
+        InstallationProgressMonitor {
     
     private final GlueIntegrator integrator;
     private UpdatePreferencesComposite updatePreferences;
@@ -53,7 +52,13 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
     }
     
     public void startedOrStoppedInstalling() {
-        updateWorkIndicator();
+        if (integrator.isInstallingUpdates())
+            showPreferencesComposite();
+        else
+            updateWorkIndicator();
+    }
+    
+    protected void showPreferencesComposite() {
     }
     
     private synchronized void updateWorkIndicator() {
@@ -93,28 +98,37 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
         display.asyncExec(new Runnable() {
             
             public void run() {
-                updatePreferences.reportStartingInstallation();
+                synchronized (GlueToPreferences.this) {
+                    if (updatePreferences != null)
+                        updatePreferences.reportStartingInstallation();
+                }
             }
             
         });
     }
-
+    
     public synchronized void downloading(final long totalBytes) {
         this.totalBytes = totalBytes;
         display.asyncExec(new Runnable() {
             
             public void run() {
-                updatePreferences.reportDownloadingUpdates(0, totalBytes);
+                synchronized (GlueToPreferences.this) {
+                    if (updatePreferences != null)
+                        updatePreferences.reportDownloadingUpdates(0, totalBytes);
+                }
             }
             
         });
     }
-
+    
     public synchronized void downloadingProgress(final long bytesDone) {
         display.asyncExec(new Runnable() {
             
             public void run() {
-                updatePreferences.reportDownloadingUpdates(bytesDone, totalBytes);
+                synchronized (GlueToPreferences.this) {
+                    if (updatePreferences != null)
+                        updatePreferences.reportDownloadingUpdates(bytesDone, totalBytes);
+                }
             }
             
         });
@@ -124,17 +138,23 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
         display.asyncExec(new Runnable() {
             
             public void run() {
-                updatePreferences.reportInstallingUpdates();
+                synchronized (GlueToPreferences.this) {
+                    if (updatePreferences != null)
+                        updatePreferences.reportInstallingUpdates();
+                }
             }
             
         });
     }
-
+    
     public synchronized void finishing() {
         display.asyncExec(new Runnable() {
             
             public void run() {
-                updatePreferences.reportFinishingInstallation();
+                synchronized (GlueToPreferences.this) {
+                    if (updatePreferences != null)
+                        updatePreferences.reportFinishingInstallation();
+                }
             }
             
         });

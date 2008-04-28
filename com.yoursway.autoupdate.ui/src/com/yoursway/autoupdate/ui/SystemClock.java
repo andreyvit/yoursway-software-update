@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdate.ui;
 
 import com.yoursway.autoupdate.core.glue.ext.Clock;
 

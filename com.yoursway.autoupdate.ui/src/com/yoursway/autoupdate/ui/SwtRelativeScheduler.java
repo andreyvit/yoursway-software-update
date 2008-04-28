@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdate.ui;
 
 import org.eclipse.swt.widgets.Display;
 

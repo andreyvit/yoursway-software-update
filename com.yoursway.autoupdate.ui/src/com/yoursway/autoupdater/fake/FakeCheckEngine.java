@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdater.fake;
 
 import com.yoursway.autoupdate.core.CheckEngine;
 import com.yoursway.autoupdate.core.VersionDescription;
@@ -10,7 +10,7 @@ public class FakeCheckEngine implements CheckEngine {
     
     public CheckResult checkForUpdates() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
         //        return new NoUpdatesCheckResult();

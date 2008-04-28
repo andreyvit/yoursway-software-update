@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdater.fake;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.core.tests.fakeapp.ui;
+package com.yoursway.autoupdater.fake;
 
 import com.yoursway.autoupdate.core.InstallationProgressMonitor;
 import com.yoursway.autoupdate.core.ProposedUpdate;
