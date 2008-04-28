@@ -8,6 +8,7 @@ import com.yoursway.autoupdate.core.CheckEngine;
 import com.yoursway.autoupdate.core.InstallationProgressMonitor;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.UpdateEngine;
+import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.glue.ext.Clock;
 import com.yoursway.autoupdate.core.glue.persister.PersistentState;
 import com.yoursway.autoupdate.core.glue.persister.Persister;
@@ -34,10 +35,12 @@ public class GlueIntegratorImpl implements GlueIntegrator, OverallStateListener,
     
     private transient Listeners<GlueIntegratorListener> listeners = newListenersByIdentity();
     private UpdateController update;
+    private final CheckEngine checkEngine;
     
     public GlueIntegratorImpl(Clock clock, CheckEngine checkEngine, UpdateEngine updateEngine,
             Executor backgroundExecutor, RelativeScheduler relativeScheduler, Storage storage) {
         this.clock = clock;
+        this.checkEngine = checkEngine;
         try {
             persister = new Persister(storage, relativeScheduler, new StateFactory() {
                 
@@ -139,6 +142,10 @@ public class GlueIntegratorImpl implements GlueIntegrator, OverallStateListener,
 
     public void addInstallationProgressMonitor(InstallationProgressMonitor monitor) {
         update.addMonitor(monitor);
+    }
+
+    public VersionDescription currentVersion() {
+        return checkEngine.currentVersion();
     }
     
 }

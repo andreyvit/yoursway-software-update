@@ -1,12 +1,10 @@
 package com.yoursway.autoupdate.core;
 
-import com.yoursway.autoupdate.core.versions.Version;
 import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
-
 public class ProposedUpdateImpl implements ProposedUpdate {
 
-    private final VersionDefinition currentDef;
-    private final VersionDefinition freshDef;
+    final VersionDefinition currentDef;
+    final VersionDefinition freshDef;
 
     public ProposedUpdateImpl(VersionDefinition currentDef, VersionDefinition freshDef) {
         if (currentDef == null)
@@ -21,12 +19,8 @@ public class ProposedUpdateImpl implements ProposedUpdate {
         return currentDef.changesDescription();
     }
 
-    public Version targetVersion() {
-        return freshDef.version();
-    }
-
-    public String targetVersionDisplayName() {
-        return freshDef.displayName();
+    public VersionDescription targetVersion() {
+        return freshDef;
     }
     
 }

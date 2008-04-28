@@ -6,4 +6,6 @@ public interface UpdateEngine {
 
     void cleanUpPreviousUpdate(InstallationProgressMonitor progressMonitor);
     
+    boolean checkIfCleanupIsNeeded();
+    
 }

@@ -244,7 +244,7 @@ public class UpdatePreferencesComposite extends Composite {
     public void reportDownloadingUpdates(long doneBytes, long totalBytes) {
         label.setText("Downloading updates...");
         progressBar.setSelection((int) (doneBytes * 100 / totalBytes));
-        actionLabel.setText(format("%d bytes remaining", totalBytes - doneBytes));
+        actionLabel.setText(format("%,d KB remaining", (totalBytes - doneBytes + 1023) / 1024));
         showSpinner();
         showProgress();
     }

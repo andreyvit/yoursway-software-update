@@ -24,8 +24,6 @@ import com.yoursway.autoupdater.core.tests.fakeapp.ui.internal.Activator;
 
 public class FakeApplication implements IApplication {
     
-    private final static String UPDATE_SCHEDULE_PREF = "update.schedule";
-    
     public Object start(IApplicationContext context) throws Exception {
         Display display = new Display();
         
@@ -42,36 +40,10 @@ public class FakeApplication implements IApplication {
         GlueToPreferences glueToPreferences = new GlueToPreferences(glue, display);
         new GlueToDialog(glue, Activator.getDefault().getDialogSettings());
         
-        final Shell shell = new Shell(display, SWT.DIALOG_TRIM);
-        final UpdatePreferencesComposite prefs = new UpdatePreferencesComposite(shell, SWT.NONE);
+        Shell shell = new Shell(display, SWT.DIALOG_TRIM);
+        UpdatePreferencesComposite prefs = new UpdatePreferencesComposite(shell, SWT.NONE);
         glueToPreferences.hook(prefs);
-        //        prefs.setCallback(new UpdatePreferencesCallback() {
-        //            
-        //            public void checkNow() {
-        //                prefs.reportChecking();
-        //                Display.getDefault().timerExec(2000, new Runnable() {
-        //                    
-        //                    public void run() {
-        //                        prefs.reportNoUpdatesFound();
-        //                        
-        //                        UpdateInformationDialog dialog = new UpdateInformationDialog(shell, DialogUtils
-        //                                .lookup(Activator.getDefault().getDialogSettings(), "updateDialog"));
-        //                        dialog.setBlockOnOpen(false);
-        //                        dialog.open();
-        //                    }
-        //                    
-        //                });
-        //                
-        //            }
-        //            
-        //            public void setSchedule(Schedule schedule) {
-        //                Activator.getDefault().getPreferenceStore().setValue(UPDATE_SCHEDULE_PREF,
-        //                        schedule.toString());
-        //                Activator.getDefault().savePluginPreferences();
-        //            }
-        //            
-        //        });
-        //        
+        
         prefs.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
         GridLayoutFactory.swtDefaults().generateLayout(shell);
         

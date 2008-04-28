@@ -31,5 +31,9 @@ public class FakeUpdateEngine implements UpdateEngine {
         }
         progressMonitor.finished();
     }
+
+    public boolean checkIfCleanupIsNeeded() {
+        return false;
+    }
     
 }

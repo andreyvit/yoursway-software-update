@@ -6,6 +6,7 @@ package com.yoursway.autoupdater.core.tests.fakeapp.ui;
 import java.io.Serializable;
 
 import com.yoursway.autoupdate.core.ProposedUpdate;
+import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.versions.Version;
 
 public final class FakeProposedUpdate implements ProposedUpdate, Serializable {
@@ -25,11 +26,18 @@ public final class FakeProposedUpdate implements ProposedUpdate, Serializable {
         return changesDescription;
     }
     
-    public Version targetVersion() {
-        return new Version(versionName);
+    public VersionDescription targetVersion() {
+        return new VersionDescription() {
+
+            public String displayName() {
+                return versionDisplayName;
+            }
+
+            public Version version() {
+                return new Version(versionName);
+            }
+            
+        };
     }
     
-    public String targetVersionDisplayName() {
-        return versionDisplayName;
-    }
 }

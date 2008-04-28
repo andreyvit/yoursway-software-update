@@ -39,9 +39,7 @@ public class AutomaticUpdater {
     private static final String PROPERTY_TESTS_PING_URL = "updater.tests.ping.url";
     
     public static void checkForUpdates(Version currentVersion, URL defaultUrl) throws UpdatesFoundExit {
-        ApplicationInstallation install = new ApplicationInstallation(urlToFileWithProtocolCheck(Platform
-                .getInstallLocation().getURL()));
-        checkForUpdates(install, currentVersion, defaultUrl);
+        checkForUpdates(localInstallation(), currentVersion, defaultUrl);
     }
     
     public static CheckResult checkForUpdates1(Version currentVersion, URL updateUrl) {
@@ -69,8 +67,55 @@ public class AutomaticUpdater {
         }
     }
     
+    public static void doUpdate(ProposedUpdate update, InstallationProgressMonitor monitor)
+            throws UpdatesFoundExit {
+        doUpdate(localInstallation(), update, monitor);
+    }
+
+    private static ApplicationInstallation localInstallation() {
+        return new ApplicationInstallation(urlToFileWithProtocolCheck(Platform
+                .getInstallLocation().getURL()));
+    }
+    
+    public static void doUpdate(ApplicationInstallation install, ProposedUpdate update,
+            InstallationProgressMonitor monitor) throws UpdatesFoundExit {
+        try {
+            ProposedUpdateImpl updateImpl = (ProposedUpdateImpl) update;
+            VersionDefinition freshDef = updateImpl.freshDef;
+            
+            Collection<RemoteFile> freshFiles = freshDef.files();
+            
+            Collection<FileAction> actions = buildActions(install.getFileContainer(), freshFiles);
+            
+            RealExecutor42 executor = new RealExecutor42();
+            RealReplaceTester replaceTester = new RealReplaceTester();
+            RealExecutor9 executor9 = new RealExecutor9();
+            
+            UpdaterInfo updaterInfo = freshDef.updaterInfo();
+            UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
+                    .asCollection(), updaterInfo.files());
+            UpdatePlan plan = planBuilder.build();
+            try {
+                saveToFile(new StringInputStream(plan.toString()), new File("/tmp/plan.txt"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ExecutablePlan executablePlan = plan.instantiate(new UpdateRequest(install.root(), install
+                    .getFileContainer().allFiles(), actions, updaterInfo, executor9));
+            try {
+                executablePlan.execute(executor);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            
+            throw new UpdatesFoundExit(true);
+        } finally {
+        }
+    }
+    
     public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
-    throws UpdatesFoundExit {
+            throws UpdatesFoundExit {
         log("checkForUpdates is running for version " + currentVersion);
         if (!forcedUpdateCheckBecauseOfTests() && !shouldCheckForUpdates())
             return;

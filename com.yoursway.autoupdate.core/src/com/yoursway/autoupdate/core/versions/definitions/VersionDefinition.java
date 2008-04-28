@@ -10,10 +10,11 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.Assert;
 
+import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.versions.Version;
 import com.yoursway.utils.XmlWriter;
 
-public class VersionDefinition {
+public class VersionDefinition implements VersionDescription {
     
     private final RemoteFile[] files;
     private final Version version;

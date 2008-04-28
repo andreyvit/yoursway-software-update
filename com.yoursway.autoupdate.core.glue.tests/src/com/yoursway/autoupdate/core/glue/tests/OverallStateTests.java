@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.yoursway.autoupdate.core.ProposedUpdate;
+import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.checkres.CommunicationErrorCheckResult;
 import com.yoursway.autoupdate.core.checkres.InternalFailureCheckResult;
 import com.yoursway.autoupdate.core.checkres.NoUpdatesCheckResult;
@@ -120,14 +121,10 @@ public class OverallStateTests {
                 throw new UnsupportedOperationException();
             }
 
-            public Version targetVersion() {
+            public VersionDescription targetVersion() {
                 throw new UnsupportedOperationException();
             }
 
-            public String targetVersionDisplayName() {
-                throw new UnsupportedOperationException();
-            }
-            
         }));
         assertEquals(UPDATE_FOUND_ACTIONS_UNDECIDED, os.state());
         assertEquals(false, os.lastCheckAttempt().hasFailed());

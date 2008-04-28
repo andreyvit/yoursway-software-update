@@ -41,7 +41,7 @@ public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDi
             dialog.create();
             dialog.setBlockOnOpen(false);
         }
-        dialog.setContentsFrom(updateProposedInTheDialog);
+        dialog.setContentsFrom(integrator.currentVersion(), updateProposedInTheDialog);
         dialog.open();
     }
     

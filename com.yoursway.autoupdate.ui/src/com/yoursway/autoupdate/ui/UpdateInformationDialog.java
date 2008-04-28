@@ -14,7 +14,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -22,6 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import com.yoursway.autoupdate.core.ProposedUpdate;
+import com.yoursway.autoupdate.core.VersionDescription;
 
 public class UpdateInformationDialog extends Dialog {
     
@@ -66,12 +66,12 @@ public class UpdateInformationDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         newShell.setText("Updates found");
         newShell.addShellListener(new ShellAdapter() {
-
+            
             public void shellClosed(ShellEvent e) {
                 // note: this is not called when Window.close() is called
                 callback.postpone();
             }
-
+            
         });
         super.configureShell(newShell);
     }
@@ -100,9 +100,10 @@ public class UpdateInformationDialog extends Dialog {
         return composite;
     }
     
-    public void setContentsFrom(ProposedUpdate update) {
-        title.setText(format("An updated version %s has been found. The changes are:", update
-                .targetVersionDisplayName()));
+    public void setContentsFrom(VersionDescription current, ProposedUpdate update) {
+        title.setText(format(
+                "An updated version %s has been found (%s is installed currently). The changes are:",
+                update.targetVersion().displayName(), current.displayName()));
         browser.setText(update.changesDescription());
     }
     
@@ -124,14 +125,16 @@ public class UpdateInformationDialog extends Dialog {
             }
             
         });
-        createButton(parent, SKIP_ID, "&Skip This Version", false).addSelectionListener(new SelectionAdapter() {
-            
-            public void widgetSelected(SelectionEvent e) {
-                callback.skip();
-                close();
-            }
-            
-        });;
+        createButton(parent, SKIP_ID, "&Skip This Version", false).addSelectionListener(
+                new SelectionAdapter() {
+                    
+                    public void widgetSelected(SelectionEvent e) {
+                        callback.skip();
+                        close();
+                    }
+                    
+                });
+        ;
         createSpacer(parent);
         createButton(parent, UPDATE_ID, "&Update Now", true).addSelectionListener(new SelectionAdapter() {
             
