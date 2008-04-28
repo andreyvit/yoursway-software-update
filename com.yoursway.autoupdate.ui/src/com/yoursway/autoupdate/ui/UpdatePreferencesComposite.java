@@ -35,6 +35,7 @@ public class UpdatePreferencesComposite extends Composite {
     private Composite buttonAndLabel;
     private BiMap<Schedule, Button> schedulesToRadios;
     private Boolean spinnerShown;
+    private Boolean progressShown;
     private UpdatePreferencesCallback callback;
     private Composite progressComposite;
     private ProgressBar progressBar;
@@ -89,27 +90,32 @@ public class UpdatePreferencesComposite extends Composite {
     public void reportLastCheck(Date date) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         hideSpinner();
+        hideProgress();
         label.setText("Last check at " + dateFormat.format(date));
     }
     
     public void reportLastFailedCheck(Date date) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         hideSpinner();
+        hideProgress();
         label.setText("Last failed check at " + dateFormat.format(date));
     }
 
     public void reportNeverChecked() {
         hideSpinner();
+        hideProgress();
         label.setText("");
     }
     
     public void reportChecking() {
         showSpinner();
+        hideProgress();
         label.setText("Checking for updates...");
     }
 
     public void reportInstalling(int progress) {
         showSpinner();
+        showProgress();
         label.setText("Installing updates...");
         actionLabel.setText(format("%d%% done", progress));
     }
@@ -132,7 +138,6 @@ public class UpdatePreferencesComposite extends Composite {
         checkNow.setText("Check Now");
         
         spinner = new SpinnerControl(buttonAndLabel, SWT.NONE);
-        hideSpinner();
         spinner.setDelayOverrideMs(100);
         
         label = new Link(buttonAndLabel, SWT.NONE);
@@ -158,6 +163,7 @@ public class UpdatePreferencesComposite extends Composite {
         
         stopUpdate = new Button(progressComposite, SWT.PUSH);
         stopUpdate.setText("Stop");
+        stopUpdate.setEnabled(false);
         
         GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).margins(10, 0).generateLayout(
                 progressComposite);
@@ -165,6 +171,9 @@ public class UpdatePreferencesComposite extends Composite {
         ((GridData) stopUpdate.getLayoutData()).horizontalIndent = 5;
         
         GridLayoutFactory.swtDefaults().generateLayout(parent);
+        
+        hideSpinner();
+        hideProgress();
     }
     
     private void hideSpinner() {
@@ -185,6 +194,20 @@ public class UpdatePreferencesComposite extends Composite {
         checkNow.setEnabled(false);
         buttonAndLabel.layout();
         spinnerShown = TRUE;
+    }
+    
+    private void hideProgress() {
+        if (FALSE == progressShown)
+            return;
+        progressComposite.setVisible(false);
+        progressShown = FALSE;
+    }
+    
+    private void showProgress() {
+        if (TRUE == progressShown)
+            return;
+        progressComposite.setVisible(true);
+        progressShown = TRUE;
     }
     
 }
