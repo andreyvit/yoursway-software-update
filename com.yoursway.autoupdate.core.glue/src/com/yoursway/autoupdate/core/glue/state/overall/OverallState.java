@@ -17,11 +17,15 @@ public interface OverallState {
     void finishedCheckingForUpdates(long now, CheckResult result);
     
     void startInstallation(long now);
+    
+    void installationFinished(long now);
 
     long startUpTime();
 
     Attempt lastCheckAttempt();
 
     Mode state();
+
+    void finishingInstallation(long now);
     
 }

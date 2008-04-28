@@ -36,7 +36,7 @@ public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDi
     }
     
     synchronized void createAndShowDialog() {
-        if (dialog == null || dialog.getShell().isDisposed()) {
+        if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed()) {
             dialog = dialogFactory.createDialog();
             dialog.create();
             dialog.setBlockOnOpen(false);
@@ -44,7 +44,7 @@ public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDi
         dialog.setContentsFrom(updateProposedInTheDialog);
         dialog.open();
     }
-
+    
     static class DialogFactory {
         
         private IDialogSettings settings;
@@ -80,7 +80,7 @@ public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDi
     
     public void startedOrStoppedCheckingForUpdates() {
     }
-
+    
     public void startedOrStoppedInstalling() {
     }
     

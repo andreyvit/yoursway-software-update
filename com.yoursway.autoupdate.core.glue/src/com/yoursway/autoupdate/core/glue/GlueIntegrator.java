@@ -1,5 +1,6 @@
 package com.yoursway.autoupdate.core.glue;
 
+import com.yoursway.autoupdate.core.InstallationProgressMonitor;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.glue.state.overall.Attempt;
 import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
@@ -28,6 +29,6 @@ public interface GlueIntegrator {
 
     boolean isInstallingUpdates();
 
-    int updatesInstallationProgress();
+    void addInstallationProgressMonitor(InstallationProgressMonitor monitor);
     
 }

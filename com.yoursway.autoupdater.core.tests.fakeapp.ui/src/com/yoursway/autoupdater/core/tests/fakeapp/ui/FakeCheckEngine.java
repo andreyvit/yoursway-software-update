@@ -14,7 +14,7 @@ public class FakeCheckEngine implements CheckEngine {
         //        return new NoUpdatesCheckResult();
         return new UpdateFoundCheckResult(new FakeProposedUpdate("0.2-mac", "0.2", "<h1>Version 0.2</h1>\n"
                 + "<p>Everything has been thrown away and rewritten from scratch.</p>\n"
-                + "<p>Major improvements:\n" + "<ul>" + "<li>Debugging, breakpoints etc</li>"
+                + "<p>Major improvements:\n" + "<ul>" + "<li>ÄÄDebugging, breakpoints etc</li>"
                 + "<li>Step Into / Step Over" + "<li>Automatic Updater included" + "</ul>"));
     }
     

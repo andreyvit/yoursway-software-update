@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.eclipse.swt.widgets.Display;
 
+import com.yoursway.autoupdate.core.InstallationProgressMonitor;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.glue.GlueIntegrator;
 import com.yoursway.autoupdate.core.glue.GlueIntegratorListener;
@@ -12,14 +13,22 @@ import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 import com.yoursway.autoupdate.ui.UpdatePreferencesCallback;
 import com.yoursway.autoupdate.ui.UpdatePreferencesComposite;
 
-public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferencesCallback {
+public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferencesCallback, InstallationProgressMonitor {
     
     private final GlueIntegrator integrator;
     private UpdatePreferencesComposite updatePreferences;
+    private final Display display;
+    private long totalBytes;
     
-    public GlueToPreferences(GlueIntegrator integrator) {
+    public GlueToPreferences(GlueIntegrator integrator, Display display) {
+        if (integrator == null)
+            throw new NullPointerException("integrator is null");
+        if (display == null)
+            throw new NullPointerException("display is null");
         this.integrator = integrator;
+        this.display = display;
         integrator.addListener(this);
+        integrator.addInstallationProgressMonitor(this);
     }
     
     public synchronized void hook(UpdatePreferencesComposite composite) {
@@ -49,30 +58,26 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
     
     private synchronized void updateWorkIndicator() {
         if (updatePreferences != null) {
+            if (integrator.isInstallingUpdates())
+                return;
             final boolean isChecking = integrator.isCheckingForUpdates();
-            final boolean isInstalling = integrator.isInstallingUpdates();
-            final int updateProgress = (isInstalling ? integrator.updatesInstallationProgress() : 0);
-            final UpdatePreferencesComposite composite = updatePreferences;
-            Runnable runnable = new Runnable() {
+            display.asyncExec(new Runnable() {
                 
                 public void run() {
                     if (isChecking)
-                        composite.reportChecking();
-                    else if (isInstalling) {
-                        composite.reportInstalling(updateProgress);
-                    } else {
+                        updatePreferences.reportChecking();
+                    else {
                         Attempt attempt = integrator.getLastCheckAttemp();
                         if (!attempt.exists())
-                            composite.reportNeverChecked();
+                            updatePreferences.reportNeverChecked();
                         else if (attempt.hasFailed())
-                            composite.reportLastFailedCheck(new Date(attempt.time()));
+                            updatePreferences.reportLastFailedCheck(new Date(attempt.time()));
                         else
-                            composite.reportLastCheck(new Date(attempt.time()));
+                            updatePreferences.reportLastCheck(new Date(attempt.time()));
                     }
                 }
                 
-            };
-            Display.getDefault().asyncExec(runnable);
+            });
         }
     }
     
@@ -82,6 +87,60 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
     
     public void setSchedule(Schedule schedule) {
         integrator.setSchedule(schedule);
+    }
+    
+    public synchronized void starting() {
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                updatePreferences.reportStartingInstallation();
+            }
+            
+        });
+    }
+
+    public synchronized void downloading(final long totalBytes) {
+        this.totalBytes = totalBytes;
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                updatePreferences.reportDownloadingUpdates(0, totalBytes);
+            }
+            
+        });
+    }
+
+    public synchronized void downloadingProgress(final long bytesDone) {
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                updatePreferences.reportDownloadingUpdates(bytesDone, totalBytes);
+            }
+            
+        });
+    }
+    
+    public synchronized void installing() {
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                updatePreferences.reportInstallingUpdates();
+            }
+            
+        });
+    }
+
+    public synchronized void finishing() {
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                updatePreferences.reportFinishingInstallation();
+            }
+            
+        });
+    }
+    
+    public synchronized void finished() {
     }
     
 }

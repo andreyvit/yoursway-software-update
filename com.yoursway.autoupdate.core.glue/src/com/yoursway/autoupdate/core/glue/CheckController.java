@@ -1,11 +1,8 @@
 package com.yoursway.autoupdate.core.glue;
 
-import java.util.concurrent.Executor;
-
 import com.yoursway.autoupdate.core.CheckEngine;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.checkres.CheckResult;
-import com.yoursway.autoupdate.core.glue.ext.Clock;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallState;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallStateListener;
 import com.yoursway.autoupdate.core.glue.state.version.VersionStateImpl;
@@ -20,18 +17,14 @@ public class CheckController implements OverallStateListener {
     
     private final CheckEngine checkEngine;
     
-    private final Clock clock;
+    private final ExecutorWithTime executor;
     
-    private final Executor executor;
-    
-    public CheckController(CheckEngine checkEngine, Executor executor, Clock clock,
+    public CheckController(CheckEngine checkEngine, ExecutorWithTime executor, 
             OverallState overallState, VersionStateImpl versionState) {
         if (checkEngine == null)
             throw new NullPointerException("checkEngine is null");
         if (executor == null)
             throw new NullPointerException("executor is null");
-        if (clock == null)
-            throw new NullPointerException("clock is null");
         if (overallState == null)
             throw new NullPointerException("overallState is null");
         if (versionState == null)
@@ -39,7 +32,6 @@ public class CheckController implements OverallStateListener {
         this.overallState = overallState;
         this.versionState = versionState;
         this.checkEngine = checkEngine;
-        this.clock = clock;
         this.executor = executor;
         
         overallState.addListener(this);
@@ -52,17 +44,23 @@ public class CheckController implements OverallStateListener {
     
     private void startCheckingForUpdates() {
         isChecking = true;
+        final CheckResult[] result = new CheckResult[1];
         executor.execute(new Runnable() {
             
             public void run() {
-                processResult(checkEngine.checkForUpdates());
+                result[0] = checkEngine.checkForUpdates();
+            }
+            
+        }, new RunnableWithTime() {
+
+            public void run(long now) {
+                processResult(result[0], now);
             }
             
         });
     }
     
-    protected synchronized void processResult(CheckResult result) {
-        long now = clock.now();
+    protected synchronized void processResult(CheckResult result, long now) {
         isChecking = false;
         overallState.finishedCheckingForUpdates(now, result);
         ProposedUpdate update = result.foundUpdateOrNull();

@@ -36,42 +36,42 @@ public class FakeApplication implements IApplication {
         Executor executor = new ThreadPoolExecutor(0, 1, 10000, TimeUnit.MILLISECONDS,
                 new SynchronousQueue<Runnable>());
         
-        GlueIntegrator glue = new GlueIntegratorImpl(new SystemClock(), new FakeCheckEngine(), executor,
-                new SwtRelativeScheduler(display), storage);
+        GlueIntegrator glue = new GlueIntegratorImpl(new SystemClock(), new FakeCheckEngine(),
+                new FakeUpdateEngine(), executor, new SwtRelativeScheduler(display), storage);
         
-        GlueToPreferences glueToPreferences = new GlueToPreferences(glue);
+        GlueToPreferences glueToPreferences = new GlueToPreferences(glue, display);
         new GlueToDialog(glue, Activator.getDefault().getDialogSettings());
         
         final Shell shell = new Shell(display, SWT.DIALOG_TRIM);
         final UpdatePreferencesComposite prefs = new UpdatePreferencesComposite(shell, SWT.NONE);
         glueToPreferences.hook(prefs);
-//        prefs.setCallback(new UpdatePreferencesCallback() {
-//            
-//            public void checkNow() {
-//                prefs.reportChecking();
-//                Display.getDefault().timerExec(2000, new Runnable() {
-//                    
-//                    public void run() {
-//                        prefs.reportNoUpdatesFound();
-//                        
-//                        UpdateInformationDialog dialog = new UpdateInformationDialog(shell, DialogUtils
-//                                .lookup(Activator.getDefault().getDialogSettings(), "updateDialog"));
-//                        dialog.setBlockOnOpen(false);
-//                        dialog.open();
-//                    }
-//                    
-//                });
-//                
-//            }
-//            
-//            public void setSchedule(Schedule schedule) {
-//                Activator.getDefault().getPreferenceStore().setValue(UPDATE_SCHEDULE_PREF,
-//                        schedule.toString());
-//                Activator.getDefault().savePluginPreferences();
-//            }
-//            
-//        });
-//        
+        //        prefs.setCallback(new UpdatePreferencesCallback() {
+        //            
+        //            public void checkNow() {
+        //                prefs.reportChecking();
+        //                Display.getDefault().timerExec(2000, new Runnable() {
+        //                    
+        //                    public void run() {
+        //                        prefs.reportNoUpdatesFound();
+        //                        
+        //                        UpdateInformationDialog dialog = new UpdateInformationDialog(shell, DialogUtils
+        //                                .lookup(Activator.getDefault().getDialogSettings(), "updateDialog"));
+        //                        dialog.setBlockOnOpen(false);
+        //                        dialog.open();
+        //                    }
+        //                    
+        //                });
+        //                
+        //            }
+        //            
+        //            public void setSchedule(Schedule schedule) {
+        //                Activator.getDefault().getPreferenceStore().setValue(UPDATE_SCHEDULE_PREF,
+        //                        schedule.toString());
+        //                Activator.getDefault().savePluginPreferences();
+        //            }
+        //            
+        //        });
+        //        
         prefs.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
         GridLayoutFactory.swtDefaults().generateLayout(shell);
         

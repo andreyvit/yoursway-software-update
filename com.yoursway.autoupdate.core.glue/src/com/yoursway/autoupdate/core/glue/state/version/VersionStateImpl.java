@@ -5,6 +5,7 @@ import static com.yoursway.autoupdate.core.glue.state.version.VersionDecision.IN
 import static com.yoursway.autoupdate.core.glue.state.version.VersionDecision.INSTALLING;
 import static com.yoursway.autoupdate.core.glue.state.version.VersionDecision.POSTPONED;
 import static com.yoursway.autoupdate.core.glue.state.version.VersionDecision.SKIPPED;
+import static com.yoursway.autoupdate.core.glue.state.version.VersionDecision.UNDECIDED;
 import static com.yoursway.utils.Listeners.newListenersByIdentity;
 
 import com.yoursway.autoupdate.core.ProposedUpdate;
@@ -101,7 +102,7 @@ public class VersionStateImpl {
     }
     
     public synchronized ProposedUpdate getUndecidedUpdateIfExists() {
-        if (update == null || decision != VersionDecision.UNDECIDED)
+        if (update == null || decision != UNDECIDED)
             return null;
         return update;
     }
@@ -113,6 +114,12 @@ public class VersionStateImpl {
     
     public VersionStateMemento createMemento() {
         return new VersionStateMemento(update, decision, decidedAt);
+    }
+
+    public ProposedUpdate getUpdateToInstallIfExists() {
+        if (update == null || decision != INSTALLING)
+            return null;
+        return update;
     }
     
 }

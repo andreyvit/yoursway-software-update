@@ -12,11 +12,13 @@ import java.util.Map;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ProgressBar;
 
@@ -41,6 +43,9 @@ public class UpdatePreferencesComposite extends Composite {
     private ProgressBar progressBar;
     private Link actionLabel;
     private Button stopUpdate;
+    private Composite progressBarComposite;
+    private StackLayout progressBarCompositeLayout;
+    private ProgressBar indeterminateProgressBar;
     
     public UpdatePreferencesComposite(Composite parent, int style) {
         super(parent, style);
@@ -100,7 +105,7 @@ public class UpdatePreferencesComposite extends Composite {
         hideProgress();
         label.setText("Last failed check at " + dateFormat.format(date));
     }
-
+    
     public void reportNeverChecked() {
         hideSpinner();
         hideProgress();
@@ -108,18 +113,11 @@ public class UpdatePreferencesComposite extends Composite {
     }
     
     public void reportChecking() {
+        label.setText("Checking for updates...");
         showSpinner();
         hideProgress();
-        label.setText("Checking for updates...");
     }
-
-    public void reportInstalling(int progress) {
-        showSpinner();
-        showProgress();
-        label.setText("Installing updates...");
-        actionLabel.setText(format("%d%% done", progress));
-    }
-
+    
     private void createContent(Composite parent) {
         checkDaily = new Button(parent, SWT.RADIO);
         checkDaily.setText("Check for updates daily");
@@ -143,7 +141,7 @@ public class UpdatePreferencesComposite extends Composite {
         label = new Link(buttonAndLabel, SWT.NONE);
         label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
                 .create());
-//        label.setText("Last check 5 hours ago");
+        //        label.setText("Last check 5 hours ago");
         
         GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(buttonAndLabel);
         
@@ -154,12 +152,18 @@ public class UpdatePreferencesComposite extends Composite {
         actionLabel = new Link(progressComposite, SWT.NONE);
         actionLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true)
                 .span(2, 1).create());
-//        actionLabel.setText("Downloading updates...");
+        //        actionLabel.setText("Downloading updates...");
         
-        progressBar = new ProgressBar(progressComposite, SWT.NONE);
+        progressBarComposite = new Composite(progressComposite, SWT.NONE);
+        progressBarCompositeLayout = new StackLayout();
+        progressBarComposite.setLayout(progressBarCompositeLayout);
+        progressBarComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL,
+                SWT.CENTER).create());
+        
+        progressBar = new ProgressBar(progressBarComposite, SWT.NONE);
         progressBar.setSelection(20);
-        progressBar.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER)
-                .create());
+        
+        indeterminateProgressBar = new ProgressBar(progressBarComposite, SWT.INDETERMINATE);
         
         stopUpdate = new Button(progressComposite, SWT.PUSH);
         stopUpdate.setText("Stop");
@@ -187,6 +191,10 @@ public class UpdatePreferencesComposite extends Composite {
     }
     
     private void showSpinner() {
+        doShowSpinnerComposite();
+    }
+    
+    private void doShowSpinnerComposite() {
         if (TRUE == spinnerShown)
             return;
         spinner.setLayoutData(GridDataFactory.fillDefaults().indent(25, 0).create());
@@ -204,10 +212,57 @@ public class UpdatePreferencesComposite extends Composite {
     }
     
     private void showProgress() {
+        showProgressComposite(progressBar);
+    }
+    
+    private void showInderminateProgress() {
+        showProgressComposite(indeterminateProgressBar);
+    }
+
+    private void showProgressComposite(Control topControl) {
+        if (progressBarCompositeLayout.topControl != topControl) {
+            progressBarCompositeLayout.topControl = topControl;
+            progressBarComposite.layout();
+        }
         if (TRUE == progressShown)
             return;
         progressComposite.setVisible(true);
         progressShown = TRUE;
+    }
+    
+    public void reportInstalling(int progress) {
+    }
+    
+    public void reportStartingInstallation() {
+        label.setText("Preparing to update...");
+        progressBar.setSelection(0);
+        actionLabel.setText("");
+        showSpinner();
+        showInderminateProgress();
+    }
+
+    public void reportDownloadingUpdates(long doneBytes, long totalBytes) {
+        label.setText("Downloading updates...");
+        progressBar.setSelection((int) (doneBytes * 100 / totalBytes));
+        actionLabel.setText(format("%d bytes remaining", totalBytes - doneBytes));
+        showSpinner();
+        showProgress();
+    }
+
+    public void reportInstallingUpdates() {
+        label.setText("Installing updates...");
+        progressBar.setSelection(0);
+        actionLabel.setText("");
+        showSpinner();
+        showInderminateProgress();
+    }
+
+    public void reportFinishingInstallation() {
+        label.setText("Finishing installation...");
+        progressBar.setSelection(0);
+        actionLabel.setText("");
+        showSpinner();
+        showInderminateProgress();
     }
     
 }

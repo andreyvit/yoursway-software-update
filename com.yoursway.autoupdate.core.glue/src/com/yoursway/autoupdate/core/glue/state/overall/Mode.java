@@ -74,8 +74,26 @@ public enum Mode {
         public boolean canStartAutomaticCheckingForUpdates() {
             return false;
         }
+
+        public boolean isUpdateInProgress() {
+            return true;
+        }
+
+    },
+    
+    FINISHING_UPDATE {
         
-    };
+        public boolean canStartAutomaticCheckingForUpdates() {
+            return false;
+        }
+        
+        public boolean isUpdateInProgress() {
+            return true;
+        }
+        
+    },
+    
+    ;
     
     public abstract boolean canStartAutomaticCheckingForUpdates();
     
@@ -97,6 +115,10 @@ public enum Mode {
 
     public boolean isTemporary() {
         return true;
+    }
+
+    public boolean isUpdateInProgress() {
+        return false;
     }
    
 }

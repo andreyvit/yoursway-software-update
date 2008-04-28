@@ -150,4 +150,18 @@ public class OverallStateImpl implements OverallState, Serializable, Cloneable {
         notifyStateChanged(now);
     }
     
+    public synchronized void finishingInstallation(long now) {
+        if (!mode.isUpdateInProgress())
+            throw new IllegalStateException("Installation finish is not expected in state " + mode);
+        this.mode = Mode.FINISHING_UPDATE;
+        notifyStateChanged(now);
+    }
+
+    public void installationFinished(long now) {
+        if (!mode.isUpdateInProgress())
+            throw new IllegalStateException("Installation finish is not expected in state " + mode);
+        mode = Mode.NO_UPDATES;
+        notifyStateChanged(now);
+    }
+    
 }
