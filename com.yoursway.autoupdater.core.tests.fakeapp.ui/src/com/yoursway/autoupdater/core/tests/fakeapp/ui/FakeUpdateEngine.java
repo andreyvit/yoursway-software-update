@@ -26,7 +26,7 @@ public class FakeUpdateEngine implements UpdateEngine {
     public void cleanUpPreviousUpdate(InstallationProgressMonitor progressMonitor) {
         progressMonitor.finishing();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
         progressMonitor.finished();

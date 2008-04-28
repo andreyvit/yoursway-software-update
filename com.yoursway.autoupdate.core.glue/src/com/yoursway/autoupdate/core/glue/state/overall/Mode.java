@@ -15,7 +15,7 @@ public enum Mode {
             return true;
         }
 
-        public boolean isTemporary() {
+        public boolean shouldBeDiscardedAtRestart() {
             return false;
         }
 
@@ -27,7 +27,7 @@ public enum Mode {
             return true;
         }
 
-        public boolean isTemporary() {
+        public boolean shouldBeDiscardedAtRestart() {
             return false;
         }
 
@@ -79,6 +79,10 @@ public enum Mode {
             return true;
         }
 
+        public boolean shouldBeDiscardedAtRestart() {
+            return false;
+        }
+
     },
     
     FINISHING_UPDATE {
@@ -90,7 +94,11 @@ public enum Mode {
         public boolean isUpdateInProgress() {
             return true;
         }
-        
+
+        public boolean shouldBeDiscardedAtRestart() {
+            return false;
+        }
+
     },
     
     ;
@@ -113,7 +121,7 @@ public enum Mode {
         return false;
     }
 
-    public boolean isTemporary() {
+    public boolean shouldBeDiscardedAtRestart() {
         return true;
     }
 
