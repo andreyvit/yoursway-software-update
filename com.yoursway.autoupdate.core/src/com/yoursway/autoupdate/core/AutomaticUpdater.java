@@ -2,7 +2,7 @@ package com.yoursway.autoupdate.core;
 
 import static com.yoursway.autoupdate.core.FileStateBuilder.buildActions;
 import static com.yoursway.autoupdate.core.FileStateBuilder.modifiedFiles;
-import static com.yoursway.autoupdate.core.internal.Activator.log;
+import static com.yoursway.autoupdate.core.internal.Activator.logInfo;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
 import static com.yoursway.utils.YsFileUtils.urlToFileWithProtocolCheck;
 
@@ -14,11 +14,6 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 
-import com.yoursway.autoupdate.core.checkres.CheckResult;
-import com.yoursway.autoupdate.core.checkres.CommunicationErrorCheckResult;
-import com.yoursway.autoupdate.core.checkres.InternalFailureCheckResult;
-import com.yoursway.autoupdate.core.checkres.NoUpdatesCheckResult;
-import com.yoursway.autoupdate.core.checkres.UpdateFoundCheckResult;
 import com.yoursway.autoupdate.core.execution.RealExecutor42;
 import com.yoursway.autoupdate.core.execution.RealExecutor9;
 import com.yoursway.autoupdate.core.execution.RealReplaceTester;
@@ -42,31 +37,6 @@ public class AutomaticUpdater {
         checkForUpdates(localInstallation(), currentVersion, defaultUrl);
     }
     
-    public static CheckResult checkForUpdates1(Version currentVersion, URL updateUrl) {
-        log("checkForUpdates is running for version " + currentVersion);
-        updateUrl = determineUpdateUrl(updateUrl);
-        IVersionDefinitionLoader loader = new UrlBasedVersionDefinitionLoader(updateUrl);
-        try {
-            VersionDefinition currentDef = loader.loadDefinition(currentVersion);
-            if (!currentDef.hasNewerVersion())
-                return new NoUpdatesCheckResult();
-            
-            Version freshVersion = currentDef.nextVersion();
-            VersionDefinition freshDef = loader.loadDefinition(freshVersion);
-            
-            ProposedUpdateImpl update = new ProposedUpdateImpl(currentDef, freshDef);
-            return new UpdateFoundCheckResult(update);
-        } catch (VersionDefinitionNotAvailable e) {
-            return new CommunicationErrorCheckResult();
-        } catch (InvalidVersionDefinitionException e) {
-            return new CommunicationErrorCheckResult();
-        } catch (RuntimeException e) {
-            return new InternalFailureCheckResult(e);
-        } catch (Error e) {
-            return new InternalFailureCheckResult(e);
-        }
-    }
-    
     public static void doUpdate(ProposedUpdate update, InstallationProgressMonitor monitor)
             throws UpdatesFoundExit {
         doUpdate(localInstallation(), update, monitor);
@@ -81,6 +51,7 @@ public class AutomaticUpdater {
             InstallationProgressMonitor monitor) throws UpdatesFoundExit {
         try {
             ProposedUpdateImpl updateImpl = (ProposedUpdateImpl) update;
+            VersionDefinition currentDef = updateImpl.currentDef;
             VersionDefinition freshDef = updateImpl.freshDef;
             
             Collection<RemoteFile> freshFiles = freshDef.files();
@@ -91,7 +62,7 @@ public class AutomaticUpdater {
             RealReplaceTester replaceTester = new RealReplaceTester();
             RealExecutor9 executor9 = new RealExecutor9();
             
-            UpdaterInfo updaterInfo = freshDef.updaterInfo();
+            UpdaterInfo updaterInfo = currentDef.updaterInfo();
             UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
                     .asCollection(), updaterInfo.files());
             UpdatePlan plan = planBuilder.build();
@@ -116,7 +87,7 @@ public class AutomaticUpdater {
     
     public static void checkForUpdates(ApplicationInstallation install, Version currentVersion, URL updateUrl)
             throws UpdatesFoundExit {
-        log("checkForUpdates is running for version " + currentVersion);
+        logInfo(("checkForUpdates is running for version " + currentVersion));
         if (!forcedUpdateCheckBecauseOfTests() && !shouldCheckForUpdates())
             return;
         updateUrl = determineUpdateUrl(updateUrl);
@@ -139,7 +110,7 @@ public class AutomaticUpdater {
             RealReplaceTester replaceTester = new RealReplaceTester();
             RealExecutor9 executor9 = new RealExecutor9();
             
-            UpdaterInfo updaterInfo = freshDef.updaterInfo();
+            UpdaterInfo updaterInfo = currentDef.updaterInfo();
             UpdatePlanBuilder planBuilder = new UpdatePlanBuilder(replaceTester, modifiedFiles(actions)
                     .asCollection(), updaterInfo.files());
             UpdatePlan plan = planBuilder.build();
@@ -191,11 +162,11 @@ public class AutomaticUpdater {
         }
     }
     
-    private static URL determineUpdateUrl(URL updateUrl) {
+    public static URL determineUpdateUrl(URL updateUrl) {
         String overrideUrl = System.getProperty(PROPERTY_URL_OVERRIDE);
         if (overrideUrl != null)
             try {
-                log("Override update URL is " + overrideUrl);
+                logInfo(("Override update URL is " + overrideUrl));
                 return new URL(overrideUrl);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);

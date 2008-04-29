@@ -1,8 +1,13 @@
 package com.yoursway.autoupdate.core.glue;
 
+import org.eclipse.core.runtime.Status;
+
 import com.yoursway.autoupdate.core.CheckEngine;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.checkres.CheckResult;
+import com.yoursway.autoupdate.core.checkres.CommunicationErrorCheckResult;
+import com.yoursway.autoupdate.core.checkres.InternalFailureCheckResult;
+import com.yoursway.autoupdate.core.glue.internal.Activator;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallState;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallStateListener;
 import com.yoursway.autoupdate.core.glue.state.version.VersionStateImpl;
@@ -19,8 +24,8 @@ public class CheckController implements OverallStateListener {
     
     private final ExecutorWithTime executor;
     
-    public CheckController(CheckEngine checkEngine, ExecutorWithTime executor, 
-            OverallState overallState, VersionStateImpl versionState) {
+    public CheckController(CheckEngine checkEngine, ExecutorWithTime executor, OverallState overallState,
+            VersionStateImpl versionState) {
         if (checkEngine == null)
             throw new NullPointerException("checkEngine is null");
         if (executor == null)
@@ -48,13 +53,28 @@ public class CheckController implements OverallStateListener {
         executor.execute(new Runnable() {
             
             public void run() {
-                result[0] = checkEngine.checkForUpdates();
+                try {
+                    result[0] = checkEngine.checkForUpdates();
+                } catch (Throwable e) {
+                    result[0] = new InternalFailureCheckResult(e);
+                }
             }
             
         }, new RunnableWithTime() {
-
+            
             public void run(long now) {
-                processResult(result[0], now);
+                CheckResult theResult = result[0];
+                if (theResult instanceof CommunicationErrorCheckResult) {
+                    CommunicationErrorCheckResult r = (CommunicationErrorCheckResult) theResult;
+                    Activator.getDefault().getLog()
+                            .log(
+                                    new Status(Status.WARNING, Activator.PLUGIN_ID, "Check failed", r
+                                            .getThrowable()));
+                } else if (theResult instanceof InternalFailureCheckResult) {
+                    InternalFailureCheckResult r = (InternalFailureCheckResult) theResult;
+                    Activator.log("Check failed (due to internal error)", r.getThrowable());
+                }
+                processResult(theResult, now);
             }
             
         });
@@ -67,4 +87,5 @@ public class CheckController implements OverallStateListener {
         if (update != null)
             versionState.freshVersionFound(now, update);
     }
+    
 }

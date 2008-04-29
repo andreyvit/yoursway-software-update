@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import com.google.common.collect.BiMap;
+import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.glue.state.schedule.Schedule;
 import com.yoursway.common.ui.animatedimage.SpinnerControl;
 
@@ -46,6 +47,7 @@ public class UpdatePreferencesComposite extends Composite {
     private Composite progressBarComposite;
     private StackLayout progressBarCompositeLayout;
     private ProgressBar indeterminateProgressBar;
+    private Link currentVersionLabel;
     
     public UpdatePreferencesComposite(Composite parent, int style) {
         super(parent, style);
@@ -92,6 +94,10 @@ public class UpdatePreferencesComposite extends Composite {
         throw new AssertionError("No radio button is selected");
     }
     
+    public void setCurrentVersion(VersionDescription desc) {
+        currentVersionLabel.setText(format("Currently installed version is %s.", desc.displayName()));
+    }
+    
     public void reportLastCheck(Date date) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         hideSpinner();
@@ -119,8 +125,13 @@ public class UpdatePreferencesComposite extends Composite {
     }
     
     private void createContent(Composite parent) {
+        currentVersionLabel = new Link(parent, SWT.NONE);
+        currentVersionLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(
+                true, false).create());
+        
         checkDaily = new Button(parent, SWT.RADIO);
         checkDaily.setText("Check for updates daily");
+        checkDaily.setLayoutData(GridDataFactory.defaultsFor(checkDaily).indent(0, 10).create());
         
         checkWeekly = new Button(parent, SWT.RADIO);
         checkWeekly.setText("Check for updates weekly");
@@ -218,7 +229,7 @@ public class UpdatePreferencesComposite extends Composite {
     private void showInderminateProgress() {
         showProgressComposite(indeterminateProgressBar);
     }
-
+    
     private void showProgressComposite(Control topControl) {
         if (progressBarCompositeLayout.topControl != topControl) {
             progressBarCompositeLayout.topControl = topControl;
@@ -240,7 +251,7 @@ public class UpdatePreferencesComposite extends Composite {
         showSpinner();
         showInderminateProgress();
     }
-
+    
     public void reportDownloadingUpdates(long doneBytes, long totalBytes) {
         label.setText("Downloading updates...");
         progressBar.setSelection((int) (doneBytes * 100 / totalBytes));
@@ -248,7 +259,7 @@ public class UpdatePreferencesComposite extends Composite {
         showSpinner();
         showProgress();
     }
-
+    
     public void reportInstallingUpdates() {
         label.setText("Installing updates...");
         progressBar.setSelection(0);
@@ -256,7 +267,7 @@ public class UpdatePreferencesComposite extends Composite {
         showSpinner();
         showInderminateProgress();
     }
-
+    
     public void reportFinishingInstallation() {
         label.setText("Finishing installation...");
         progressBar.setSelection(0);

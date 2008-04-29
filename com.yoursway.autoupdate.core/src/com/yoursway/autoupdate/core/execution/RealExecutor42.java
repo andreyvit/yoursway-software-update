@@ -1,5 +1,8 @@
 package com.yoursway.autoupdate.core.execution;
 
+import static com.google.common.base.Functions.TO_STRING;
+import static com.google.common.base.Join.join;
+import static com.google.common.collect.Iterators.transform;
 import static com.yoursway.utils.YsFileUtils.transfer;
 import static com.yoursway.utils.YsFileUtils.writeObject;
 
@@ -14,8 +17,10 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import com.google.common.base.Functions;
 import com.yoursway.autoupdate.core.actions.Action;
 import com.yoursway.autoupdate.core.actions.Executor42;
+import com.yoursway.autoupdate.core.internal.Activator;
 import com.yoursway.autoupdate.internal.launching.IVMRunner;
 import com.yoursway.autoupdate.internal.launching.VMRunnerConfiguration;
 import com.yoursway.autoupdate.launching.ILaunch;
@@ -46,6 +51,8 @@ public class RealExecutor42 extends RealExecutor implements Executor42 {
             if (file.getName().endsWith(".jar"))
                 classPath.add(file.toString());
         String[] cp = classPath.toArray(new String[classPath.size()]);
+        Activator.logInfo("Standalone updater files:\n" + join("\n", transform(updaterFiles.iterator(), TO_STRING)));
+        Activator.logInfo("Standalone updater\nClasspath:\n" + join("\n", cp));
         VMRunnerConfiguration config = new VMRunnerConfiguration("com.yoursway.autoupdate.core.extupdater.Main", cp);
         config.setProgramArguments(new String[] {jobFile.toString()});
         IVMRunner runner = VmRunners.createRunner();

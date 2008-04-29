@@ -1,8 +1,13 @@
 package com.yoursway.autoupdate.core;
 
-import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
-public class ProposedUpdateImpl implements ProposedUpdate {
+import java.io.Serializable;
 
+import com.yoursway.autoupdate.core.versions.definitions.VersionDefinition;
+
+public class ProposedUpdateImpl implements ProposedUpdate, Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
     final VersionDefinition currentDef;
     final VersionDefinition freshDef;
 

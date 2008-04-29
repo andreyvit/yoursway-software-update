@@ -1,14 +1,18 @@
 package com.yoursway.autoupdate.core.versions.definitions;
 
+import java.io.Serializable;
+
 import org.eclipse.core.runtime.Assert;
 
 import com.google.common.base.Function;
 import com.yoursway.utils.relativepath.Pathes;
 import com.yoursway.utils.relativepath.RelativePath;
 
-public class AppFile {
+public class AppFile implements Serializable {
 
-	protected final RelativePath relativePath;
+    private static final long serialVersionUID = 1L;
+    
+    protected final RelativePath relativePath;
 	protected final String md5;
     public static final Function<AppFile, RelativePath> APPFILE_TO_PATH = new Function<AppFile, RelativePath>() {
         

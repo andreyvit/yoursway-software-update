@@ -101,9 +101,12 @@ public class UpdateInformationDialog extends Dialog {
     }
     
     public void setContentsFrom(VersionDescription current, ProposedUpdate update) {
-        title.setText(format(
+        String currentName = current.displayName();
+        String targetName = update.targetVersion().displayName();
+        String message = format(
                 "An updated version %s has been found (%s is installed currently). The changes are:",
-                update.targetVersion().displayName(), current.displayName()));
+                targetName, currentName);
+        title.setText(message);
         browser.setText(update.changesDescription());
     }
     

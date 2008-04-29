@@ -97,7 +97,7 @@ public class AutomaticUpdatesSchedulingStartup implements IStartup, RcpAutomatic
             
             RealCheckAndUpdateEngineImpl realEngine = new RealCheckAndUpdateEngineImpl(updateInfo.version(),
                     updateInfo.updateUrl());
-            boolean useTheRealThing = false;
+            boolean useTheRealThing = true;
             CheckEngine checkEngine = (useTheRealThing ? realEngine : new FakeCheckEngine());
             UpdateEngine updateEngine = (useTheRealThing ? realEngine : new FakeUpdateEngine());
             

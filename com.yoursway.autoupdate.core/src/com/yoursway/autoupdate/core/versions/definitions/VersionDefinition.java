@@ -3,6 +3,7 @@ package com.yoursway.autoupdate.core.versions.definitions;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -14,7 +15,9 @@ import com.yoursway.autoupdate.core.VersionDescription;
 import com.yoursway.autoupdate.core.versions.Version;
 import com.yoursway.utils.XmlWriter;
 
-public class VersionDefinition implements VersionDescription {
+public class VersionDefinition implements VersionDescription, Serializable {
+    
+    private static final long serialVersionUID = 1L;
     
     private final RemoteFile[] files;
     private final Version version;

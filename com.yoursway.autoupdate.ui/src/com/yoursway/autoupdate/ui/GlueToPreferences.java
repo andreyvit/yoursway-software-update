@@ -36,6 +36,7 @@ public class GlueToPreferences implements GlueIntegratorListener, UpdatePreferen
         updatePreferences = composite;
         updatePreferences.setCallback(this);
         updatePreferences.setSchedule(integrator.getSchedule());
+        updatePreferences.setCurrentVersion(integrator.currentVersion());
         updateWorkIndicator();
     }
     

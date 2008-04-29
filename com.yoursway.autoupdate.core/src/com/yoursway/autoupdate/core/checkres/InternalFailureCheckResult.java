@@ -22,5 +22,9 @@ public class InternalFailureCheckResult extends CheckResultImpl {
     public void accept(CheckResultVisitor visitor) {
         visitor.internalFailure(this);
     }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
    
 }

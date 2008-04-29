@@ -90,7 +90,7 @@ public class OverallStateTests {
     @Test
     public void interpretsCommunicationErrorResult() {
         startsAutomaticCheck();
-        os.finishedCheckingForUpdates(500, new CommunicationErrorCheckResult());
+        os.finishedCheckingForUpdates(500, new CommunicationErrorCheckResult(new Exception()));
         assertEquals(NO_UPDATES, os.state());
         assertEquals(true, os.lastCheckAttempt().hasFailed());
     }

@@ -21,6 +21,8 @@ public class GlueToDialog implements GlueIntegratorListener, UpdateInformationDi
     }
     
     public synchronized void askUserDecision(final ProposedUpdate undecidedUpdate) {
+        if (undecidedUpdate == null)
+            throw new NullPointerException("undecidedUpdate is null");
         this.updateProposedInTheDialog = undecidedUpdate;
         Runnable runnable = new Runnable() {
             

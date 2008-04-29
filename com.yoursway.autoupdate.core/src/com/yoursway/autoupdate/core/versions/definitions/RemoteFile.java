@@ -10,7 +10,9 @@ import com.yoursway.utils.relativepath.RelativePath;
 
 public class RemoteFile extends AppFile {
 
-	private final RemoteSource source;
+    private static final long serialVersionUID = 1L;
+    
+    private final RemoteSource source;
 
     public RemoteFile(RelativePath relativePath, String md5, RemoteSource source) {
 		super(relativePath, md5);

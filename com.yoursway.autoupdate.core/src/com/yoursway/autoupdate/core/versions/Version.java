@@ -1,14 +1,18 @@
 package com.yoursway.autoupdate.core.versions;
 
+import java.io.Serializable;
+
 import org.eclipse.core.runtime.Assert;
 
 /**
  * This class encapsulates a String version ID, in case we want to turn it into
  * something more interesting in the future.
  */
-public class Version {
+public class Version implements Serializable {
 
-	private final String version;
+    private static final long serialVersionUID = 1L;
+    
+    private final String version;
 
 	public Version(String version) {
 		Assert.isNotNull(version);

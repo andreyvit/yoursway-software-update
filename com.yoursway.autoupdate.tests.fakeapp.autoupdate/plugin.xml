@@ -4,7 +4,7 @@
    <extension
          point="com.yoursway.autoupdate.ui.eclipse.updatableApplications">
       <application
-            update-url="file:///tmp/fakeapp"
+            update-url="file:///data/esko-update/"
             version="0.1-mac"
             version-name="0.1">
       </application>

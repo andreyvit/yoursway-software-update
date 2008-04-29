@@ -3,6 +3,7 @@ package com.yoursway.autoupdate.core.glue;
 import com.yoursway.autoupdate.core.InstallationProgressMonitor;
 import com.yoursway.autoupdate.core.ProposedUpdate;
 import com.yoursway.autoupdate.core.UpdateEngine;
+import com.yoursway.autoupdate.core.glue.internal.Activator;
 import com.yoursway.autoupdate.core.glue.state.overall.OverallState;
 import com.yoursway.autoupdate.core.glue.state.version.VersionStateImpl;
 import com.yoursway.autoupdate.core.glue.state.version.VersionStateListener;
@@ -82,7 +83,12 @@ public class UpdateController implements VersionStateListener {
     }
     
     void doInstallUpdate() {
-        updateEngine.update(updateBeingInstalled, multicastMonitor);
+        multicastMonitor.starting();
+        try {
+            updateEngine.update(updateBeingInstalled, multicastMonitor);
+        } catch (Throwable e) {
+            Activator.log("Update process failed", e);
+        }
     }
     
     private synchronized void finishedInstallingUpdate(long now) {
