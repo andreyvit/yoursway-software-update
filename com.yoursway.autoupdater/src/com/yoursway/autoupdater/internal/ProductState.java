@@ -15,7 +15,7 @@ public class ProductState {
         
         ProductVersionState state = versions.get(version);
         if (state == null) {
-            state = new ProductVersionState(version);
+            state = new ProductVersionStateWrap(version);
             versions.put(version, state);
         }
         
