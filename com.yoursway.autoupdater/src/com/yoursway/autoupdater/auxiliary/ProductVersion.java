@@ -6,4 +6,8 @@ public class ProductVersion {
         throw new UnsupportedOperationException();
     }
     
+    public Product product() {
+        throw new UnsupportedOperationException();
+    }
+    
 }
