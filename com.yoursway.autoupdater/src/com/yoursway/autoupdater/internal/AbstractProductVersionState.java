@@ -11,12 +11,30 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         this.wrap = wrap;
     }
     
+    public static ProductVersionState from(State s, ProductVersionStateWrap w) {
+        if (s == State.New)
+            return new ProductVersionState_New(w);
+        if (s == State.Downloading)
+            return new ProductVersionState_Downloading(w);
+        if (s == State.Installing)
+            return new ProductVersionState_Installing(w);
+        if (s == State.Current)
+            return new ProductVersionState_Current(w);
+        if (s == State.Old)
+            return new ProductVersionState_Old(w);
+        throw new IllegalArgumentException("State s == " + s.toString());
+    }
+    
     protected final void changeState(ProductVersionState newState) {
         wrap.changeState(newState);
     }
     
     protected ProductVersion version() {
         return wrap.version();
+    }
+    
+    protected ProductState productState() {
+        return wrap.productState();
     }
     
     public void startUpdating() {
@@ -31,17 +49,8 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public static ProductVersionState from(State s, ProductVersionStateWrap w) {
-        if (s == State.New)
-            return new ProductVersionState_New(w);
-        if (s == State.Downloading)
-            return new ProductVersionState_Downloading(w);
-        if (s == State.Installing)
-            return new ProductVersionState_Installing(w);
-        if (s == State.Current)
-            return new ProductVersionState_Current(w);
-        if (s == State.Old)
-            return new ProductVersionState_Old(w);
-        throw new IllegalArgumentException("State s == " + s.toString());
+    public boolean isCurrent() {
+        return false;
     }
+    
 }

@@ -14,4 +14,9 @@ public class ProductVersionState_Current extends AbstractProductVersionState imp
                 version().toMemento()).build();
     }
     
+    @Override
+    public boolean isCurrent() {
+        return true;
+    }
+    
 }

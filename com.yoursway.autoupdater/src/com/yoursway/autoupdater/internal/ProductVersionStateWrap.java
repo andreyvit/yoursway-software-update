@@ -7,15 +7,27 @@ public class ProductVersionStateWrap implements ProductVersionState {
     
     private ProductVersionState state;
     private final ProductVersion version;
+    private final ProductState productState;
     
-    public ProductVersionStateWrap(ProductVersion version) {
-        state = new ProductVersionState_New(this);
+    public ProductVersionStateWrap(ProductVersion version, ProductState productState) {
+        this.productState = productState;
         this.version = version;
+        state = new ProductVersionState_New(this);
     }
     
-    private ProductVersionStateWrap(ProductVersionStateMemento memento) {
+    private ProductVersionStateWrap(ProductVersionStateMemento memento, ProductState productState) {
+        this.productState = productState;
         version = ProductVersion.fromMemento(memento.getVersion());
         state = AbstractProductVersionState.from(memento.getState(), this);
+    }
+    
+    public static ProductVersionStateWrap fromMemento(ProductVersionStateMemento memento,
+            ProductState productState) {
+        return new ProductVersionStateWrap(memento, productState);
+    }
+    
+    public ProductVersionStateMemento toMemento() {
+        return state.toMemento();
     }
     
     void changeState(ProductVersionState newState) {
@@ -27,6 +39,10 @@ public class ProductVersionStateWrap implements ProductVersionState {
         return version;
     }
     
+    ProductState productState() {
+        return productState;
+    }
+
     public void startUpdating() {
         state.startUpdating();
     }
@@ -39,12 +55,8 @@ public class ProductVersionStateWrap implements ProductVersionState {
         state.continueWork();
     }
     
-    public static ProductVersionStateWrap fromMemento(ProductVersionStateMemento memento) {
-        return new ProductVersionStateWrap(memento);
-    }
-    
-    public ProductVersionStateMemento toMemento() {
-        return state.toMemento();
+    public boolean isCurrent() {
+        return state.isCurrent();
     }
     
 }

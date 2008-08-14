@@ -18,7 +18,7 @@ public class ProductState {
     private ProductState(ProductStateMemento memento) {
         product = Product.fromMemento(memento.getProduct());
         for (ProductVersionStateMemento m : memento.getVersionList()) {
-            ProductVersionStateWrap state = ProductVersionStateWrap.fromMemento(m);
+            ProductVersionStateWrap state = ProductVersionStateWrap.fromMemento(m, this);
             versions.put(state.version(), state);
         }
     }
@@ -29,7 +29,7 @@ public class ProductState {
         
         ProductVersionState state = versions.get(version);
         if (state == null) {
-            state = new ProductVersionStateWrap(version);
+            state = new ProductVersionStateWrap(version, this);
             versions.put(version, state);
         }
         
@@ -61,5 +61,12 @@ public class ProductState {
         for (ProductVersionState version : versions.values())
             b.addVersion(version.toMemento());
         return b.build();
+    }
+    
+    ProductVersionStateWrap currentVersionStateOrNull() {
+        for (ProductVersionState version : versions.values())
+            if (version.isCurrent())
+                return (ProductVersionStateWrap) version;
+        return null;
     }
 }

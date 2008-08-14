@@ -12,4 +12,6 @@ public interface ProductVersionState {
     
     ProductVersionStateMemento toMemento();
     
+    boolean isCurrent();
+    
 }

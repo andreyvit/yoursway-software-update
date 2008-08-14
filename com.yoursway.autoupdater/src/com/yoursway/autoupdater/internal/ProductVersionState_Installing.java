@@ -27,6 +27,10 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
         
         //> check if it installed successfully
         
+        ProductVersionStateWrap current = productState().currentVersionStateOrNull();
+        if (current != null)
+            current.changeState(new ProductVersionState_Old(current));
+        
         changeState(new ProductVersionState_Current(wrap));
     }
     
