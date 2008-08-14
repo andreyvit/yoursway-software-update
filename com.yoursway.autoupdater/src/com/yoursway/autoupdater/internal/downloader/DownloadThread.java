@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.internal;
+package com.yoursway.autoupdater.internal.downloader;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;

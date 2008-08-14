@@ -1,10 +1,8 @@
-package com.yoursway.autoupdater;
+package com.yoursway.autoupdater.internal.downloader;
 
 import java.util.List;
 
 import com.yoursway.autoupdater.auxiliary.DownloadTask;
-import com.yoursway.autoupdater.internal.DownloadProgress;
-import com.yoursway.autoupdater.internal.DownloadThread;
 
 public class Downloader {
     

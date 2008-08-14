@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.internal;
+package com.yoursway.autoupdater.internal.downloader;
 
 public interface DownloadProgressListener {
     

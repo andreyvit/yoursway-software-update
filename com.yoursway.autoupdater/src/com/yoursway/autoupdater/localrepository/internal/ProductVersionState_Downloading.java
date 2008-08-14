@@ -1,7 +1,9 @@
-package com.yoursway.autoupdater.internal;
+package com.yoursway.autoupdater.localrepository.internal;
 
-import com.yoursway.autoupdater.Downloader;
 import com.yoursway.autoupdater.auxiliary.Packs;
+import com.yoursway.autoupdater.internal.downloader.DownloadProgress;
+import com.yoursway.autoupdater.internal.downloader.DownloadProgressListener;
+import com.yoursway.autoupdater.internal.downloader.Downloader;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 

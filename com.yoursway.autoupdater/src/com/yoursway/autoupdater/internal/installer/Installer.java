@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater;
+package com.yoursway.autoupdater.internal.installer;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 

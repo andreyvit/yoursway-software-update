@@ -1,6 +1,6 @@
-package com.yoursway.autoupdater.internal;
+package com.yoursway.autoupdater.localrepository.internal;
 
-import com.yoursway.autoupdater.Installer;
+import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 

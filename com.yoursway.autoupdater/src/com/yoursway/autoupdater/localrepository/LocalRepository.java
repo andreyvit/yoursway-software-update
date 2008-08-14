@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater;
+package com.yoursway.autoupdater.localrepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
-import com.yoursway.autoupdater.internal.ProductState;
+import com.yoursway.autoupdater.localrepository.internal.ProductState;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;

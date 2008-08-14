@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.internal;
+package com.yoursway.autoupdater.localrepository.internal;
 
 import java.util.HashMap;
 import java.util.Map;
