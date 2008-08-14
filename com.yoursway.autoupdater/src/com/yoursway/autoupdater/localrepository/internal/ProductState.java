@@ -28,12 +28,12 @@ public class ProductState {
             throw new IllegalStateException("Updating of the product has started already.");
         
         ProductVersionState state = versions.get(version);
-        if (state == null) {
+        if (state != null)
+            state.startUpdating();
+        else {
             state = new ProductVersionStateWrap(version, this);
             versions.put(version, state);
         }
-        
-        state.startUpdating();
     }
     
     private boolean updating() {

@@ -12,7 +12,7 @@ public class ProductVersionStateWrap implements ProductVersionState {
     public ProductVersionStateWrap(ProductVersion version, ProductState productState) {
         this.productState = productState;
         this.version = version;
-        state = new ProductVersionState_New(this);
+        state = new ProductVersionState_Installing(this);
     }
     
     private ProductVersionStateWrap(ProductVersionStateMemento memento, ProductState productState) {
@@ -42,7 +42,7 @@ public class ProductVersionStateWrap implements ProductVersionState {
     ProductState productState() {
         return productState;
     }
-
+    
     public void startUpdating() {
         state.startUpdating();
     }

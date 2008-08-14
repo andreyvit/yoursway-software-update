@@ -1,10 +1,7 @@
 package com.yoursway.autoupdater.internal.downloader;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -14,7 +11,7 @@ import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
 
-public class DownloadThread extends Thread {
+class DownloadThread extends Thread {
     
     private final DownloadTask task;
     private final String place;
@@ -44,11 +41,12 @@ public class DownloadThread extends Thread {
     
     private void download(DownloadTaskItem item) {
         InputStream in = null;
-        OutputStream out = null;
+        DownloadingFile out = null;
         
         try {
             in = new URL(item.url()).openStream();
-            out = new BufferedOutputStream(new FileOutputStream(place + item.filename()));
+            
+            out = new DownloadingFile(item, place);
             
             byte[] buffer = new byte[1024];
             int read;
@@ -57,7 +55,11 @@ public class DownloadThread extends Thread {
                 if (read == -1)
                     return;
                 
-                out.write(buffer, 0, read);
+                try {
+                    out.write(buffer, 0, read);
+                } catch (FilePartIsntCorrectException e) {
+                    //> load this part again
+                }
                 
                 loadedBytes += read;
                 progressBroadcaster.fire().progressChanged();
@@ -77,6 +79,8 @@ public class DownloadThread extends Thread {
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                } catch (FilePartIsntCorrectException e) {
+                    //> load this part again
                 }
             if (in != null)
                 try {

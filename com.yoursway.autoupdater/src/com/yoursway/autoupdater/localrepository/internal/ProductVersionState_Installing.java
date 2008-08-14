@@ -1,5 +1,9 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import com.yoursway.autoupdater.auxiliary.Packs;
+import com.yoursway.autoupdater.internal.downloader.DownloadProgress;
+import com.yoursway.autoupdater.internal.downloader.DownloadProgressListener;
+import com.yoursway.autoupdater.internal.downloader.Downloader;
 import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
@@ -12,26 +16,47 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     
     @Override
     public void continueWork() {
-        Installer installer = new Installer(version());
         
-        if (installer.restartRequired()) {
-            //> make installation script
-            //> run installation script
-            //> wait for a signal
-            //> quit
-        } else {
-            //> prepare components
-            installer.install();
-            //> postpare components
-        }
+        Packs packs = version().packs();
+        final DownloadProgress progress = Downloader.instance().startDownloading(packs);
         
-        //> check if it installed successfully
+        progress.events().addListener(new DownloadProgressListener() {
+            
+            public void completed() {
+                if (progress.successful()) {
+                    
+                    Installer installer = new Installer(version());
+                    
+                    if (installer.restartRequired()) {
+                        //> make installation script
+                        //> run installation script
+                        //> wait for a signal
+                        //> quit
+                    } else {
+                        //> prepare components
+                        installer.install();
+                        //> postpare components
+                    }
+                    
+                    //> check if it installed successfully
+                    
+                    ProductVersionStateWrap current = productState().currentVersionStateOrNull();
+                    if (current != null)
+                        current.changeState(new ProductVersionState_Old(current));
+                    
+                    changeState(new ProductVersionState_Old(wrap));
+                    
+                } else {
+                    //> repeat
+                }
+            }
+            
+            public void progressChanged() {
+                //>
+            }
+            
+        });
         
-        ProductVersionStateWrap current = productState().currentVersionStateOrNull();
-        if (current != null)
-            current.changeState(new ProductVersionState_Old(current));
-        
-        changeState(new ProductVersionState_Current(wrap));
     }
     
     @Override

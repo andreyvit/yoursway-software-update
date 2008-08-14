@@ -23,4 +23,5 @@ public class DownloadTaskItem {
     public int filesize() {
         throw new UnsupportedOperationException();
     }
+    
 }

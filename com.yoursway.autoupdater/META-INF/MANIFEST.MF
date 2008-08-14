@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Autoupdater
+Bundle-SymbolicName: com.yoursway.autoupdater
+Bundle-Version: 1.0.0
+Bundle-ClassPath: autoupdater.jar,
+ protobuf-java-2.0.0beta.jar
+Export-Package: com.google.protobuf,
+ com.yoursway.autoupdater.auxiliary,
+ com.yoursway.autoupdater.internal.downloader,
+ com.yoursway.autoupdater.internal.installer,
+ com.yoursway.autoupdater.localrepository,
+ com.yoursway.autoupdater.localrepository.internal,
+ com.yoursway.autoupdater.protos,
+ xxx,
+ xxx.library
+Require-Bundle: com.google.collections;bundle-version="1.0.0"
