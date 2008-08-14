@@ -19,4 +19,8 @@ public class DownloadTaskItem {
         else
             return "noname"; //!
     }
+    
+    public int filesize() {
+        throw new UnsupportedOperationException();
+    }
 }

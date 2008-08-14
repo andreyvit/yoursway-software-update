@@ -19,14 +19,24 @@ public class ProductVersionState_Downloading extends AbstractProductVersionState
     @Override
     public void continueWork() {
         Packs packs = version().packs();
-        DownloadProgress progress = Downloader.instance().startDownloading(packs);
+        final DownloadProgress progress = Downloader.instance().startDownloading(packs);
         
-        progress.waitCompletion();
-        if (progress.successful())
-            changeState(new ProductVersionState_Installing(wrap));
-        else {
+        progress.events().addListener(new DownloadProgressListener() {
             
-        }
+            public void completed() {
+                if (progress.successful())
+                    changeState(new ProductVersionState_Installing(wrap));
+                else {
+                    //> repeat
+                }
+            }
+            
+            public void progressChanged() {
+                //>
+            }
+            
+        });
+        
     }
     
     public ProductVersionStateMemento toMemento() {

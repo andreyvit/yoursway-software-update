@@ -11,4 +11,11 @@ public class DownloadTask {
         return items;
     }
     
+    public int totalBytes() {
+        int bytes = 0;
+        for (DownloadTaskItem item : items)
+            bytes += item.filesize();
+        return bytes;
+    }
+    
 }

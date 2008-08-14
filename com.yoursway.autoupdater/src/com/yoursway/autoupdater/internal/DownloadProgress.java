@@ -1,13 +1,13 @@
 package com.yoursway.autoupdater.internal;
 
-public class DownloadProgress {
+import com.yoursway.utils.EventSource;
+
+public interface DownloadProgress {
     
-    public void waitCompletion() {
-        throw new UnsupportedOperationException();
-    }
+    boolean successful();
     
-    public boolean successful() {
-        throw new UnsupportedOperationException();
-    }
+    EventSource<DownloadProgressListener> events();
+    
+    int progressPercents();
     
 }
