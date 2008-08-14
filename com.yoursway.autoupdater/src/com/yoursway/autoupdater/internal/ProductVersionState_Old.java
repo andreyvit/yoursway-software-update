@@ -3,19 +3,21 @@ package com.yoursway.autoupdater.internal;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
-public class ProductVersionState_New extends AbstractProductVersionState {
+public class ProductVersionState_Old extends AbstractProductVersionState implements ProductVersionState {
     
-    public ProductVersionState_New(ProductVersionStateWrap wrap) {
+    public ProductVersionState_Old(ProductVersionStateWrap wrap) {
         super(wrap);
     }
     
     @Override
     public void startUpdating() {
-        changeState(new ProductVersionState_Downloading(wrap));
+        //>
+        throw new UnsupportedOperationException();
     }
     
     public ProductVersionStateMemento toMemento() {
-        return ProductVersionStateMemento.newBuilder().setState(State.New).setVersion(version().toMemento())
+        return ProductVersionStateMemento.newBuilder().setState(State.Old).setVersion(version().toMemento())
                 .build();
     }
+    
 }

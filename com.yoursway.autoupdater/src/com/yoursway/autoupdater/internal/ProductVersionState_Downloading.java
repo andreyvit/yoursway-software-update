@@ -2,6 +2,8 @@ package com.yoursway.autoupdater.internal;
 
 import com.yoursway.autoupdater.Downloader;
 import com.yoursway.autoupdater.auxiliary.Packs;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
 public class ProductVersionState_Downloading extends AbstractProductVersionState {
     
@@ -25,6 +27,11 @@ public class ProductVersionState_Downloading extends AbstractProductVersionState
         else {
             
         }
+    }
+    
+    public ProductVersionStateMemento toMemento() {
+        return ProductVersionStateMemento.newBuilder().setState(State.Downloading).setVersion(
+                version().toMemento()).build();
     }
     
 }

@@ -1,6 +1,8 @@
 package com.yoursway.autoupdater.internal;
 
 import com.yoursway.autoupdater.Installer;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
 public class ProductVersionState_Installing extends AbstractProductVersionState {
     
@@ -31,6 +33,11 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     @Override
     public boolean updating() {
         return true;
+    }
+    
+    public ProductVersionStateMemento toMemento() {
+        return ProductVersionStateMemento.newBuilder().setState(State.Installing).setVersion(
+                version().toMemento()).build();
     }
     
 }

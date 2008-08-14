@@ -19,8 +19,14 @@ message ProductVersionStateMemento {
 	required State state = 2;
 }
 
+message ProductMemento {
+	required string name = 1;
+}
+
 message ProductStateMemento {
-	repeated ProductVersionStateMemento version = 1;
+	required ProductMemento product = 1;
+
+	repeated ProductVersionStateMemento version = 2;
 }
 
 message LocalRepositoryMemento {
