@@ -1,0 +1,28 @@
+
+option java_package = "com.yoursway.autoupdater.protos";
+
+message ProductVersionMemento {
+	required string name = 1;
+}
+
+message ProductVersionStateMemento {
+	required ProductVersionMemento version = 1;
+	
+	enum State {
+		New = 0;
+		Downloading = 1;
+		Installing = 2;
+		Current = 3;
+		Old = 4;
+	}
+	
+	required State state = 2;
+}
+
+message ProductStateMemento {
+	repeated ProductVersionStateMemento version = 1;
+}
+
+message LocalRepositoryMemento {
+	repeated ProductStateMemento product = 1;
+}
