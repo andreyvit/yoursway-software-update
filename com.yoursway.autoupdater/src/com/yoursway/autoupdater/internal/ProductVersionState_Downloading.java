@@ -17,11 +17,14 @@ public class ProductVersionState_Downloading extends AbstractProductVersionState
     @Override
     public void continueWork() {
         Packs packs = version().packs();
-        new Downloader(null).download(packs); //!
+        DownloadProgress progress = Downloader.instance().startDownloading(packs);
         
-        //> check if packs downloaded successfully
-        
-        changeState(new ProductVersionState_Installing(wrap));
+        progress.waitCompletion();
+        if (progress.successful())
+            changeState(new ProductVersionState_Installing(wrap));
+        else {
+            
+        }
     }
     
 }
