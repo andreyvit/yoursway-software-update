@@ -1,9 +1,13 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import static com.google.common.collect.Lists.newLinkedList;
+
+import java.util.Collection;
+
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
-import com.yoursway.autoupdater.filelibrary.RequiredFiles;
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
@@ -55,8 +59,8 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public RequiredFiles requiredFiles() {
-        return RequiredFiles.empty;
+    public Collection<Request> requiredFiles() {
+        return newLinkedList();
     }
     
     public void libraryChanged(LibraryState state) {

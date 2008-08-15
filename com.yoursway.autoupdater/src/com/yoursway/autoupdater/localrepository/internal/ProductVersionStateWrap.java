@@ -1,8 +1,10 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import java.util.Collection;
+
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
-import com.yoursway.autoupdater.filelibrary.RequiredFiles;
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 
 public class ProductVersionStateWrap implements ProductVersionState {
@@ -49,7 +51,7 @@ public class ProductVersionStateWrap implements ProductVersionState {
         state.continueWork();
     }
     
-    public RequiredFiles requiredFiles() {
+    public Collection<Request> requiredFiles() {
         return state.requiredFiles();
     }
     
