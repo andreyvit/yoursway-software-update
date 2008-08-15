@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.yoursway.autoupdater.auxiliary.DownloadTaskItem;
+import com.yoursway.autoupdater.filelibrary.RequiredFile;
 
 class DownloadingFile {
     
@@ -17,8 +17,8 @@ class DownloadingFile {
     private int partOffset = 0;
     private int partCounter = 0;
     
-    public DownloadingFile(DownloadTaskItem item, String place) throws FileNotFoundException {
-        out = new BufferedOutputStream(new FileOutputStream(place + item.filename()));
+    public DownloadingFile(RequiredFile file, String place) throws FileNotFoundException {
+        out = new BufferedOutputStream(new FileOutputStream(place + file.filename()));
     }
     
     public void write(byte[] b, int off, int len) throws IOException, FilePartIsntCorrectException {

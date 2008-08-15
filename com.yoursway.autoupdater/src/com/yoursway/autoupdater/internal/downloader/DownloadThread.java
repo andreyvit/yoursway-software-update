@@ -5,15 +5,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.yoursway.autoupdater.auxiliary.DownloadTask;
-import com.yoursway.autoupdater.auxiliary.DownloadTaskItem;
+import com.yoursway.autoupdater.filelibrary.RequiredFile;
+import com.yoursway.autoupdater.filelibrary.RequiredFiles;
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
 
 class DownloadThread extends Thread {
     
-    private final DownloadTask task;
+    private final RequiredFiles files;
     private final String place;
     
     private final Broadcaster<DownloadProgressListener> progressBroadcaster = BroadcasterFactory
@@ -22,31 +22,31 @@ class DownloadThread extends Thread {
     private int loadedBytes = 0;
     private final int totalBytes;
     
-    public DownloadThread(DownloadTask task, String place) {
-        this.task = task;
+    public DownloadThread(RequiredFiles files, String place) {
+        this.files = files;
         this.place = place;
         
-        totalBytes = task.totalBytes();
+        totalBytes = files.totalBytes();
     }
     
     @Override
     public void run() {
-        for (DownloadTaskItem item : task.items()) {
+        for (RequiredFile file : files.files()) {
             //> check if the file has been downloaded already 
-            download(item);
+            download(file);
         }
         
         progressBroadcaster.fire().completed();
     }
     
-    private void download(DownloadTaskItem item) {
+    private void download(RequiredFile file) {
         InputStream in = null;
         DownloadingFile out = null;
         
         try {
-            in = new URL(item.url()).openStream();
+            in = new URL(file.url()).openStream();
             
-            out = new DownloadingFile(item, place);
+            out = new DownloadingFile(file, place);
             
             byte[] buffer = new byte[1024];
             int read;

@@ -1,10 +1,11 @@
 package com.yoursway.autoupdater.auxiliary;
 
+import com.yoursway.autoupdater.filelibrary.RequiredFiles;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento;
 
 public class ProductVersion {
     
-    public Packs packs() {
+    public RequiredFiles packs() {
         throw new UnsupportedOperationException();
     }
     

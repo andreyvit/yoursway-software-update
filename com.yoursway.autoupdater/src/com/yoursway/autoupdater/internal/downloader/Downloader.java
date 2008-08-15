@@ -2,7 +2,7 @@ package com.yoursway.autoupdater.internal.downloader;
 
 import java.util.List;
 
-import com.yoursway.autoupdater.auxiliary.DownloadTask;
+import com.yoursway.autoupdater.filelibrary.RequiredFiles;
 
 public class Downloader {
     
@@ -18,8 +18,8 @@ public class Downloader {
         //> use a storage provider instead
     }
     
-    public DownloadProgress startDownloading(DownloadTask task) {
-        DownloadThread thread = new DownloadThread(task, place);
+    public DownloadProgress startDownloading(RequiredFiles files) {
+        DownloadThread thread = new DownloadThread(files, place);
         threads.add(thread);
         return thread.progress();
     }

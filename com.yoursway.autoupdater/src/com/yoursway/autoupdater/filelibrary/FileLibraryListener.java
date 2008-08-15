@@ -1,4 +1,4 @@
-package xxx.library;
+package com.yoursway.autoupdater.filelibrary;
 
 public interface FileLibraryListener {
     

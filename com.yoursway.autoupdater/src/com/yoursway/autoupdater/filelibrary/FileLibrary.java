@@ -1,8 +1,6 @@
-package xxx.library;
+package com.yoursway.autoupdater.filelibrary;
 
 import java.util.Collection;
-
-import xxx.Request;
 
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
@@ -15,8 +13,15 @@ public class FileLibrary {
     private final Broadcaster<FileLibraryListener> broadcaster = BroadcasterFactory
             .newBroadcaster(FileLibraryListener.class);
     
+    private final OrderManager orderManager;
+    
     public FileLibrary(Downloader downloader) {
+        if (downloader == null)
+            throw new NullPointerException("downloader is null");
+        
         this.downloader = downloader;
+        
+        orderManager = new OrderManager(this);
     }
     
     public void order(Collection<Request> requests) {
@@ -30,6 +35,10 @@ public class FileLibrary {
     private void a() {
         LibraryState state = null; //!
         broadcaster.fire().libraryChanged(state); //> fire when 1% of any file loaded  
+    }
+    
+    public OrderManager orderManager() {
+        return orderManager;
     }
     
 }

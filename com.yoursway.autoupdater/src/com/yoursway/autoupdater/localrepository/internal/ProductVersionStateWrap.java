@@ -1,13 +1,15 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.filelibrary.LibraryState;
+import com.yoursway.autoupdater.filelibrary.RequiredFiles;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 
 public class ProductVersionStateWrap implements ProductVersionState {
     
     private ProductVersionState state;
-    private final ProductVersion version;
-    private final ProductState productState;
+    final ProductVersion version;
+    final ProductState productState;
     
     public ProductVersionStateWrap(ProductVersion version, ProductState productState) {
         this.productState = productState;
@@ -35,14 +37,6 @@ public class ProductVersionStateWrap implements ProductVersionState {
         continueWork();
     }
     
-    ProductVersion version() {
-        return version;
-    }
-    
-    ProductState productState() {
-        return productState;
-    }
-    
     public void startUpdating() {
         state.startUpdating();
     }
@@ -55,8 +49,12 @@ public class ProductVersionStateWrap implements ProductVersionState {
         state.continueWork();
     }
     
-    public boolean isCurrent() {
-        return state.isCurrent();
+    public RequiredFiles requiredFiles() {
+        return state.requiredFiles();
+    }
+    
+    public void libraryChanged(LibraryState s) {
+        state.libraryChanged(s);
     }
     
 }

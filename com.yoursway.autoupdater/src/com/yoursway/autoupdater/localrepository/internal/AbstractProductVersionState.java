@@ -1,6 +1,10 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.filelibrary.LibraryState;
+import com.yoursway.autoupdater.filelibrary.OrderManager;
+import com.yoursway.autoupdater.filelibrary.RequiredFiles;
+import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
 abstract class AbstractProductVersionState implements ProductVersionState {
@@ -24,11 +28,19 @@ abstract class AbstractProductVersionState implements ProductVersionState {
     }
     
     protected ProductVersion version() {
-        return wrap.version();
+        return wrap.version;
     }
     
     protected ProductState productState() {
-        return wrap.productState();
+        return wrap.productState;
+    }
+    
+    protected Installer installer() {
+        return wrap.productState.installer;
+    }
+    
+    protected OrderManager orderManager() {
+        return wrap.productState.orderManager;
     }
     
     public void startUpdating() {
@@ -43,8 +55,12 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public boolean isCurrent() {
-        return false;
+    public RequiredFiles requiredFiles() {
+        return RequiredFiles.empty;
+    }
+    
+    public void libraryChanged(LibraryState state) {
+        // nothing to do
     }
     
 }

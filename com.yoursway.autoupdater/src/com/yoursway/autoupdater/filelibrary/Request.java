@@ -1,4 +1,4 @@
-package xxx;
+package com.yoursway.autoupdater.filelibrary;
 
 import static com.yoursway.utils.DebugOutputHelper.reflectionBasedToString;
 

@@ -5,6 +5,9 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.filelibrary.OrderManager;
+import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder;
@@ -15,11 +18,19 @@ public class ProductState {
     
     private final Map<ProductVersion, ProductVersionState> versions = new HashMap<ProductVersion, ProductVersionState>();
     
-    private ProductState(ProductStateMemento memento) {
+    private final FileLibrary fileLibrary;
+    final OrderManager orderManager;
+    final Installer installer;
+    
+    public ProductState(ProductStateMemento memento, FileLibrary fileLibrary, Installer installer) {
+        this.orderManager = fileLibrary.orderManager();
+        this.fileLibrary = fileLibrary;
+        this.installer = installer;
+        
         product = Product.fromMemento(memento.getProduct());
         for (ProductVersionStateMemento m : memento.getVersionList()) {
             ProductVersionStateWrap state = ProductVersionStateWrap.fromMemento(m, this);
-            versions.put(state.version(), state);
+            versions.put(state.version, state);
         }
     }
     
@@ -33,6 +44,7 @@ public class ProductState {
         else {
             state = new ProductVersionStateWrap(version, this);
             versions.put(version, state);
+            fileLibrary.events().addListener(state);
         }
     }
     
@@ -52,10 +64,6 @@ public class ProductState {
         return product;
     }
     
-    public static ProductState fromMemento(ProductStateMemento memento) {
-        return new ProductState(memento);
-    }
-    
     public ProductStateMemento toMemento() {
         Builder b = ProductStateMemento.newBuilder().setProduct(product.toMemento());
         for (ProductVersionState version : versions.values())
@@ -63,10 +71,4 @@ public class ProductState {
         return b.build();
     }
     
-    ProductVersionStateWrap currentVersionStateOrNull() {
-        for (ProductVersionState version : versions.values())
-            if (version.isCurrent())
-                return (ProductVersionStateWrap) version;
-        return null;
-    }
 }

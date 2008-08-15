@@ -1,10 +1,10 @@
-package com.yoursway.autoupdater.auxiliary;
+package com.yoursway.autoupdater.filelibrary;
 
-public class DownloadTaskItem {
+public class RequiredFile {
     
     private final String url;
     
-    public DownloadTaskItem(String url) {
+    public RequiredFile(String url) {
         this.url = url;
     }
     

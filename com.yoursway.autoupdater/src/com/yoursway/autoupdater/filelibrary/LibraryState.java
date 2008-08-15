@@ -1,7 +1,8 @@
-package xxx.library;
+package com.yoursway.autoupdater.filelibrary;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -18,4 +19,13 @@ public class LibraryState {
     public FileState stateOf(URL url) {
         return states.get(url);
     }
+    
+    public boolean filesReady(RequiredFiles files) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public Collection<File> getLocalFiles(RequiredFiles files) {
+        throw new UnsupportedOperationException();
+    }
+    
 }

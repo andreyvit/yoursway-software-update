@@ -1,25 +1,15 @@
 package com.yoursway.autoupdater.internal.installer;
 
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import java.io.File;
+import java.util.Collection;
 
 public class Installer {
     
-    private final ProductVersion version;
-    
-    public Installer(ProductVersion version) {
-        this.version = version;
-    }
-    
-    public void install() {
+    public void install(Collection<File> localPacks) {
         throw new UnsupportedOperationException();
         
+        //> check restart necessity
         //> unpack and move files
-    }
-    
-    public boolean restartRequired() {
-        throw new UnsupportedOperationException();
-        
-        //> ask components
     }
     
 }
