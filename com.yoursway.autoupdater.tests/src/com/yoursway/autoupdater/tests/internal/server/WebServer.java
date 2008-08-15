@@ -1,4 +1,4 @@
-package com.yoursway.autoupdate.core.tests;
+package com.yoursway.autoupdater.tests.internal.server;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
-import com.yoursway.autoupdate.core.tests.internal.SimpleHttpServer;
-import com.yoursway.autoupdate.core.tests.internal.SimpleServlet;
 import com.yoursway.utils.StringInputStream;
 
 public class WebServer {
@@ -30,7 +28,7 @@ public class WebServer {
         SimpleServlet servlet = new SimpleServlet() {
             
             public void log(String s2) {
-                System.out.println(s2);
+                //System.out.println(s2);
             }
             
             public InputStream openFile(String path) throws IOException {

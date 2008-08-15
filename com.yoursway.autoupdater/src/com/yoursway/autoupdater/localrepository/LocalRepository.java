@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
-import com.yoursway.autoupdater.filelibrary.Downloader;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.localrepository.internal.ProductState;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;

@@ -2,6 +2,7 @@ package com.yoursway.autoupdater.filelibrary;
 
 import java.util.Collection;
 
+import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
