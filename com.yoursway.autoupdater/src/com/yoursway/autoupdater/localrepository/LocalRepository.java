@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.localrepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -9,11 +10,13 @@ import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
+import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.internal.installer.Installer;
 import com.yoursway.autoupdater.localrepository.internal.ProductState;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
+import com.yoursway.utils.YsFileUtils;
 
 public class LocalRepository {
     
@@ -26,9 +29,10 @@ public class LocalRepository {
         product.startUpdating(version);
     }
     
-    public void atStartup() {
-        Downloader downloader = new Downloader();
-        fileLibrary = new FileLibrary(downloader);
+    public void atStartup() throws IOException {
+        Downloader downloader = new DownloaderImpl();
+        File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
+        fileLibrary = new FileLibrary(downloader, place);
         installer = new Installer();
         
         InputStream in = null; //> get from storage

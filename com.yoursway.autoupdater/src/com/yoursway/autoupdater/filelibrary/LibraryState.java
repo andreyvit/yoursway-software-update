@@ -20,11 +20,11 @@ public class LibraryState {
         return states.get(url);
     }
     
-    public boolean filesReady(RequiredFiles files) {
+    public boolean filesReady(Collection<Request> requests) {
         throw new UnsupportedOperationException();
     }
     
-    public Collection<File> getLocalFiles(RequiredFiles files) {
+    public Collection<File> getLocalFiles(Collection<Request> requests) {
         throw new UnsupportedOperationException();
     }
     

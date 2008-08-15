@@ -10,7 +10,8 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
+import com.yoursway.autoupdater.filelibrary.downloader.AbstractDownloader;
+import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
 
@@ -30,7 +31,7 @@ public class DownloaderTests {
             server = new WebServer();
             server.mount(remotePath, text);
             
-            Downloader downloader = new Downloader();
+            AbstractDownloader downloaderImpl = new DownloaderImpl();
             DownloaderListener listener = new DownloaderListener() {
                 
                 public void someBytesDownloaded(URL url) {
@@ -44,14 +45,13 @@ public class DownloaderTests {
                     }
                 }
             };
-            downloader.events().addListener(listener);
+            downloaderImpl.events().addListener(listener);
             
             URL url = new URL("http://localhost:" + server.getPort() + "/" + remotePath);
             file = File.createTempFile("autoupdater.test", null);
-            System.out.println(file.getAbsolutePath());
             
             synchronized (this) {
-                downloader.enqueue(url, file);
+                downloaderImpl.enqueue(url, file);
                 wait(1000);
             }
             
