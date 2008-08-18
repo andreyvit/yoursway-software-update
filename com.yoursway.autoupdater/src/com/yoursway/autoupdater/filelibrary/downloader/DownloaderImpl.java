@@ -28,8 +28,11 @@ public class DownloaderImpl extends AbstractDownloader {
         thread = new DownloadThread();
     }
     
-    public void enqueue(URL url, File file, long loaded) {
+    public boolean enqueue(URL url, File file, long loaded) {
         synchronized (this) {
+            if (loading(url, file))
+                return false;
+            
             tasks.add(new DownloadTask(url, file, loaded));
             notify();
         }
@@ -39,25 +42,40 @@ public class DownloaderImpl extends AbstractDownloader {
             throw new IllegalStateException("Downloading thread has been terminated.");
         if (s == State.NEW)
             thread.start();
+        
+        return true;
     }
     
     @Override
-    public boolean cancel(URL url) {
-        synchronized (this) {
-            for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
-                DownloadTask task = it.next();
-                
-                if (task.url.equals(url)) {
-                    it.remove();
-                    return true;
-                }
-            }
+    public synchronized boolean cancel(URL url) {
+        for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
+            DownloadTask task = it.next();
             
-            if (thread.task.url.equals(url)) {
-                thread.cancelCurrentTask();
+            if (task.url.equals(url)) {
+                it.remove();
                 return true;
             }
         }
+        
+        if (thread.task != null && thread.task.url.equals(url)) {
+            thread.cancelCurrentTask();
+            return true;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public synchronized boolean loading(URL url, File file) {
+        for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
+            DownloadTask task = it.next();
+            
+            if (task.url.equals(url) && task.file.equals(file))
+                return true;
+        }
+        
+        if (thread.task != null && thread.task.url.equals(url) && thread.task.file.equals(file))
+            return true;
         
         return false;
     }

@@ -14,8 +14,9 @@ public class DownloaderMock extends AbstractDownloader {
     
     private final Map<URL, File> files = newHashMap();
     
-    public void enqueue(URL url, File file, long loaded) {
+    public boolean enqueue(URL url, File file, long loaded) {
         files.put(url, file);
+        return true;
     }
     
     public void createFile(Request request) throws IOException {

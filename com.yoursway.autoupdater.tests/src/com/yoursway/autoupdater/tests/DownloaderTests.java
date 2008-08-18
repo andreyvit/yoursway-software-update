@@ -34,6 +34,21 @@ public class DownloaderTests {
         server = new WebServer();
     }
     
+    private URL urlFor(String remotePath) throws MalformedURLException {
+        return new URL("http://localhost:" + server.getPort() + "/" + remotePath);
+    }
+    
+    private File tempFile() throws IOException {
+        return File.createTempFile("autoupdater.test", null);
+    }
+    
+    private String bigString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 2000; i++)
+            sb.append("file contents ");
+        return sb.toString();
+    }
+    
     @Test
     public void connection() throws IOException, InterruptedException {
         String remotePath = "test";
@@ -78,10 +93,7 @@ public class DownloaderTests {
     @Test
     public void cancelling() throws IOException, InterruptedException {
         String remotePath = "test";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 2000; i++)
-            sb.append("file contents ");
-        String text = sb.toString();
+        String text = bigString();
         
         File file = null;
         try {
@@ -115,12 +127,54 @@ public class DownloaderTests {
         }
     }
     
-    private File tempFile() throws IOException {
-        return File.createTempFile("autoupdater.test", null);
-    }
-    
-    private URL urlFor(String remotePath) throws MalformedURLException {
-        return new URL("http://localhost:" + server.getPort() + "/" + remotePath);
+    @Test
+    public void loading() throws IOException, InterruptedException {
+        String remotePath1 = "test";
+        String remotePath2 = "myfile";
+        String text = bigString();
+        completed = false;
+        
+        File file1 = null;
+        File file2 = null;
+        try {
+            server.mount(remotePath1, text);
+            server.mount(remotePath2, text);
+            
+            Downloader downloader = new DownloaderImpl();
+            
+            URL url1 = urlFor(remotePath1);
+            URL url2 = urlFor(remotePath2);
+            file1 = tempFile();
+            file2 = tempFile();
+            
+            assertFalse(downloader.loading(url1, file1));
+            
+            downloader.enqueue(url1, file1, 0);
+            
+            assertTrue(downloader.loading(url1, file1));
+            assertFalse(downloader.loading(url1, file2));
+            assertFalse(downloader.loading(url2, file1));
+            assertFalse(downloader.loading(url2, file2));
+            Thread.sleep(100);
+            assertTrue(downloader.loading(url1, file1));
+            
+            downloader.enqueue(url2, file2, 0);
+            
+            assertTrue(downloader.loading(url2, file2));
+            
+            downloader.cancel(url1);
+            
+            Thread.sleep(100);
+            assertFalse(downloader.loading(url1, file1));
+            assertTrue(downloader.loading(url2, file2));
+            
+        } finally {
+            try {
+                file2.delete();
+            } finally {
+                file1.delete();
+            }
+        }
     }
     
     @AfterClass

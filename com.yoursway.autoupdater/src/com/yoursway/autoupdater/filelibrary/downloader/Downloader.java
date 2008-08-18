@@ -9,7 +9,7 @@ public interface Downloader {
     
     EventSource<DownloaderListener> events();
     
-    void enqueue(URL url, File file, long loaded);
+    boolean enqueue(URL url, File file, long loaded);
     
     boolean cancel(URL url);
     
