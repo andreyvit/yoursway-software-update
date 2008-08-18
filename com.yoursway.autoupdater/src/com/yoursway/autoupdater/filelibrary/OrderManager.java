@@ -1,16 +1,33 @@
 package com.yoursway.autoupdater.filelibrary;
 
+import static com.google.common.collect.Sets.newHashSet;
+
+import java.util.Set;
+
 public class OrderManager {
     
-    private FileLibrary fileLibrary;
+    private final FileLibrary fileLibrary;
     
-    OrderManager(FileLibrary fileLibrary2) {
-        // TODO Auto-generated constructor stub
+    private final Set<LibrarySubscriber> subscribers = newHashSet();
+    
+    OrderManager(FileLibrary fileLibrary) {
+        this.fileLibrary = fileLibrary;
+    }
+    
+    public void register(LibrarySubscriber s) {
+        subscribers.add(s);
+    }
+    
+    public void unregister(LibrarySubscriber s) {
+        subscribers.remove(s);
     }
     
     public void orderChanged() {
         FileLibraryOrder order = new FileLibraryOrder();
-        //> collect requests
+        
+        for (LibrarySubscriber s : subscribers)
+            order.add(s.requiredFiles());
+        
         fileLibrary.order(order);
     }
 }

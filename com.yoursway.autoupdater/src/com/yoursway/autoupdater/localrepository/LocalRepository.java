@@ -9,6 +9,7 @@ import java.util.Map;
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.internal.installer.Installer;
@@ -22,7 +23,7 @@ public class LocalRepository {
     
     private final Map<Product, ProductState> products = new HashMap<Product, ProductState>();
     private Installer installer;
-    private FileLibrary fileLibrary;
+    private FileLibrary fileLibraryImpl;
     
     public void startUpdating(ProductVersion version) {
         ProductState product = products.get(version.product());
@@ -32,7 +33,7 @@ public class LocalRepository {
     public void atStartup() throws IOException {
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
-        fileLibrary = new FileLibrary(downloader, place);
+        fileLibraryImpl = new FileLibraryImpl(downloader, place);
         installer = new Installer();
         
         InputStream in = null; //> get from storage
@@ -50,7 +51,7 @@ public class LocalRepository {
     
     private void fromMemento(LocalRepositoryMemento memento) {
         for (ProductStateMemento m : memento.getProductList()) {
-            ProductState state = new ProductState(m, fileLibrary, installer);
+            ProductState state = new ProductState(m, fileLibraryImpl, installer);
             products.put(state.product(), state);
         }
     }

@@ -9,15 +9,15 @@ import java.util.Map;
 
 public class LibraryState {
     
-    private final Map<URL, FileState> states = newHashMap();
+    private final Map<URL, FileState> fileStates = newHashMap();
     
-    LibraryState(Collection<FileState> states) {
-        for (FileState state : states)
-            this.states.put(state.url, state);
+    LibraryState(Collection<FileState> fileStates) {
+        for (FileState state : fileStates)
+            this.fileStates.put(state.url, state);
     }
     
     public LibraryFile stateOf(URL url) {
-        return states.get(url);
+        return fileStates.get(url);
     }
     
     public boolean filesReady(Collection<Request> requests) {

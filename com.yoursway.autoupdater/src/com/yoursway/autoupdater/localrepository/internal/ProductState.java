@@ -45,6 +45,8 @@ public class ProductState {
             state = new ProductVersionStateWrap(version, this);
             versions.put(version, state);
             fileLibrary.events().addListener(state);
+            orderManager.register(state);
+            state.continueWork();
         }
     }
     

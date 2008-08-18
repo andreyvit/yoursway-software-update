@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.filelibrary;
 
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.order;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.notNull;
@@ -8,8 +9,6 @@ import static org.easymock.EasyMock.verify;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class FileLibraryTests {
         place.mkdir();
         
         downloader = new DownloaderMock();
-        fileLibrary = new FileLibrary(downloader, place);
+        fileLibrary = new FileLibraryImpl(downloader, place);
         
         listener = createMock(FileLibraryListener.class);
     }
@@ -48,14 +47,4 @@ public class FileLibraryTests {
         verify(listener);
     }
     
-    private FileLibraryOrder order(int requestsCount) throws MalformedURLException {
-        FileLibraryOrder order = new FileLibraryOrder();
-        for (int i = 1; i <= requestsCount; i++)
-            order.add(request("url" + i, i * 100, "hash" + i));
-        return order;
-    }
-    
-    private Request request(String filename, int size, String hash) throws MalformedURLException {
-        return new Request(new URL("http://localhost/" + filename), size, hash);
-    }
 }
