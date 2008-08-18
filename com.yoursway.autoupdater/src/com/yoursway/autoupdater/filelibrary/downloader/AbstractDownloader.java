@@ -16,7 +16,7 @@ public abstract class AbstractDownloader implements Downloader {
         return broadcaster;
     }
     
-    public void cancel(URL url) {
+    public boolean cancel(URL url) {
         throw new UnsupportedOperationException();
     }
     

@@ -11,7 +11,7 @@ public interface Downloader {
     
     void enqueue(URL url, File file, long loaded);
     
-    void cancel(URL url);
+    boolean cancel(URL url);
     
     boolean loading(URL url, File file);
     

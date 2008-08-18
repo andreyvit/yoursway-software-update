@@ -10,12 +10,18 @@ import java.lang.Thread.State;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.yoursway.utils.annotations.SynchronizedWithMonitorOfField;
+import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
 
 public class DownloaderImpl extends AbstractDownloader {
     
     private final DownloadThread thread;
+    
+    @SynchronizedWithMonitorOfThis
     private final Queue<DownloadTask> tasks = new ConcurrentLinkedQueue<DownloadTask>();
     
     public DownloaderImpl() {
@@ -35,7 +41,35 @@ public class DownloaderImpl extends AbstractDownloader {
             thread.start();
     }
     
+    @Override
+    public boolean cancel(URL url) {
+        synchronized (this) {
+            for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
+                DownloadTask task = it.next();
+                
+                if (task.url.equals(url)) {
+                    it.remove();
+                    return true;
+                }
+            }
+            
+            if (thread.task.url.equals(url)) {
+                thread.cancelCurrentTask();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     private class DownloadThread extends Thread {
+        
+        //?
+        @SynchronizedWithMonitorOfField("DownloaderImpl.this")
+        DownloadTask task = null;
+        
+        private volatile boolean cancelled = false;
+        
         public DownloadThread() {
             super(DownloaderImpl.this.toString());
         }
@@ -43,14 +77,16 @@ public class DownloaderImpl extends AbstractDownloader {
         @Override
         public void run() {
             try {
-                DownloadTask task;
                 while (true) {
                     synchronized (DownloaderImpl.this) {
-                        task = tasks.poll();
-                        if (task == null) {
+                        while (true) {
+                            task = tasks.poll();
+                            if (task != null)
+                                break;
+                            
                             DownloaderImpl.this.wait();
-                            continue;
                         }
+                        cancelled = false;
                     }
                     
                     download(task);
@@ -58,6 +94,10 @@ public class DownloaderImpl extends AbstractDownloader {
             } catch (InterruptedException e) {
                 interrupted();
             }
+        }
+        
+        public void cancelCurrentTask() {
+            cancelled = true;
         }
         
         private void download(DownloadTask task) {
@@ -74,10 +114,10 @@ public class DownloaderImpl extends AbstractDownloader {
                 
                 byte[] buffer = new byte[1024];
                 int read;
-                while (true) {
+                while (!cancelled) {
                     read = in.read(buffer);
                     if (read == -1)
-                        return;
+                        break;
                     
                     out.write(buffer, 0, read);
                     
@@ -105,7 +145,8 @@ public class DownloaderImpl extends AbstractDownloader {
                         e.printStackTrace();
                     }
                 
-                broadcaster.fire().completed(task.url);
+                if (!cancelled)
+                    broadcaster.fire().completed(task.url);
             }
             
         }

@@ -7,7 +7,7 @@ class DownloadTask {
     
     final URL url;
     final File file;
-    public long loaded;
+    final long loaded;
     
     DownloadTask(URL url, File file, long loaded) {
         this.url = url;
