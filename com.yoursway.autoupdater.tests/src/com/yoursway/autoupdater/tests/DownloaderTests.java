@@ -177,6 +177,42 @@ public class DownloaderTests {
         }
     }
     
+    @Test
+    public void range() throws IOException, InterruptedException {
+        String remotePath = "test";
+        String text = bigString();
+        
+        File file = null;
+        try {
+            server.mount(remotePath, text);
+            
+            Downloader downloader = new DownloaderImpl();
+            
+            URL url = urlFor(remotePath);
+            file = tempFile();
+            
+            downloader.enqueue(url, file, 0);
+            Thread.sleep(100);
+            downloader.cancel(url);
+            
+            Thread.sleep(100);
+            assertFalse(text.equals(readAsString(file)));
+            
+            long loaded = file.length();
+            downloader.enqueue(url, file, loaded);
+            
+            Thread.sleep(100);
+            //! assertTrue(file.length() >= loaded); // WebServer does not support range
+            
+            Thread.sleep(1000);
+            assertEquals(text, readAsString(file));
+            
+        } finally {
+            file.delete();
+        }
+        
+    }
+    
     @AfterClass
     public static void clean() {
         server.dispose();

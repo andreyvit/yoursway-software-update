@@ -124,11 +124,26 @@ public class DownloaderImpl extends AbstractDownloader {
             
             try {
                 URLConnection connection = task.url.openConnection();
-                if (task.loaded > 0)
+                boolean append = false;
+                if (task.loaded > 0) {
                     connection.setRequestProperty("Range", "bytes=" + task.loaded + "-");
+                    
+                    String field = connection.getHeaderField("Content-Range");
+                    if (field != null) {
+                        int r = -1;
+                        if (field.startsWith("bytes ")) {
+                            int i = field.indexOf('-');
+                            r = (i >= 6 ? Integer.parseInt(field.substring(6, i)) : -1);
+                        }
+                        if (r == task.loaded)
+                            append = true;
+                        else
+                            throw new AssertionError("Weird Content-Range header.");
+                    }
+                }
                 
                 in = connection.getInputStream();
-                out = new BufferedOutputStream(new FileOutputStream(task.file));
+                out = new BufferedOutputStream(new FileOutputStream(task.file, append));
                 
                 byte[] buffer = new byte[1024];
                 int read;
