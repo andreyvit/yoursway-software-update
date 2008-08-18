@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.filelibrary;
 
-import static com.google.common.collect.Lists.newLinkedList;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.notNull;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,21 +38,21 @@ public class FileLibraryTests {
         expectLastCall().times(1 + 2 * 3);
         replay(listener);
         
-        Collection<Request> requests = requests(3);
+        FileLibraryOrder order = order(3);
         fileLibrary.events().addListener(listener);
-        fileLibrary.order(requests);
+        fileLibrary.order(order);
         
-        for (Request request : requests)
+        for (Request request : order)
             downloader.createFile(request);
         
         verify(listener);
     }
     
-    private Collection<Request> requests(int count) throws MalformedURLException {
-        Collection<Request> requests = newLinkedList();
-        for (int i = 1; i <= count; i++)
-            requests.add(request("url" + i, i * 100, "hash" + i));
-        return requests;
+    private FileLibraryOrder order(int requestsCount) throws MalformedURLException {
+        FileLibraryOrder order = new FileLibraryOrder();
+        for (int i = 1; i <= requestsCount; i++)
+            order.add(request("url" + i, i * 100, "hash" + i));
+        return order;
     }
     
     private Request request(String filename, int size, String hash) throws MalformedURLException {

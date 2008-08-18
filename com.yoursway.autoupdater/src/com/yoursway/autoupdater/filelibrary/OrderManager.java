@@ -1,8 +1,5 @@
 package com.yoursway.autoupdater.filelibrary;
 
-import java.util.Collection;
-
-
 public class OrderManager {
     
     private FileLibrary fileLibrary;
@@ -12,8 +9,8 @@ public class OrderManager {
     }
     
     public void orderChanged() {
-        Collection<Request> requests = null; //> collect requests
-        
-        fileLibrary.order(requests);
+        FileLibraryOrder order = new FileLibraryOrder();
+        //> collect requests
+        fileLibrary.order(order);
     }
 }

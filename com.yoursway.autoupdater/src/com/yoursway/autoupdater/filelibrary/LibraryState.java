@@ -16,7 +16,7 @@ public class LibraryState {
             this.states.put(state.url, state);
     }
     
-    public FileState stateOf(URL url) {
+    public LibraryFile stateOf(URL url) {
         return states.get(url);
     }
     

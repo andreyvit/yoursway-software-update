@@ -14,7 +14,7 @@ public class DownloaderMock extends AbstractDownloader {
     
     private final Map<URL, File> files = newHashMap();
     
-    public void enqueue(URL url, File file) {
+    public void enqueue(URL url, File file, long loaded) {
         files.put(url, file);
     }
     
@@ -26,5 +26,10 @@ public class DownloaderMock extends AbstractDownloader {
         
         broadcaster.fire().someBytesDownloaded(request.url);
         broadcaster.fire().completed(request.url);
+    }
+    
+    @Override
+    public boolean loading(URL url, File file) {
+        return false;
     }
 }

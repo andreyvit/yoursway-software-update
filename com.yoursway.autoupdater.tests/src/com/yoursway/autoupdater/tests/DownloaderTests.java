@@ -51,7 +51,7 @@ public class DownloaderTests {
             file = File.createTempFile("autoupdater.test", null);
             
             synchronized (this) {
-                downloaderImpl.enqueue(url, file);
+                downloaderImpl.enqueue(url, file, 0);
                 wait(1000);
             }
             

@@ -9,9 +9,9 @@ import java.io.OutputStream;
 import java.lang.Thread.State;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 
 public class DownloaderImpl extends AbstractDownloader {
     
@@ -22,9 +22,9 @@ public class DownloaderImpl extends AbstractDownloader {
         thread = new DownloadThread();
     }
     
-    public void enqueue(URL url, File file) {
+    public void enqueue(URL url, File file, long loaded) {
         synchronized (this) {
-            tasks.add(new DownloadTask(url, file));
+            tasks.add(new DownloadTask(url, file, loaded));
             notify();
         }
         
@@ -65,7 +65,11 @@ public class DownloaderImpl extends AbstractDownloader {
             OutputStream out = null;
             
             try {
-                in = task.url.openStream();
+                URLConnection connection = task.url.openConnection();
+                if (task.loaded > 0)
+                    connection.setRequestProperty("Range", "bytes=" + task.loaded + "-");
+                
+                in = connection.getInputStream();
                 out = new BufferedOutputStream(new FileOutputStream(task.file));
                 
                 byte[] buffer = new byte[1024];

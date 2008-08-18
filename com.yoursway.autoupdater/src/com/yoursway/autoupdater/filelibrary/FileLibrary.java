@@ -1,9 +1,11 @@
 package com.yoursway.autoupdater.filelibrary;
 
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
@@ -22,6 +24,8 @@ public class FileLibrary {
     
     private final File place;
     
+    private final Map<URL, LibraryFile> files = newHashMap();
+    
     public FileLibrary(Downloader downloader, File placeDir) {
         if (downloader == null)
             throw new NullPointerException("downloader is null");
@@ -30,6 +34,8 @@ public class FileLibrary {
         
         this.downloader = downloader;
         place = placeDir;
+        
+        //> restore files list
         
         downloader.events().addListener(new DownloaderListener() {
             public void completed(URL url) {
@@ -44,10 +50,25 @@ public class FileLibrary {
         orderManager = new OrderManager(this);
     }
     
-    public void order(Collection<Request> requests) {
-        //> downloader.download files
-        for (Request request : requests)
-            downloader.enqueue(request.url, new File(place, request.filename()));
+    public void order(FileLibraryOrder order) {
+        for (LibraryFile file : files.values())
+            if (!order.contains(file))
+                downloader.cancel(file.url);
+        
+        for (Request request : order) {
+            URL url = request.url;
+            
+            LibraryFile file = files.get(url);
+            if (file == null) {
+                File localFile = new File(place, request.filename());
+                file = new LibraryFile(url, request.size, localFile);
+                files.put(url, file);
+            }
+            
+            File localFile = file.localFile;
+            if (!downloader.loading(url, localFile) && !file.isDone())
+                downloader.enqueue(url, localFile, file.doneSize());
+        }
         
         changed();
     }
