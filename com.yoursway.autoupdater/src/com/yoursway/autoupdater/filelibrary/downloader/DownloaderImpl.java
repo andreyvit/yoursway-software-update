@@ -82,7 +82,6 @@ public class DownloaderImpl extends AbstractDownloader {
     
     private class DownloadThread extends Thread {
         
-        //?
         @SynchronizedWithMonitorOfField("DownloaderImpl.this")
         DownloadTask task = null;
         
@@ -96,6 +95,7 @@ public class DownloaderImpl extends AbstractDownloader {
         public void run() {
             try {
                 while (true) {
+                    DownloadTask _task;
                     synchronized (DownloaderImpl.this) {
                         while (true) {
                             task = tasks.poll();
@@ -105,9 +105,10 @@ public class DownloaderImpl extends AbstractDownloader {
                             DownloaderImpl.this.wait();
                         }
                         cancelled = false;
+                        _task = task;
                     }
                     
-                    download(task);
+                    download(_task);
                 }
             } catch (InterruptedException e) {
                 interrupted();

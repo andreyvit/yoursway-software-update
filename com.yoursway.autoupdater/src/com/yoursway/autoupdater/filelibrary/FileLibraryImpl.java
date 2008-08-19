@@ -67,7 +67,7 @@ public class FileLibraryImpl implements FileLibrary {
             }
             
             File localFile = file.localFile;
-            if (!downloader.loading(url, localFile) && !file.isDone())
+            if (!file.isDone())
                 downloader.enqueue(url, localFile, file.doneSize());
         }
         
