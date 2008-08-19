@@ -34,6 +34,14 @@ public class ProductState {
         }
     }
     
+    public ProductState(Product product, FileLibrary fileLibrary, Installer installer) {
+        this.orderManager = fileLibrary.orderManager();
+        this.fileLibrary = fileLibrary;
+        this.installer = installer;
+        
+        this.product = product;
+    }
+    
     public void startUpdating(ProductVersion version) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");

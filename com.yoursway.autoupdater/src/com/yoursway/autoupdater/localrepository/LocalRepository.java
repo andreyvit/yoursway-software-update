@@ -22,19 +22,28 @@ import com.yoursway.utils.YsFileUtils;
 public class LocalRepository {
     
     private final Map<Product, ProductState> products = new HashMap<Product, ProductState>();
-    private Installer installer;
-    private FileLibrary fileLibraryImpl;
+    private final Installer installer;
+    private final FileLibrary fileLibrary;
     
-    public void startUpdating(ProductVersion version) {
-        ProductState product = products.get(version.product());
-        product.startUpdating(version);
-    }
-    
-    public void atStartup() throws IOException {
+    public LocalRepository() throws IOException {
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
-        fileLibraryImpl = new FileLibraryImpl(downloader, place);
+        place.mkdir();
+        fileLibrary = new FileLibraryImpl(downloader, place);
         installer = new Installer();
+    }
+    
+    public void startUpdating(ProductVersion version) {
+        Product product = version.product();
+        ProductState productState = products.get(product);
+        if (productState == null) {
+            productState = new ProductState(product, fileLibrary, installer);
+            products.put(product, productState);
+        }
+        productState.startUpdating(version);
+    }
+    
+    public void atStartup() {
         
         InputStream in = null; //> get from storage
         try {
@@ -51,7 +60,7 @@ public class LocalRepository {
     
     private void fromMemento(LocalRepositoryMemento memento) {
         for (ProductStateMemento m : memento.getProductList()) {
-            ProductState state = new ProductState(m, fileLibraryImpl, installer);
+            ProductState state = new ProductState(m, fileLibrary, installer);
             products.put(state.product(), state);
         }
     }

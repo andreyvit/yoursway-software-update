@@ -7,12 +7,20 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemen
 
 public class ProductVersion {
     
+    private final Product product;
+    private final Collection<Request> packs;
+    
+    public ProductVersion(Product product, Collection<Request> packs) {
+        this.product = product;
+        this.packs = packs;
+    }
+    
     public Collection<Request> packs() {
-        throw new UnsupportedOperationException();
+        return packs;
     }
     
     public Product product() {
-        throw new UnsupportedOperationException();
+        return product;
     }
     
     public static ProductVersion fromMemento(ProductVersionMemento version) {
