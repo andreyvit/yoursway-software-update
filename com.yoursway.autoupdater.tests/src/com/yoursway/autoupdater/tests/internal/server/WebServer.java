@@ -48,6 +48,11 @@ public class WebServer {
     
     @SuppressWarnings("deprecation")
     public void dispose() {
+        try {
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
         server.stop();
     }
     
