@@ -9,6 +9,7 @@ Export-Package:
  com.yoursway.autoupdater.auxiliary,
  com.yoursway.autoupdater.filelibrary,
  com.yoursway.autoupdater.filelibrary.downloader,
+ com.yoursway.autoupdater.installer,
  com.yoursway.autoupdater.localrepository,
  com.yoursway.autoupdater.protos
 Require-Bundle: com.yoursway.utils,

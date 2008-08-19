@@ -8,7 +8,7 @@ import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.internal.installer.Installer;
+import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
 abstract class AbstractProductVersionState implements ProductVersionState {

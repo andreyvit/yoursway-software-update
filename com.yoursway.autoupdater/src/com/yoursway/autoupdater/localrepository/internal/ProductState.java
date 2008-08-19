@@ -7,7 +7,7 @@ import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
-import com.yoursway.autoupdater.internal.installer.Installer;
+import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder;

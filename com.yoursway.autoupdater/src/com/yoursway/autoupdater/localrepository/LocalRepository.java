@@ -12,7 +12,8 @@ import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
-import com.yoursway.autoupdater.internal.installer.Installer;
+import com.yoursway.autoupdater.installer.Installer;
+import com.yoursway.autoupdater.installer.InstallerImpl;
 import com.yoursway.autoupdater.localrepository.internal.ProductState;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
@@ -25,12 +26,20 @@ public class LocalRepository {
     private final Installer installer;
     private final FileLibrary fileLibrary;
     
-    public LocalRepository() throws IOException {
+    private LocalRepository() throws IOException {
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
         place.mkdir();
         fileLibrary = new FileLibraryImpl(downloader, place);
-        installer = new Installer();
+        installer = new InstallerImpl();
+    }
+    
+    public LocalRepository(Installer installer) throws IOException {
+        Downloader downloader = new DownloaderImpl();
+        File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
+        place.mkdir();
+        fileLibrary = new FileLibraryImpl(downloader, place);
+        this.installer = installer;
     }
     
     public void startUpdating(ProductVersion version) {
