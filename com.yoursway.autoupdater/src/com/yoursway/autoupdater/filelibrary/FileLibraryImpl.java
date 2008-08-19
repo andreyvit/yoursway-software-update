@@ -46,6 +46,10 @@ public class FileLibraryImpl implements FileLibrary {
             public void someBytesDownloaded(URL url) {
                 changed(false);
             }
+            
+            public void cancelled(URL url) {
+                // nothing
+            }
         });
         
         orderManager = new OrderManager(this);

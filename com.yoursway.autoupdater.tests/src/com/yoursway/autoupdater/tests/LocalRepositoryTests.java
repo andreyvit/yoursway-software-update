@@ -65,7 +65,7 @@ public class LocalRepositoryTests {
         
         synchronized (this) {
             repo.startUpdating(version);
-            wait(1000);
+            wait();
         }
         
         assertTrue("The product version has not been installed.", installed);

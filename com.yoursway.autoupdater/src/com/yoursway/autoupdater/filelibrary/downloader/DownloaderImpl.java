@@ -53,6 +53,7 @@ public class DownloaderImpl extends AbstractDownloader {
             
             if (task.url.equals(url)) {
                 it.remove();
+                broadcaster.fire().cancelled(url);
                 return true;
             }
         }
@@ -97,6 +98,11 @@ public class DownloaderImpl extends AbstractDownloader {
                 while (true) {
                     DownloadTask _task;
                     synchronized (DownloaderImpl.this) {
+                        if (cancelled) {
+                            broadcaster.fire().cancelled(task.url);
+                            cancelled = false;
+                        }
+                        
                         while (true) {
                             task = tasks.poll();
                             if (task != null)
@@ -104,7 +110,7 @@ public class DownloaderImpl extends AbstractDownloader {
                             
                             DownloaderImpl.this.wait();
                         }
-                        cancelled = false;
+                        
                         _task = task;
                     }
                     
@@ -157,6 +163,7 @@ public class DownloaderImpl extends AbstractDownloader {
                     
                     broadcaster.fire().someBytesDownloaded(task.url);
                 }
+                
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

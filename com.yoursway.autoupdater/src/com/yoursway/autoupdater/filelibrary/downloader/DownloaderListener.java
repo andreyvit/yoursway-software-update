@@ -8,4 +8,6 @@ public interface DownloaderListener {
     
     void completed(URL url);
     
+    void cancelled(URL url);
+    
 }
