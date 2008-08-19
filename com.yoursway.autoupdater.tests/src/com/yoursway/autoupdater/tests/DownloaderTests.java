@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,25 +18,15 @@ import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
+import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
 
 public class DownloaderTests {
     
     private static WebServer server;
     
-    private volatile boolean completed;
-    private volatile boolean cancelled;
-    private volatile boolean someBytesDownloaded;
-    
     @BeforeClass
     public static void setup() {
         server = new WebServer();
-    }
-    
-    @Before
-    public void setupEach() {
-        completed = false;
-        cancelled = false;
-        someBytesDownloaded = false;
     }
     
     private URL urlFor(String remotePath) throws MalformedURLException {
@@ -65,35 +54,18 @@ public class DownloaderTests {
             server.mount(remotePath, text);
             
             Downloader downloader = new DownloaderImpl();
-            downloader.events().addListener(new DownloaderListener() {
-                
-                public void someBytesDownloaded(URL url) {
-                    // nothing
-                }
-                
-                public void completed(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        completed = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-                
-                public void cancelled(URL url) {
-                    cancelled = true;
-                }
-            });
+            DownloaderListenerForTests listener = new DownloaderListenerForTests();
+            downloader.events().addListener(listener);
             
             URL url = urlFor(remotePath);
             file = tempFile();
             
-            synchronized (this) {
-                downloader.enqueue(url, file, 0);
-                wait();
-            }
+            downloader.enqueue(url, file, 0);
+            listener.wait_completed();
             
             assertEquals("The file has not been downloaded correctly", text, readAsString(file));
-            assertTrue("The task has not been completed", completed);
-            assertFalse("The task has been cancelled", cancelled);
+            assertTrue("The task has not been completed", listener.completed());
+            assertFalse("The task has been cancelled", listener.cancelled());
             
         } finally {
             file.delete();
@@ -112,45 +84,22 @@ public class DownloaderTests {
             final URL url = urlFor(remotePath);
             
             Downloader downloader = new DownloaderImpl();
-            downloader.events().addListener(new DownloaderListener() {
-                public void someBytesDownloaded(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        DownloaderTests.this.notify();
-                    }
-                }
-                
-                public void completed(URL url) {
-                    completed = true;
-                }
-                
-                public void cancelled(URL _url) {
-                    if (_url == url) {
-                        synchronized (DownloaderTests.this) {
-                            cancelled = true;
-                            DownloaderTests.this.notify();
-                        }
-                    }
-                }
-            });
+            DownloaderListenerForTests listener = new DownloaderListenerForTests(url);
+            downloader.events().addListener(listener);
             
             file = tempFile();
             
-            synchronized (this) {
-                downloader.enqueue(url, file, 0);
-                wait();
-            }
+            downloader.enqueue(url, file, 0);
+            listener.wait_someBytesDownloaded();
             
-            synchronized (this) {
-                boolean ok = downloader.cancel(url);
-                assertTrue("Cannot cancel task", ok);
-                
-                while (!cancelled)
-                    wait();
-            }
+            boolean ok = downloader.cancel(url);
+            assertTrue("Cannot cancel task", ok);
+            
+            listener.wait_cancelled();
             
             assertFalse("Cancelled file has been downloaded", text.equals(readAsString(file)));
-            assertFalse("Cancelled task has been completed", completed);
-            assertTrue("The task has not been cancelled", cancelled);
+            assertFalse("Cancelled task has been completed", listener.completed());
+            assertTrue("The task has not been cancelled", listener.cancelled());
             
         } finally {
             file.delete();
@@ -162,7 +111,6 @@ public class DownloaderTests {
         String remotePath1 = "test";
         String remotePath2 = "myfile";
         String text = bigString();
-        completed = false;
         
         File file1 = null;
         File file2 = null;
@@ -171,25 +119,8 @@ public class DownloaderTests {
             server.mount(remotePath2, text);
             
             Downloader downloader = new DownloaderImpl();
-            downloader.events().addListener(new DownloaderListener() {
-                public void someBytesDownloaded(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        someBytesDownloaded = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-                
-                public void completed(URL url) {
-                    // nothing
-                }
-                
-                public void cancelled(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        cancelled = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-            });
+            DownloaderListenerForTests listener = new DownloaderListenerForTests();
+            downloader.events().addListener(listener);
             
             URL url1 = urlFor(remotePath1);
             URL url2 = urlFor(remotePath2);
@@ -204,12 +135,7 @@ public class DownloaderTests {
             assertFalse(downloader.loading(url1, file2));
             assertFalse(downloader.loading(url2, file1));
             assertFalse(downloader.loading(url2, file2));
-            
-            synchronized (this) {
-                while (!someBytesDownloaded)
-                    wait();
-            }
-            
+            listener.wait_someBytesDownloaded();
             assertTrue(downloader.loading(url1, file1));
             
             downloader.enqueue(url2, file2, 0);
@@ -217,11 +143,7 @@ public class DownloaderTests {
             assertTrue(downloader.loading(url2, file2));
             
             downloader.cancel(url1);
-            
-            synchronized (this) {
-                while (!cancelled)
-                    wait();
-            }
+            listener.wait_cancelled();
             
             assertFalse(downloader.loading(url1, file1));
             assertTrue(downloader.loading(url2, file2));
@@ -245,59 +167,27 @@ public class DownloaderTests {
             server.mount(remotePath, text);
             
             Downloader downloader = new DownloaderImpl();
-            downloader.events().addListener(new DownloaderListener() {
-                public void someBytesDownloaded(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        someBytesDownloaded = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-                
-                public void completed(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        completed = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-                
-                public void cancelled(URL url) {
-                    synchronized (DownloaderTests.this) {
-                        cancelled = true;
-                        DownloaderTests.this.notify();
-                    }
-                }
-            });
+            DownloaderListenerForTests listener = new DownloaderListenerForTests();
+            downloader.events().addListener(listener);
             
             URL url = urlFor(remotePath);
             file = tempFile();
             
             downloader.enqueue(url, file, 0);
-            synchronized (this) {
-                while (!someBytesDownloaded)
-                    wait();
-            }
+            listener.wait_someBytesDownloaded();
             downloader.cancel(url);
             
-            synchronized (this) {
-                while (!cancelled)
-                    wait();
-            }
+            listener.wait_cancelled();
             assertFalse(text.equals(readAsString(file)));
             
             long loaded = file.length();
-            someBytesDownloaded = false;
+            listener.reset_someBytesDownloaded();
             downloader.enqueue(url, file, loaded);
             
-            synchronized (this) {
-                while (!someBytesDownloaded)
-                    wait();
-            }
+            listener.wait_someBytesDownloaded();
             //! assertTrue(file.length() >= loaded); // WebServer does not support range
             
-            synchronized (this) {
-                while (!completed)
-                    wait();
-            }
+            listener.wait_completed();
             assertEquals(text, readAsString(file));
             
         } finally {
@@ -309,6 +199,78 @@ public class DownloaderTests {
     @AfterClass
     public static void clean() {
         server.dispose();
+    }
+    
+    private final class DownloaderListenerForTests implements DownloaderListener {
+        
+        private final URL url;
+        
+        @SynchronizedWithMonitorOfThis
+        private boolean completed = false;
+        @SynchronizedWithMonitorOfThis
+        private boolean cancelled = false;
+        @SynchronizedWithMonitorOfThis
+        private boolean someBytesDownloaded = false;
+        
+        public DownloaderListenerForTests() {
+            url = null;
+        }
+        
+        public synchronized void reset_someBytesDownloaded() {
+            someBytesDownloaded = false;
+        }
+        
+        public synchronized void wait_someBytesDownloaded() throws InterruptedException {
+            while (!someBytesDownloaded)
+                wait();
+        }
+        
+        public synchronized void wait_cancelled() throws InterruptedException {
+            while (!cancelled)
+                wait();
+        }
+        
+        public synchronized void wait_completed() throws InterruptedException {
+            while (!completed)
+                wait();
+        }
+        
+        public synchronized boolean cancelled() {
+            return cancelled;
+        }
+        
+        public synchronized boolean completed() {
+            return completed;
+        }
+        
+        public DownloaderListenerForTests(URL url) {
+            this.url = url;
+        }
+        
+        private boolean matching(URL url) {
+            return this.url == null || this.url == url;
+        }
+        
+        public synchronized void someBytesDownloaded(URL url) {
+            if (matching(url)) {
+                someBytesDownloaded = true;
+                notify();
+            }
+        }
+        
+        public synchronized void completed(URL url) {
+            if (matching(url)) {
+                completed = true;
+                notify();
+            }
+        }
+        
+        public synchronized void cancelled(URL url) {
+            if (matching(url)) {
+                cancelled = true;
+                notify();
+            }
+        }
     }
     
 }
