@@ -6,9 +6,11 @@ import java.net.URL;
 class LibraryFile {
     
     final URL url;
-    private final long size;
+    final long size;
     
     final File localFile;
+    
+    private long prevDoneSize;
     
     LibraryFile(URL url, long size, File localFile) {
         if (url == null)
@@ -21,27 +23,19 @@ class LibraryFile {
         this.localFile = localFile;
     }
     
-    LibraryFile state() {
-        return new FileState(url, size, doneSize(), localFile);
+    FileState state() {
+        long doneSize = doneSize();
+        FileState state = new FileState(this, doneSize, prevDoneSize);
+        prevDoneSize = doneSize;
+        return state;
     }
     
     long doneSize() {
         return localFile.length();
     }
     
-    public boolean isDone() {
+    boolean isDone() {
         return size == doneSize();
-    }
-    
-    public double progress() {
-        return size == 0 ? 1.0 : (doneSize() * 1.0 / size);
-    }
-    
-    public File getLocalFile() {
-        if (!isDone())
-            throw new IllegalStateException("The file has not yet been downloaded.");
-        
-        return localFile;
     }
     
 }

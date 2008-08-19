@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.filelibrary;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.File;
@@ -13,19 +14,29 @@ public class LibraryState {
     
     LibraryState(Collection<FileState> fileStates) {
         for (FileState state : fileStates)
-            this.fileStates.put(state.url, state);
+            this.fileStates.put(state.url(), state);
     }
     
-    public LibraryFile stateOf(URL url) {
+    public FileState stateOf(URL url) {
         return fileStates.get(url);
     }
     
     public boolean filesReady(Collection<Request> requests) {
-        throw new UnsupportedOperationException();
+        for (Request request : requests) {
+            FileState state = stateOf(request.url);
+            if (!state.isDone())
+                return false;
+        }
+        return true;
     }
     
     public Collection<File> getLocalFiles(Collection<Request> requests) {
-        throw new UnsupportedOperationException();
+        Collection<File> files = newLinkedList();
+        for (Request request : requests) {
+            FileState state = stateOf(request.url);
+            files.add(state.getLocalFile());
+        }
+        return files;
     }
     
 }

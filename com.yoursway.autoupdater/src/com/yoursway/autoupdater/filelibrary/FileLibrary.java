@@ -4,10 +4,10 @@ import com.yoursway.utils.EventSource;
 
 public interface FileLibrary {
     
-    public abstract void order(FileLibraryOrder order);
+    void order(FileLibraryOrder order);
     
-    public abstract EventSource<FileLibraryListener> events();
+    EventSource<FileLibraryListener> events();
     
-    public abstract OrderManager orderManager();
+    OrderManager orderManager();
     
 }

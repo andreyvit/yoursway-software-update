@@ -34,15 +34,15 @@ public class FileLibraryTests {
     @Test
     public void order_libraryChanged() throws IOException {
         listener.libraryChanged((LibraryState) notNull());
-        expectLastCall().times(1 + 2 * 3);
+        expectLastCall().times(1 + 1 * 3);
         replay(listener);
         
         FileLibraryOrder order = order(3);
         fileLibrary.events().addListener(listener);
-        fileLibrary.order(order);
+        fileLibrary.order(order); // libraryChanged
         
         for (Request request : order)
-            downloader.createFile(request);
+            downloader.createFile(request); // libraryChanged
         
         verify(listener);
     }

@@ -1,10 +1,11 @@
 package com.yoursway.autoupdater.filelibrary;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.File;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
@@ -39,11 +40,11 @@ public class FileLibraryImpl implements FileLibrary {
         
         downloader.events().addListener(new DownloaderListener() {
             public void completed(URL url) {
-                changed();
+                changed(false);
             }
             
             public void someBytesDownloaded(URL url) {
-                changed();
+                changed(false);
             }
         });
         
@@ -70,16 +71,25 @@ public class FileLibraryImpl implements FileLibrary {
                 downloader.enqueue(url, localFile, file.doneSize());
         }
         
-        changed();
+        changed(true);
     }
     
     public EventSource<FileLibraryListener> events() {
         return broadcaster;
     }
     
-    private void changed() {
-        LibraryState state = new LibraryState(new LinkedList<FileState>()); //> get state
-        broadcaster.fire().libraryChanged(state); //> fire when 1% of any file loaded  
+    private void changed(boolean forced) {
+        List<FileState> fileStates = newLinkedList();
+        boolean significantly = false;
+        for (LibraryFile file : files.values()) {
+            FileState state = file.state();
+            fileStates.add(state);
+            if (state.significantlyChanged())
+                significantly = true;
+        }
+        
+        if (significantly || forced)
+            broadcaster.fire().libraryChanged(new LibraryState(fileStates));
     }
     
     public OrderManager orderManager() {
