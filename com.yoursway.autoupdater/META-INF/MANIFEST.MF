@@ -7,11 +7,10 @@ Bundle-ClassPath: autoupdater.jar,
  protobuf-java-2.0.0beta.jar
 Export-Package: 
  com.yoursway.autoupdater.auxiliary,
- com.yoursway.autoupdater.filelibrary,
- com.yoursway.autoupdater.filelibrary.downloader,
- com.yoursway.autoupdater.installer,
- com.yoursway.autoupdater.localrepository,
- com.yoursway.autoupdater.protos
+ com.yoursway.autoupdater.filelibrary;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.filelibrary.downloader;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.installer;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.localrepository
 Require-Bundle: com.yoursway.utils,
  com.google.collections;bundle-version="1.0.0",
  com.google.protobuf;bundle-version="1.0.0"
