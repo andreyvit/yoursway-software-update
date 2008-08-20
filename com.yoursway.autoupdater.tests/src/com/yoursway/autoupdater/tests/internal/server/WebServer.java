@@ -48,12 +48,13 @@ public class WebServer {
     
     @SuppressWarnings("deprecation")
     public void dispose() {
+        server.stop();
+        
         try {
             server.close();
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        server.stop();
     }
     
     public int getPort() {

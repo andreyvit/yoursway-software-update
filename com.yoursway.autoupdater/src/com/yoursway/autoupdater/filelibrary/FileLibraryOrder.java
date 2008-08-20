@@ -14,7 +14,7 @@ class FileLibraryOrder implements Iterable<Request> {
     public FileLibraryOrder() {
         // nothing
     }
-
+    
     public FileLibraryOrder(Collection<Request> requests) {
         add(requests);
     }

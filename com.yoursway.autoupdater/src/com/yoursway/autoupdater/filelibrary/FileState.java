@@ -34,7 +34,7 @@ public class FileState {
         if (!isDone())
             throw new IllegalStateException("The file has not yet been downloaded.");
         
-        return file.localFile;
+        return file.localFile();
     }
     
     boolean significantlyChanged() {

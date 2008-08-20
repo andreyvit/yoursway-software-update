@@ -3,12 +3,12 @@ package com.yoursway.autoupdater.filelibrary;
 import java.io.File;
 import java.net.URL;
 
-class LibraryFile {
+public class LibraryFile {
     
     final URL url;
     final long size;
     
-    final File localFile;
+    private final File localFile;
     
     private long prevDoneSize;
     
@@ -36,6 +36,10 @@ class LibraryFile {
     
     boolean isDone() {
         return size == doneSize();
+    }
+    
+    public File localFile() {
+        return localFile;
     }
     
 }

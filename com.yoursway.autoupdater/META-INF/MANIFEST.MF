@@ -9,6 +9,7 @@ Export-Package:
  com.yoursway.autoupdater.auxiliary,
  com.yoursway.autoupdater.filelibrary;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.filelibrary.downloader;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.filelibrary.urlfilemapper;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.installer;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.localrepository
 Require-Bundle: com.yoursway.utils,

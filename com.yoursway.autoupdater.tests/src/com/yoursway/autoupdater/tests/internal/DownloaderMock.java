@@ -12,14 +12,15 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.filelibrary.downloader.AbstractDownloader;
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
 import com.yoursway.utils.YsFileUtils;
 
 public class DownloaderMock extends AbstractDownloader {
     
     private final Map<URL, File> files = newHashMap();
     
-    public boolean enqueue(URL url, File file, long loaded) {
-        files.put(url, file);
+    public boolean enqueue(URLFileMapping mapping, long loaded) {
+        files.put(mapping.url(), mapping.file());
         return true;
     }
     
@@ -34,7 +35,8 @@ public class DownloaderMock extends AbstractDownloader {
     }
     
     @Override
-    public boolean loading(URL url, File file) {
+    public boolean loading(URL url) {
         return false;
     }
+    
 }

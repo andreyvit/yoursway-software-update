@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapper;
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
@@ -23,8 +25,7 @@ public class FileLibraryImpl implements FileLibrary {
     
     private final OrderManager orderManager;
     
-    private final File place;
-    
+    private final URLFileMapper urlFileMapper;
     private final Map<URL, LibraryFile> files = newHashMap();
     
     public FileLibraryImpl(Downloader downloader, File placeDir) {
@@ -34,7 +35,7 @@ public class FileLibraryImpl implements FileLibrary {
             throw new NullPointerException("placeDir is null");
         
         this.downloader = downloader;
-        place = placeDir;
+        urlFileMapper = new URLFileMapper(placeDir, files);
         
         //> restore files list
         
@@ -62,17 +63,16 @@ public class FileLibraryImpl implements FileLibrary {
         
         for (Request request : order) {
             URL url = request.url;
+            URLFileMapping mapping = urlFileMapper.mappingFor(url);
             
             LibraryFile file = files.get(url);
             if (file == null) {
-                File localFile = new File(place, request.filename());
-                file = new LibraryFile(url, request.size, localFile);
+                file = new LibraryFile(url, request.size, mapping.file());
                 files.put(url, file);
             }
             
-            File localFile = file.localFile;
             if (!file.isDone())
-                downloader.enqueue(url, localFile, file.doneSize());
+                downloader.enqueue(mapping, file.doneSize());
         }
         
         changed(true);

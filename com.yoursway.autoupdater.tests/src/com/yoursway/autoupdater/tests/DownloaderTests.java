@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.tests;
 
+import static com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMappingUtils.createMapping;
 import static com.yoursway.utils.YsFileUtils.readAsString;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -19,6 +20,8 @@ import org.junit.Test;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMappingUtils;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
 
@@ -32,6 +35,7 @@ public class DownloaderTests {
     private String remotePath;
     private URL url;
     private File file;
+    private URLFileMapping mapping;
     
     @BeforeClass
     public static void setup() {
@@ -47,6 +51,7 @@ public class DownloaderTests {
         remotePath = "test";
         url = urlFor(remotePath);
         file = tempFile();
+        mapping = URLFileMappingUtils.createMapping(url, file);
     }
     
     private URL urlFor(String remotePath) throws MalformedURLException {
@@ -69,7 +74,7 @@ public class DownloaderTests {
         String text = "Hello world!\nOK\n";
         server.mount(remotePath, text);
         
-        downloader.enqueue(url, file, 0);
+        downloader.enqueue(mapping, 0);
         listener.wait_completed();
         
         assertEquals("The file has not been downloaded correctly", text, readAsString(file));
@@ -84,7 +89,7 @@ public class DownloaderTests {
         
         listener.setURL(url);
         
-        downloader.enqueue(url, file, 0);
+        downloader.enqueue(mapping, 0);
         listener.wait_someBytesDownloaded();
         
         boolean ok = downloader.cancel(url);
@@ -108,26 +113,24 @@ public class DownloaderTests {
             URL url2 = urlFor(remotePath2);
             file2 = tempFile();
             
-            assertFalse(downloader.loading(url, file));
+            assertFalse(downloader.loading(url));
             
-            downloader.enqueue(url, file, 0);
+            downloader.enqueue(mapping, 0);
             
-            assertTrue(downloader.loading(url, file));
-            assertFalse(downloader.loading(url, file2));
-            assertFalse(downloader.loading(url2, file));
-            assertFalse(downloader.loading(url2, file2));
+            assertTrue(downloader.loading(url));
+            assertFalse(downloader.loading(url2));
             listener.wait_someBytesDownloaded();
-            assertTrue(downloader.loading(url, file));
+            assertTrue(downloader.loading(url));
             
-            downloader.enqueue(url2, file2, 0);
+            downloader.enqueue(createMapping(url2, file2), 0);
             
-            assertTrue(downloader.loading(url2, file2));
+            assertTrue(downloader.loading(url2));
             
             downloader.cancel(url);
             listener.wait_cancelled();
             
-            assertFalse(downloader.loading(url, file));
-            assertTrue(downloader.loading(url2, file2));
+            assertFalse(downloader.loading(url));
+            assertTrue(downloader.loading(url2));
             
             listener.wait_completed();
         } finally {
@@ -140,7 +143,7 @@ public class DownloaderTests {
         String text = bigString();
         server.mount(remotePath, text);
         
-        downloader.enqueue(url, file, 0);
+        downloader.enqueue(mapping, 0);
         listener.wait_someBytesDownloaded();
         downloader.cancel(url);
         
@@ -149,7 +152,7 @@ public class DownloaderTests {
         
         long loaded = file.length();
         listener.reset_someBytesDownloaded();
-        downloader.enqueue(url, file, loaded);
+        downloader.enqueue(mapping, loaded);
         
         listener.wait_someBytesDownloaded();
         //! assertTrue(file.length() >= loaded); // WebServer does not support range

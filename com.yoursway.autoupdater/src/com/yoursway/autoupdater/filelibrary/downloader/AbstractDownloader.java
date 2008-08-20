@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.filelibrary.downloader;
 
-import java.io.File;
 import java.net.URL;
 
 import com.yoursway.utils.EventSource;
@@ -20,7 +19,7 @@ public abstract class AbstractDownloader implements Downloader {
         throw new UnsupportedOperationException();
     }
     
-    public boolean loading(URL url, File file) {
+    public boolean loading(URL url) {
         throw new UnsupportedOperationException();
     }
     

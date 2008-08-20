@@ -1,7 +1,6 @@
 package com.yoursway.autoupdater.filelibrary.downloader;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +13,7 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfField;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
 
@@ -28,12 +28,12 @@ public class DownloaderImpl extends AbstractDownloader {
         thread = new DownloadThread();
     }
     
-    public boolean enqueue(URL url, File file, long loaded) {
+    public boolean enqueue(URLFileMapping mapping, long loaded) {
         synchronized (this) {
-            if (loading(url, file))
+            if (loading(mapping.url()))
                 return false;
             
-            tasks.add(new DownloadTask(url, file, loaded));
+            tasks.add(new DownloadTask(mapping, loaded));
             notify();
         }
         
@@ -51,14 +51,14 @@ public class DownloaderImpl extends AbstractDownloader {
         for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
             DownloadTask task = it.next();
             
-            if (task.url.equals(url)) {
+            if (task.url().equals(url)) {
                 it.remove();
                 broadcaster.fire().cancelled(url);
                 return true;
             }
         }
         
-        if (thread.task != null && thread.task.url.equals(url)) {
+        if (thread.task != null && thread.task.url().equals(url)) {
             thread.cancelCurrentTask();
             return true;
         }
@@ -67,15 +67,15 @@ public class DownloaderImpl extends AbstractDownloader {
     }
     
     @Override
-    public synchronized boolean loading(URL url, File file) {
+    public synchronized boolean loading(URL url) {
         for (Iterator<DownloadTask> it = tasks.iterator(); it.hasNext();) {
             DownloadTask task = it.next();
             
-            if (task.url.equals(url) && task.file.equals(file))
+            if (task.url().equals(url))
                 return true;
         }
         
-        if (thread.task != null && thread.task.url.equals(url) && thread.task.file.equals(file))
+        if (thread.task != null && thread.task.url().equals(url))
             return true;
         
         return false;
@@ -99,7 +99,7 @@ public class DownloaderImpl extends AbstractDownloader {
                     DownloadTask _task;
                     synchronized (DownloaderImpl.this) {
                         if (cancelled) {
-                            broadcaster.fire().cancelled(task.url);
+                            broadcaster.fire().cancelled(task.url());
                             cancelled = false;
                         }
                         
@@ -130,7 +130,7 @@ public class DownloaderImpl extends AbstractDownloader {
             OutputStream out = null;
             
             try {
-                URLConnection connection = task.url.openConnection();
+                URLConnection connection = task.url().openConnection();
                 boolean append = false;
                 if (task.loaded > 0) {
                     connection.setRequestProperty("Range", "bytes=" + task.loaded + "-");
@@ -150,7 +150,7 @@ public class DownloaderImpl extends AbstractDownloader {
                 }
                 
                 in = connection.getInputStream();
-                out = new BufferedOutputStream(new FileOutputStream(task.file, append));
+                out = new BufferedOutputStream(new FileOutputStream(task.file(), append));
                 
                 byte[] buffer = new byte[1024];
                 int read;
@@ -161,7 +161,7 @@ public class DownloaderImpl extends AbstractDownloader {
                     
                     out.write(buffer, 0, read);
                     
-                    broadcaster.fire().someBytesDownloaded(task.url);
+                    broadcaster.fire().someBytesDownloaded(task.url());
                 }
                 
             } catch (MalformedURLException e) {
@@ -187,7 +187,7 @@ public class DownloaderImpl extends AbstractDownloader {
                     }
                 
                 if (!cancelled)
-                    broadcaster.fire().completed(task.url);
+                    broadcaster.fire().completed(task.url());
             }
             
         }

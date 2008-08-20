@@ -60,12 +60,4 @@ public class Request {
         return true;
     }
     
-    String filename() {
-        String path = url.getPath();
-        int slash = path.lastIndexOf('/');
-        if (slash >= 0 && slash < path.length() - 1)
-            return path.substring(slash + 1);
-        else
-            throw new AssertionError("URL doesn't contain filename.");
-    }
 }
