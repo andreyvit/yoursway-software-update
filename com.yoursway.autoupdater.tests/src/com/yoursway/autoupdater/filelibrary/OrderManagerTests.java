@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.filelibrary;
 
-import static com.google.common.collect.Lists.newLinkedList;
 import static com.yoursway.autoupdater.filelibrary.RequestUtils.requests;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -12,6 +11,11 @@ import java.net.MalformedURLException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.yoursway.autoupdater.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.filelibrary.FileLibraryOrder;
+import com.yoursway.autoupdater.filelibrary.LibrarySubscriber;
+import com.yoursway.autoupdater.filelibrary.OrderManager;
 
 public class OrderManagerTests {
     
@@ -42,7 +46,7 @@ public class OrderManagerTests {
         expect(s1.requiredFiles()).andReturn(requests(1, 3));
         expect(s2.requiredFiles()).andReturn(requests(5, 8));
         expect(s3.requiredFiles()).andReturn(requests(3, 6));
-        fileLibrary.order(new FileLibraryOrder(newLinkedList(requests(1, 8))));
+        fileLibrary.order(new FileLibraryOrder(requests(1, 8)));
         replay(fileLibrary, s1, s2, s3);
         
         orderManager.register(s1);

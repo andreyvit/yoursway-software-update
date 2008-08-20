@@ -15,7 +15,7 @@ import com.yoursway.utils.StringInputStream;
 
 public class WebServer {
     
-    private final static int PORT = 8744;
+    public final static int PORT = 8744;
     private final SimpleHttpServer server;
     
     private final Map<String, String> mountedStrings = newHashMap();

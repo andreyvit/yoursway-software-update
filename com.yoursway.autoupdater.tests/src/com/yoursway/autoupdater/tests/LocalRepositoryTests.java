@@ -1,8 +1,11 @@
 package com.yoursway.autoupdater.tests;
 
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.fileContents;
 import static com.yoursway.autoupdater.filelibrary.RequestUtils.requests;
+import static com.yoursway.utils.YsFileUtils.readAsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +53,16 @@ public class LocalRepositoryTests {
                 Iterator<File> it = localPacks.iterator();
                 for (int i = first; i <= last; i++) {
                     File file = it.next();
-                    assertEquals(RequestUtils.sizeOf(i), file.length());
                     System.out.println(file.getPath() + " - size: " + file.length());
+                    
+                    int size = RequestUtils.sizeOf(i);
+                    assertEquals(size, file.length());
+                    
+                    try {
+                        assertEquals(fileContents(size), readAsString(file));
+                    } catch (IOException e) {
+                        fail("IOException at file checking");
+                    }
                 }
                 
                 System.out.println("Installation finished!");

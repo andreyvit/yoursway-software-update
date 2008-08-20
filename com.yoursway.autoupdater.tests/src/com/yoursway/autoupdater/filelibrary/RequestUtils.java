@@ -11,11 +11,14 @@ import com.yoursway.autoupdater.tests.internal.server.WebServer;
 public class RequestUtils {
     
     static Request request(String filename, int size, String hash) throws MalformedURLException {
-        return new Request(new URL("http://localhost:8744/" + filename), size, hash);
+        return new Request(new URL("http://localhost:" + WebServer.PORT + "/" + filename), size, hash);
     }
     
-    static FileLibraryOrder order(int requestsCount) throws MalformedURLException {
-        return new FileLibraryOrder(requests(1, requestsCount));
+    public static Collection<Request> do_order(FileLibrary fileLibrary, int requestsCount)
+            throws MalformedURLException {
+        Collection<Request> requests = requests(1, requestsCount);
+        fileLibrary.order(new FileLibraryOrder(requests));
+        return requests;
     }
     
     public static Collection<Request> requests(int first, int last) throws MalformedURLException {
@@ -28,13 +31,13 @@ public class RequestUtils {
     public static void mount(WebServer server, Collection<Request> requests) {
         for (Request request : requests) {
             String path = request.url.getPath().substring(1);
-            server.mount(path, randomString((int) request.size));
+            server.mount(path, fileContents((int) request.size));
         }
     }
     
-    private static String randomString(int length) {
+    public static String fileContents(long length) {
         StringBuilder sb = new StringBuilder();
-        int rest = length;
+        long rest = length;
         while (rest > 20) {
             String s = "file contents ";
             sb.append(s);
@@ -51,4 +54,13 @@ public class RequestUtils {
     public static int sizeOf(int i) {
         return i * 100;
     }
+    
+    public static URL url(Request request) {
+        return request.url;
+    }
+    
+    public static long size(Request request) {
+        return request.size;
+    }
+    
 }

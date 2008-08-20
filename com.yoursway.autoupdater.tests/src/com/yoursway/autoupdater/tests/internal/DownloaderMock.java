@@ -1,12 +1,16 @@
-package com.yoursway.autoupdater.filelibrary;
+package com.yoursway.autoupdater.tests.internal;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.fileContents;
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.size;
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.url;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.filelibrary.downloader.AbstractDownloader;
 import com.yoursway.utils.YsFileUtils;
 
@@ -20,13 +24,13 @@ public class DownloaderMock extends AbstractDownloader {
     }
     
     public void createFile(Request request) throws IOException {
-        File file = files.get(request.url);
-        StringBuilder b = new StringBuilder();
-        b.setLength((int) request.size);
-        YsFileUtils.writeString(file, b.toString());
+        URL url = url(request);
         
-        broadcaster.fire().someBytesDownloaded(request.url);
-        broadcaster.fire().completed(request.url);
+        File file = files.get(url);
+        YsFileUtils.writeString(file, fileContents(size(request)));
+        
+        broadcaster.fire().someBytesDownloaded(url);
+        broadcaster.fire().completed(url);
     }
     
     @Override

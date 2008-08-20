@@ -1,6 +1,6 @@
-package com.yoursway.autoupdater.filelibrary;
+package com.yoursway.autoupdater.tests;
 
-import static com.yoursway.autoupdater.filelibrary.RequestUtils.order;
+import static com.yoursway.autoupdater.filelibrary.RequestUtils.do_order;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.notNull;
@@ -9,9 +9,18 @@ import static org.easymock.EasyMock.verify;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.yoursway.autoupdater.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
+import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
+import com.yoursway.autoupdater.filelibrary.LibraryState;
+import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.tests.internal.DownloaderMock;
+import com.yoursway.utils.YsFileUtils;
 
 public class FileLibraryTests {
     
@@ -21,9 +30,7 @@ public class FileLibraryTests {
     
     @Before
     public void setUp() throws IOException {
-        File place = File.createTempFile("autoupdater.test.filelibrary", null);
-        place.delete();
-        place.mkdir();
+        File place = YsFileUtils.createTempFolder("autoupdater.test.filelibrary", null);
         
         downloader = new DownloaderMock();
         fileLibrary = new FileLibraryImpl(downloader, place);
@@ -37,14 +44,12 @@ public class FileLibraryTests {
         expectLastCall().times(1 + 1 * 3);
         replay(listener);
         
-        FileLibraryOrder order = order(3);
         fileLibrary.events().addListener(listener);
-        fileLibrary.order(order); // libraryChanged
+        Collection<Request> requests = do_order(fileLibrary, 3); // libraryChanged
         
-        for (Request request : order)
+        for (Request request : requests)
             downloader.createFile(request); // libraryChanged
         
         verify(listener);
     }
-    
 }

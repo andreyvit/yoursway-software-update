@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,9 +26,27 @@ public class DownloaderTests {
     
     private static WebServer server;
     
+    private Downloader downloader;
+    private DownloaderListenerForTests listener;
+    
+    private String remotePath;
+    private URL url;
+    private File file;
+    
     @BeforeClass
     public static void setup() {
         server = new WebServer();
+    }
+    
+    @Before
+    public void setupEach() throws IOException {
+        downloader = new DownloaderImpl();
+        listener = new DownloaderListenerForTests();
+        downloader.events().addListener(listener);
+        
+        remotePath = "test";
+        url = urlFor(remotePath);
+        file = tempFile();
     }
     
     private URL urlFor(String remotePath) throws MalformedURLException {
@@ -45,155 +65,102 @@ public class DownloaderTests {
     }
     
     @Test
-    public void connection() throws IOException, InterruptedException {
-        String remotePath = "test";
+    public void connection() throws InterruptedException, IOException {
         String text = "Hello world!\nOK\n";
+        server.mount(remotePath, text);
         
-        File file = null;
-        try {
-            server.mount(remotePath, text);
-            
-            Downloader downloader = new DownloaderImpl();
-            DownloaderListenerForTests listener = new DownloaderListenerForTests();
-            downloader.events().addListener(listener);
-            
-            URL url = urlFor(remotePath);
-            file = tempFile();
-            
-            downloader.enqueue(url, file, 0);
-            listener.wait_completed();
-            
-            assertEquals("The file has not been downloaded correctly", text, readAsString(file));
-            assertTrue("The task has not been completed", listener.completed());
-            assertFalse("The task has been cancelled", listener.cancelled());
-            
-        } finally {
-            file.delete();
-        }
+        downloader.enqueue(url, file, 0);
+        listener.wait_completed();
+        
+        assertEquals("The file has not been downloaded correctly", text, readAsString(file));
+        assertTrue("The task has not been completed", listener.completed());
+        assertFalse("The task has been cancelled", listener.cancelled());
     }
     
     @Test
     public void cancelling() throws IOException, InterruptedException {
-        String remotePath = "test";
         String text = bigString();
+        server.mount(remotePath, text);
         
-        File file = null;
-        try {
-            server.mount(remotePath, text);
-            
-            final URL url = urlFor(remotePath);
-            
-            Downloader downloader = new DownloaderImpl();
-            DownloaderListenerForTests listener = new DownloaderListenerForTests(url);
-            downloader.events().addListener(listener);
-            
-            file = tempFile();
-            
-            downloader.enqueue(url, file, 0);
-            listener.wait_someBytesDownloaded();
-            
-            boolean ok = downloader.cancel(url);
-            assertTrue("Cannot cancel task", ok);
-            
-            listener.wait_cancelled();
-            
-            assertFalse("Cancelled file has been downloaded", text.equals(readAsString(file)));
-            assertFalse("Cancelled task has been completed", listener.completed());
-            assertTrue("The task has not been cancelled", listener.cancelled());
-            
-        } finally {
-            file.delete();
-        }
+        listener.setURL(url);
+        
+        downloader.enqueue(url, file, 0);
+        listener.wait_someBytesDownloaded();
+        
+        boolean ok = downloader.cancel(url);
+        assertTrue("Cannot cancel task", ok);
+        listener.wait_cancelled();
+        
+        assertFalse("Cancelled file has been downloaded", text.equals(readAsString(file)));
+        assertFalse("Cancelled task has been completed", listener.completed());
+        assertTrue("The task has not been cancelled", listener.cancelled());
     }
     
     @Test
     public void loading() throws IOException, InterruptedException {
-        String remotePath1 = "test";
         String remotePath2 = "myfile";
         String text = bigString();
         
-        File file1 = null;
         File file2 = null;
         try {
-            server.mount(remotePath1, text);
+            server.mount(remotePath, text);
             server.mount(remotePath2, text);
-            
-            Downloader downloader = new DownloaderImpl();
-            DownloaderListenerForTests listener = new DownloaderListenerForTests();
-            downloader.events().addListener(listener);
-            
-            URL url1 = urlFor(remotePath1);
             URL url2 = urlFor(remotePath2);
-            file1 = tempFile();
             file2 = tempFile();
             
-            assertFalse(downloader.loading(url1, file1));
+            assertFalse(downloader.loading(url, file));
             
-            downloader.enqueue(url1, file1, 0);
+            downloader.enqueue(url, file, 0);
             
-            assertTrue(downloader.loading(url1, file1));
-            assertFalse(downloader.loading(url1, file2));
-            assertFalse(downloader.loading(url2, file1));
+            assertTrue(downloader.loading(url, file));
+            assertFalse(downloader.loading(url, file2));
+            assertFalse(downloader.loading(url2, file));
             assertFalse(downloader.loading(url2, file2));
             listener.wait_someBytesDownloaded();
-            assertTrue(downloader.loading(url1, file1));
+            assertTrue(downloader.loading(url, file));
             
             downloader.enqueue(url2, file2, 0);
             
             assertTrue(downloader.loading(url2, file2));
             
-            downloader.cancel(url1);
+            downloader.cancel(url);
             listener.wait_cancelled();
             
-            assertFalse(downloader.loading(url1, file1));
+            assertFalse(downloader.loading(url, file));
             assertTrue(downloader.loading(url2, file2));
             
+            listener.wait_completed();
         } finally {
-            try {
-                file2.delete();
-            } finally {
-                file1.delete();
-            }
+            file2.delete();
         }
     }
     
     @Test
     public void range() throws IOException, InterruptedException {
-        String remotePath = "test";
         String text = bigString();
+        server.mount(remotePath, text);
         
-        File file = null;
-        try {
-            server.mount(remotePath, text);
-            
-            Downloader downloader = new DownloaderImpl();
-            DownloaderListenerForTests listener = new DownloaderListenerForTests();
-            downloader.events().addListener(listener);
-            
-            URL url = urlFor(remotePath);
-            file = tempFile();
-            
-            downloader.enqueue(url, file, 0);
-            listener.wait_someBytesDownloaded();
-            downloader.cancel(url);
-            
-            listener.wait_cancelled();
-            assertFalse(text.equals(readAsString(file)));
-            
-            long loaded = file.length();
-            listener.reset_someBytesDownloaded();
-            downloader.enqueue(url, file, loaded);
-            
-            listener.wait_someBytesDownloaded();
-            //! assertTrue(file.length() >= loaded); // WebServer does not support range
-            
-            listener.wait_completed();
-            assertEquals(text, readAsString(file));
-            
-        } finally {
-            file.delete();
-        }
+        downloader.enqueue(url, file, 0);
+        listener.wait_someBytesDownloaded();
+        downloader.cancel(url);
         
+        listener.wait_cancelled();
+        assertFalse(text.equals(readAsString(file)));
+        
+        long loaded = file.length();
+        listener.reset_someBytesDownloaded();
+        downloader.enqueue(url, file, loaded);
+        
+        listener.wait_someBytesDownloaded();
+        //! assertTrue(file.length() >= loaded); // WebServer does not support range
+        
+        listener.wait_completed();
+        assertEquals(text, readAsString(file));
+    }
+    
+    @After
+    public void cleanEach() {
+        file.delete();
     }
     
     @AfterClass
@@ -203,7 +170,7 @@ public class DownloaderTests {
     
     private final class DownloaderListenerForTests implements DownloaderListener {
         
-        private final URL url;
+        private URL url = null;
         
         @SynchronizedWithMonitorOfThis
         private boolean completed = false;
@@ -212,8 +179,8 @@ public class DownloaderTests {
         @SynchronizedWithMonitorOfThis
         private boolean someBytesDownloaded = false;
         
-        public DownloaderListenerForTests() {
-            url = null;
+        public void setURL(URL url) {
+            this.url = url;
         }
         
         public synchronized void reset_someBytesDownloaded() {
@@ -241,10 +208,6 @@ public class DownloaderTests {
         
         public synchronized boolean completed() {
             return completed;
-        }
-        
-        public DownloaderListenerForTests(URL url) {
-            this.url = url;
         }
         
         private boolean matching(URL url) {
