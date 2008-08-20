@@ -23,7 +23,7 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         if (s == State.Installing)
             return new ProductVersionState_Installing(w);
         if (s == State.Old)
-            return new ProductVersionState_Old(w);
+            return new ProductVersionState_Idle(w);
         throw new IllegalArgumentException("State s == " + s.toString());
     }
     

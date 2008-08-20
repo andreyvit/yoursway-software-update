@@ -3,9 +3,9 @@ package com.yoursway.autoupdater.localrepository.internal;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
-public class ProductVersionState_Old extends AbstractProductVersionState implements ProductVersionState {
+public class ProductVersionState_Idle extends AbstractProductVersionState implements ProductVersionState {
     
-    public ProductVersionState_Old(ProductVersionStateWrap wrap) {
+    public ProductVersionState_Idle(ProductVersionStateWrap wrap) {
         super(wrap);
     }
     
