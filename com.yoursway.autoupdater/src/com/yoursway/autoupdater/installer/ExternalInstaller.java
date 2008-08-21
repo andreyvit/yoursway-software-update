@@ -88,6 +88,7 @@ class ExternalInstaller {
         File java = new File(javaHome, "bin/java"); //! check at windows
         
         ProcessBuilder pb = new ProcessBuilder();
+        pb.directory(folder);
         pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());
         try {
             pb.start();

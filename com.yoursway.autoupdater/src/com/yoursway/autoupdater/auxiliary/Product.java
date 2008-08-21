@@ -5,11 +5,11 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento;
 public class Product {
     
     public static Product fromMemento(ProductMemento product) {
-        throw new UnsupportedOperationException();
+        return new Product();
     }
     
     public ProductMemento toMemento() {
-        throw new UnsupportedOperationException();
+        return ProductMemento.newBuilder().build();
     }
     
 }

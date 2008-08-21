@@ -11,7 +11,8 @@ Export-Package:
  com.yoursway.autoupdater.filelibrary.downloader;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.filelibrary.urlfilemapper;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.installer;x-friends:="com.yoursway.autoupdater.tests",
- com.yoursway.autoupdater.localrepository
+ com.yoursway.autoupdater.localrepository,
+ com.yoursway.autoupdater.protos;x-friends:="com.yoursway.autoupdater.installer"
 Require-Bundle: com.yoursway.utils,
  com.google.collections;bundle-version="1.0.0",
  com.google.protobuf;bundle-version="1.0.0"

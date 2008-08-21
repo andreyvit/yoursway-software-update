@@ -14,19 +14,26 @@ public final class LocalRepositoryProtos {
       com.google.protobuf.Descriptors.FileDescriptor
       buildDescriptor() {
     java.lang.String descriptorData =
-      "\n\033LocalRepositoryProtos.proto\"%\n\025Product" +
-      "VersionMemento\022\014\n\004name\030\001 \002(\t\"\300\001\n\032Product" +
-      "VersionStateMemento\022\'\n\007version\030\001 \002(\0132\026.P" +
-      "roductVersionMemento\0220\n\005state\030\002 \002(\0162!.Pr" +
-      "oductVersionStateMemento.State\"G\n\005State\022" +
-      "\007\n\003New\020\000\022\017\n\013Downloading\020\001\022\016\n\nInstalling\020" +
-      "\002\022\013\n\007Current\020\003\022\007\n\003Old\020\004\"\036\n\016ProductMement" +
-      "o\022\014\n\004name\030\001 \002(\t\"e\n\023ProductStateMemento\022 " +
-      "\n\007product\030\001 \002(\0132\017.ProductMemento\022,\n\007vers" +
-      "ion\030\002 \003(\0132\033.ProductVersionStateMemento\"?" +
-      "\n\026LocalRepositoryMemento\022%\n\007product\030\001 \003(" +
-      "\0132\024.ProductStateMementoB!\n\037com.yoursway." +
-      "autoupdater.protos";
+      "\n\033LocalRepositoryProtos.proto\"9\n\016Request" +
+      "Memento\022\013\n\003url\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\014\n\004sh" +
+      "a1\030\003 \002(\t\"R\n\024ComponentFileMemento\022\014\n\004hash" +
+      "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\014" +
+      "\n\004path\030\004 \002(\t\"E\n\020ComponentMemento\022#\n\004file" +
+      "\030\001 \003(\0132\025.ComponentFileMemento\022\014\n\004pack\030\002 " +
+      "\003(\t\"\020\n\016ProductMemento\"~\n\025ProductVersionM" +
+      "emento\022 \n\007product\030\001 \002(\0132\017.ProductMemento" +
+      "\022\035\n\004pack\030\002 \003(\0132\017.RequestMemento\022$\n\tcompo" +
+      "nent\030\003 \003(\0132\021.ComponentMemento\"\300\001\n\032Produc" +
+      "tVersionStateMemento\022\'\n\007version\030\001 \002(\0132\026." +
+      "ProductVersionMemento\0220\n\005state\030\002 \002(\0162!.P" +
+      "roductVersionStateMemento.State\"G\n\005State" +
+      "\022\007\n\003New\020\000\022\017\n\013Downloading\020\001\022\016\n\nInstalling" +
+      "\020\002\022\013\n\007Current\020\003\022\007\n\003Old\020\004\"e\n\023ProductState" +
+      "Memento\022 \n\007product\030\001 \002(\0132\017.ProductMement" +
+      "o\022,\n\007version\030\002 \003(\0132\033.ProductVersionState" +
+      "Memento\"?\n\026LocalRepositoryMemento\022%\n\007pro" +
+      "duct\030\001 \003(\0132\024.ProductStateMementoB!\n\037com." +
+      "yoursway.autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -36,6 +43,811 @@ public final class LocalRepositoryProtos {
       throw new RuntimeException(
         "Failed to parse protocol buffer descriptor for " +
         "\"LocalRepositoryProtos.proto\".", e);
+    }
+  }
+  
+  public static final class RequestMemento extends
+      com.google.protobuf.GeneratedMessage {
+    // Use RequestMemento.newBuilder() to construct.
+    private RequestMemento() {}
+    
+    private static final RequestMemento defaultInstance = new RequestMemento();
+    public static RequestMemento getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public RequestMemento getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_RequestMemento_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_RequestMemento_fieldAccessorTable;
+    }
+    
+    // required string url = 1;
+    private boolean hasUrl;
+    private java.lang.String url_ = "";
+    public boolean hasUrl() { return hasUrl; }
+    public java.lang.String getUrl() { return url_; }
+    
+    // required int64 size = 2;
+    private boolean hasSize;
+    private long size_ = 0L;
+    public boolean hasSize() { return hasSize; }
+    public long getSize() { return size_; }
+    
+    // required string sha1 = 3;
+    private boolean hasSha1;
+    private java.lang.String sha1_ = "";
+    public boolean hasSha1() { return hasSha1; }
+    public java.lang.String getSha1() { return sha1_; }
+    
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return new Builder(); }
+    public Builder newBuilderForType() { return new Builder(); }
+    public static Builder newBuilder(com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento prototype) {
+      return new Builder().mergeFrom(prototype);
+    }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      // Construct using com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.newBuilder()
+      private Builder() {}
+      
+      com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento();
+      
+      protected com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento();
+        return this;
+      }
+      
+      public Builder clone() {
+        return new Builder().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.getDescriptor();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getDefaultInstanceForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.getDefaultInstance();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento build() {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result);
+        }
+        return buildPartial();
+      }
+      
+      private com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento buildPartial() {
+        com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      
+      // required string url = 1;
+      public boolean hasUrl() {
+        return result.hasUrl();
+      }
+      public java.lang.String getUrl() {
+        return result.getUrl();
+      }
+      public Builder setUrl(java.lang.String value) {
+        result.hasUrl = true;
+        result.url_ = value;
+        return this;
+      }
+      public Builder clearUrl() {
+        result.hasUrl = false;
+        result.url_ = "";
+        return this;
+      }
+      
+      // required int64 size = 2;
+      public boolean hasSize() {
+        return result.hasSize();
+      }
+      public long getSize() {
+        return result.getSize();
+      }
+      public Builder setSize(long value) {
+        result.hasSize = true;
+        result.size_ = value;
+        return this;
+      }
+      public Builder clearSize() {
+        result.hasSize = false;
+        result.size_ = 0L;
+        return this;
+      }
+      
+      // required string sha1 = 3;
+      public boolean hasSha1() {
+        return result.hasSha1();
+      }
+      public java.lang.String getSha1() {
+        return result.getSha1();
+      }
+      public Builder setSha1(java.lang.String value) {
+        result.hasSha1 = true;
+        result.sha1_ = value;
+        return this;
+      }
+      public Builder clearSha1() {
+        result.hasSha1 = false;
+        result.sha1_ = "";
+        return this;
+      }
+    }
+  }
+  
+  public static final class ComponentFileMemento extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ComponentFileMemento.newBuilder() to construct.
+    private ComponentFileMemento() {}
+    
+    private static final ComponentFileMemento defaultInstance = new ComponentFileMemento();
+    public static ComponentFileMemento getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ComponentFileMemento getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ComponentFileMemento_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ComponentFileMemento_fieldAccessorTable;
+    }
+    
+    // required string hash = 1;
+    private boolean hasHash;
+    private java.lang.String hash_ = "";
+    public boolean hasHash() { return hasHash; }
+    public java.lang.String getHash() { return hash_; }
+    
+    // required int64 size = 2;
+    private boolean hasSize;
+    private long size_ = 0L;
+    public boolean hasSize() { return hasSize; }
+    public long getSize() { return size_; }
+    
+    // required int64 modified = 3;
+    private boolean hasModified;
+    private long modified_ = 0L;
+    public boolean hasModified() { return hasModified; }
+    public long getModified() { return modified_; }
+    
+    // required string path = 4;
+    private boolean hasPath;
+    private java.lang.String path_ = "";
+    public boolean hasPath() { return hasPath; }
+    public java.lang.String getPath() { return path_; }
+    
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return new Builder(); }
+    public Builder newBuilderForType() { return new Builder(); }
+    public static Builder newBuilder(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento prototype) {
+      return new Builder().mergeFrom(prototype);
+    }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      // Construct using com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.newBuilder()
+      private Builder() {}
+      
+      com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento();
+      
+      protected com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento();
+        return this;
+      }
+      
+      public Builder clone() {
+        return new Builder().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.getDescriptor();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento getDefaultInstanceForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.getDefaultInstance();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento build() {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result);
+        }
+        return buildPartial();
+      }
+      
+      private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento buildPartial() {
+        com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      
+      // required string hash = 1;
+      public boolean hasHash() {
+        return result.hasHash();
+      }
+      public java.lang.String getHash() {
+        return result.getHash();
+      }
+      public Builder setHash(java.lang.String value) {
+        result.hasHash = true;
+        result.hash_ = value;
+        return this;
+      }
+      public Builder clearHash() {
+        result.hasHash = false;
+        result.hash_ = "";
+        return this;
+      }
+      
+      // required int64 size = 2;
+      public boolean hasSize() {
+        return result.hasSize();
+      }
+      public long getSize() {
+        return result.getSize();
+      }
+      public Builder setSize(long value) {
+        result.hasSize = true;
+        result.size_ = value;
+        return this;
+      }
+      public Builder clearSize() {
+        result.hasSize = false;
+        result.size_ = 0L;
+        return this;
+      }
+      
+      // required int64 modified = 3;
+      public boolean hasModified() {
+        return result.hasModified();
+      }
+      public long getModified() {
+        return result.getModified();
+      }
+      public Builder setModified(long value) {
+        result.hasModified = true;
+        result.modified_ = value;
+        return this;
+      }
+      public Builder clearModified() {
+        result.hasModified = false;
+        result.modified_ = 0L;
+        return this;
+      }
+      
+      // required string path = 4;
+      public boolean hasPath() {
+        return result.hasPath();
+      }
+      public java.lang.String getPath() {
+        return result.getPath();
+      }
+      public Builder setPath(java.lang.String value) {
+        result.hasPath = true;
+        result.path_ = value;
+        return this;
+      }
+      public Builder clearPath() {
+        result.hasPath = false;
+        result.path_ = "";
+        return this;
+      }
+    }
+  }
+  
+  public static final class ComponentMemento extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ComponentMemento.newBuilder() to construct.
+    private ComponentMemento() {}
+    
+    private static final ComponentMemento defaultInstance = new ComponentMemento();
+    public static ComponentMemento getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ComponentMemento getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ComponentMemento_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ComponentMemento_fieldAccessorTable;
+    }
+    
+    // repeated .ComponentFileMemento file = 1;
+    private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> file_ =
+      java.util.Collections.emptyList();
+    public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> getFileList() {
+      return file_;
+    }
+    public int getFileCount() { return file_.size(); }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento getFile(int index) {
+      return file_.get(index);
+    }
+    
+    // repeated string pack = 2;
+    private java.util.List<java.lang.String> pack_ =
+      java.util.Collections.emptyList();
+    public java.util.List<java.lang.String> getPackList() {
+      return pack_;
+    }
+    public int getPackCount() { return pack_.size(); }
+    public java.lang.String getPack(int index) {
+      return pack_.get(index);
+    }
+    
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return new Builder(); }
+    public Builder newBuilderForType() { return new Builder(); }
+    public static Builder newBuilder(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento prototype) {
+      return new Builder().mergeFrom(prototype);
+    }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      // Construct using com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.newBuilder()
+      private Builder() {}
+      
+      com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento();
+      
+      protected com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento();
+        return this;
+      }
+      
+      public Builder clone() {
+        return new Builder().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.getDescriptor();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento getDefaultInstanceForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.getDefaultInstance();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento build() {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result);
+        }
+        return buildPartial();
+      }
+      
+      private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento buildPartial() {
+        if (result.file_ != java.util.Collections.EMPTY_LIST) {
+          result.file_ =
+            java.util.Collections.unmodifiableList(result.file_);
+        }
+        if (result.pack_ != java.util.Collections.EMPTY_LIST) {
+          result.pack_ =
+            java.util.Collections.unmodifiableList(result.pack_);
+        }
+        com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      
+      // repeated .ComponentFileMemento file = 1;
+      public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> getFileList() {
+        return java.util.Collections.unmodifiableList(result.file_);
+      }
+      public int getFileCount() {
+        return result.getFileCount();
+      }
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento getFile(int index) {
+        return result.getFile(index);
+      }
+      public Builder setFile(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento value) {
+        result.file_.set(index, value);
+        return this;
+      }
+      public Builder setFile(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.Builder builderForValue) {
+        result.file_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addFile(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento value) {
+        if (result.file_.isEmpty()) {
+          result.file_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento>();
+        }
+        result.file_.add(value);
+        return this;
+      }
+      public Builder addFile(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.Builder builderForValue) {
+        if (result.file_.isEmpty()) {
+          result.file_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento>();
+        }
+        result.file_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllFile(
+          java.lang.Iterable<? extends com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> values) {
+        if (result.file_.isEmpty()) {
+          result.file_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento>();
+        }
+        super.addAll(values, result.file_);
+        return this;
+      }
+      public Builder clearFile() {
+        result.file_ = java.util.Collections.emptyList();
+        return this;
+      }
+      
+      // repeated string pack = 2;
+      public java.util.List<java.lang.String> getPackList() {
+        return java.util.Collections.unmodifiableList(result.pack_);
+      }
+      public int getPackCount() {
+        return result.getPackCount();
+      }
+      public java.lang.String getPack(int index) {
+        return result.getPack(index);
+      }
+      public Builder setPack(int index, java.lang.String value) {
+        result.pack_.set(index, value);
+        return this;
+      }
+      public Builder addPack(java.lang.String value) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<java.lang.String>();
+        }
+        result.pack_.add(value);
+        return this;
+      }
+      public Builder addAllPack(
+          java.lang.Iterable<? extends java.lang.String> values) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<java.lang.String>();
+        }
+        super.addAll(values, result.pack_);
+        return this;
+      }
+      public Builder clearPack() {
+        result.pack_ = java.util.Collections.emptyList();
+        return this;
+      }
+    }
+  }
+  
+  public static final class ProductMemento extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ProductMemento.newBuilder() to construct.
+    private ProductMemento() {}
+    
+    private static final ProductMemento defaultInstance = new ProductMemento();
+    public static ProductMemento getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ProductMemento getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ProductMemento_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ProductMemento_fieldAccessorTable;
+    }
+    
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return new Builder(); }
+    public Builder newBuilderForType() { return new Builder(); }
+    public static Builder newBuilder(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento prototype) {
+      return new Builder().mergeFrom(prototype);
+    }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      // Construct using com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.newBuilder()
+      private Builder() {}
+      
+      com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento();
+      
+      protected com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento();
+        return this;
+      }
+      
+      public Builder clone() {
+        return new Builder().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDescriptor();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento getDefaultInstanceForType() {
+        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDefaultInstance();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento build() {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result);
+        }
+        return buildPartial();
+      }
+      
+      private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento buildPartial() {
+        com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
     }
   }
   
@@ -63,11 +875,33 @@ public final class LocalRepositoryProtos {
       return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ProductVersionMemento_fieldAccessorTable;
     }
     
-    // required string name = 1;
-    private boolean hasName;
-    private java.lang.String name_ = "";
-    public boolean hasName() { return hasName; }
-    public java.lang.String getName() { return name_; }
+    // required .ProductMemento product = 1;
+    private boolean hasProduct;
+    private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento product_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDefaultInstance();
+    public boolean hasProduct() { return hasProduct; }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento getProduct() { return product_; }
+    
+    // repeated .RequestMemento pack = 2;
+    private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> pack_ =
+      java.util.Collections.emptyList();
+    public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> getPackList() {
+      return pack_;
+    }
+    public int getPackCount() { return pack_.size(); }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getPack(int index) {
+      return pack_.get(index);
+    }
+    
+    // repeated .ComponentMemento component = 3;
+    private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento> component_ =
+      java.util.Collections.emptyList();
+    public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento> getComponentList() {
+      return component_;
+    }
+    public int getComponentCount() { return component_.size(); }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento getComponent(int index) {
+      return component_.get(index);
+    }
     
     public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento parseFrom(
         com.google.protobuf.ByteString data)
@@ -169,27 +1003,141 @@ public final class LocalRepositoryProtos {
       }
       
       public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento buildPartial() {
+        if (result.pack_ != java.util.Collections.EMPTY_LIST) {
+          result.pack_ =
+            java.util.Collections.unmodifiableList(result.pack_);
+        }
+        if (result.component_ != java.util.Collections.EMPTY_LIST) {
+          result.component_ =
+            java.util.Collections.unmodifiableList(result.component_);
+        }
         com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento returnMe = result;
         result = null;
         return returnMe;
       }
       
       
-      // required string name = 1;
-      public boolean hasName() {
-        return result.hasName();
+      // required .ProductMemento product = 1;
+      public boolean hasProduct() {
+        return result.hasProduct();
       }
-      public java.lang.String getName() {
-        return result.getName();
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento getProduct() {
+        return result.getProduct();
       }
-      public Builder setName(java.lang.String value) {
-        result.hasName = true;
-        result.name_ = value;
+      public Builder setProduct(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento value) {
+        result.hasProduct = true;
+        result.product_ = value;
         return this;
       }
-      public Builder clearName() {
-        result.hasName = false;
-        result.name_ = "";
+      public Builder setProduct(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.Builder builderForValue) {
+        result.hasProduct = true;
+        result.product_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeProduct(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento value) {
+        if (result.hasProduct() &&
+            result.product_ != com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDefaultInstance()) {
+          result.product_ =
+            com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.newBuilder(result.product_).mergeFrom(value).buildPartial();
+        } else {
+          result.product_ = value;
+        }
+        result.hasProduct = true;
+        return this;
+      }
+      public Builder clearProduct() {
+        result.hasProduct = false;
+        result.product_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDefaultInstance();
+        return this;
+      }
+      
+      // repeated .RequestMemento pack = 2;
+      public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> getPackList() {
+        return java.util.Collections.unmodifiableList(result.pack_);
+      }
+      public int getPackCount() {
+        return result.getPackCount();
+      }
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getPack(int index) {
+        return result.getPack(index);
+      }
+      public Builder setPack(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento value) {
+        result.pack_.set(index, value);
+        return this;
+      }
+      public Builder setPack(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.Builder builderForValue) {
+        result.pack_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addPack(com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento value) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
+        }
+        result.pack_.add(value);
+        return this;
+      }
+      public Builder addPack(com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.Builder builderForValue) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
+        }
+        result.pack_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllPack(
+          java.lang.Iterable<? extends com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> values) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
+        }
+        super.addAll(values, result.pack_);
+        return this;
+      }
+      public Builder clearPack() {
+        result.pack_ = java.util.Collections.emptyList();
+        return this;
+      }
+      
+      // repeated .ComponentMemento component = 3;
+      public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento> getComponentList() {
+        return java.util.Collections.unmodifiableList(result.component_);
+      }
+      public int getComponentCount() {
+        return result.getComponentCount();
+      }
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento getComponent(int index) {
+        return result.getComponent(index);
+      }
+      public Builder setComponent(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento value) {
+        result.component_.set(index, value);
+        return this;
+      }
+      public Builder setComponent(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Builder builderForValue) {
+        result.component_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addComponent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento value) {
+        if (result.component_.isEmpty()) {
+          result.component_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento>();
+        }
+        result.component_.add(value);
+        return this;
+      }
+      public Builder addComponent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Builder builderForValue) {
+        if (result.component_.isEmpty()) {
+          result.component_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento>();
+        }
+        result.component_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllComponent(
+          java.lang.Iterable<? extends com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento> values) {
+        if (result.component_.isEmpty()) {
+          result.component_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento>();
+        }
+        super.addAll(values, result.component_);
+        return this;
+      }
+      public Builder clearComponent() {
+        result.component_ = java.util.Collections.emptyList();
         return this;
       }
     }
@@ -440,162 +1388,6 @@ public final class LocalRepositoryProtos {
       public Builder clearState() {
         result.hasState = false;
         result.state_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State.New;
-        return this;
-      }
-    }
-  }
-  
-  public static final class ProductMemento extends
-      com.google.protobuf.GeneratedMessage {
-    // Use ProductMemento.newBuilder() to construct.
-    private ProductMemento() {}
-    
-    private static final ProductMemento defaultInstance = new ProductMemento();
-    public static ProductMemento getDefaultInstance() {
-      return defaultInstance;
-    }
-    
-    public ProductMemento getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-    
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ProductMemento_descriptor;
-    }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ProductMemento_fieldAccessorTable;
-    }
-    
-    // required string name = 1;
-    private boolean hasName;
-    private java.lang.String name_ = "";
-    public boolean hasName() { return hasName; }
-    public java.lang.String getName() { return name_; }
-    
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistry extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistry extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistry extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistry extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    
-    public static Builder newBuilder() { return new Builder(); }
-    public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento prototype) {
-      return new Builder().mergeFrom(prototype);
-    }
-    
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.newBuilder()
-      private Builder() {}
-      
-      com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento();
-      
-      protected com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento internalGetResult() {
-        return result;
-      }
-      
-      public Builder clear() {
-        result = new com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento();
-        return this;
-      }
-      
-      public Builder clone() {
-        return new Builder().mergeFrom(result);
-      }
-      
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDescriptor();
-      }
-      
-      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento getDefaultInstanceForType() {
-        return com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.getDefaultInstance();
-      }
-      
-      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento build() {
-        if (!isInitialized()) {
-          throw new com.google.protobuf.UninitializedMessageException(
-            result);
-        }
-        return buildPartial();
-      }
-      
-      private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        if (!isInitialized()) {
-          throw new com.google.protobuf.UninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return buildPartial();
-      }
-      
-      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento buildPartial() {
-        com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento returnMe = result;
-        result = null;
-        return returnMe;
-      }
-      
-      
-      // required string name = 1;
-      public boolean hasName() {
-        return result.hasName();
-      }
-      public java.lang.String getName() {
-        return result.getName();
-      }
-      public Builder setName(java.lang.String value) {
-        result.hasName = true;
-        result.name_ = value;
-        return this;
-      }
-      public Builder clearName() {
-        result.hasName = false;
-        result.name_ = "";
         return this;
       }
     }
@@ -1026,19 +1818,63 @@ public final class LocalRepositoryProtos {
   }
   
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ProductVersionMemento_descriptor =
+    internal_static_RequestMemento_descriptor =
       getDescriptor().getMessageTypes().get(0);
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_RequestMemento_fieldAccessorTable = new
+        com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+          internal_static_RequestMemento_descriptor,
+          new java.lang.String[] { "Url", "Size", "Sha1", },
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.class,
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.Builder.class);
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ComponentFileMemento_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_ComponentFileMemento_fieldAccessorTable = new
+        com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+          internal_static_ComponentFileMemento_descriptor,
+          new java.lang.String[] { "Hash", "Size", "Modified", "Path", },
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.class,
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.Builder.class);
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ComponentMemento_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_ComponentMemento_fieldAccessorTable = new
+        com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+          internal_static_ComponentMemento_descriptor,
+          new java.lang.String[] { "File", "Pack", },
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.class,
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Builder.class);
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ProductMemento_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_ProductMemento_fieldAccessorTable = new
+        com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+          internal_static_ProductMemento_descriptor,
+          new java.lang.String[] { },
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.class,
+          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.Builder.class);
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ProductVersionMemento_descriptor =
+      getDescriptor().getMessageTypes().get(4);
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_ProductVersionMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ProductVersionMemento_descriptor,
-          new java.lang.String[] { "Name", },
+          new java.lang.String[] { "Product", "Pack", "Component", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ProductVersionStateMemento_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(5);
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_ProductVersionStateMemento_fieldAccessorTable = new
@@ -1048,19 +1884,8 @@ public final class LocalRepositoryProtos {
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ProductMemento_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ProductMemento_fieldAccessorTable = new
-        com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-          internal_static_ProductMemento_descriptor,
-          new java.lang.String[] { "Name", },
-          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.class,
-          com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductMemento.Builder.class);
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ProductStateMemento_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(6);
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_ProductStateMemento_fieldAccessorTable = new
@@ -1071,7 +1896,7 @@ public final class LocalRepositoryProtos {
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_LocalRepositoryMemento_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(7);
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_LocalRepositoryMemento_fieldAccessorTable = new

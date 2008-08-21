@@ -2,7 +2,10 @@ package com.yoursway.autoupdater.filelibrary;
 
 import static com.yoursway.utils.DebugOutputHelper.reflectionBasedToString;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
 
 public class Request {
     
@@ -58,6 +61,15 @@ public class Request {
         } else if (!url.equals(other.url))
             return false;
         return true;
+    }
+    
+    public static Request fromMemento(RequestMemento memento) throws MalformedURLException {
+        URL url = new URL(memento.getUrl());
+        return new Request(url, memento.getSize(), memento.getSha1());
+    }
+    
+    public RequestMemento toMemento() {
+        return RequestMemento.newBuilder().setUrl(url.toString()).setSize(size).setSha1(sha1).build();
     }
     
 }
