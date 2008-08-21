@@ -1,4 +1,3 @@
-
 option java_package = "com.yoursway.autoupdater.protos";
 
 message ProductVersionMemento {

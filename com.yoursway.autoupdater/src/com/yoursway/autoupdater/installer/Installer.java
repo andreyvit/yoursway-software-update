@@ -1,10 +1,14 @@
 package com.yoursway.autoupdater.installer;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Map;
+
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
+import com.yoursway.autoupdater.auxiliary.ProductVersion;
 
 public interface Installer {
     
-    public void install(Collection<File> localPacks);
+    void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
+            File extInstallerFolder, ComponentStopper stopper) throws InstallerException;
     
 }

@@ -11,6 +11,11 @@ public class ProductVersion {
     private final Collection<Request> packs;
     
     public ProductVersion(Product product, Collection<Request> packs) {
+        if (product == null)
+            throw new NullPointerException("product is null");
+        if (packs == null)
+            throw new NullPointerException("packs is null");
+        
         this.product = product;
         this.packs = packs;
     }
@@ -28,7 +33,6 @@ public class ProductVersion {
     }
     
     public ProductVersionMemento toMemento() {
-        throw new UnsupportedOperationException();
+        return ProductVersionMemento.newBuilder().setName("UNNAMED").build();
     }
-    
 }
