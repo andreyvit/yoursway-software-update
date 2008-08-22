@@ -1,16 +1,25 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.Component;
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder;
+import com.yoursway.utils.YsFileUtils;
 
 public class ProductState {
     
@@ -29,8 +38,12 @@ public class ProductState {
         
         product = Product.fromMemento(memento.getProduct());
         for (ProductVersionStateMemento m : memento.getVersionList()) {
-            ProductVersionStateWrap state = ProductVersionStateWrap.fromMemento(m, this);
-            versions.put(state.version, state);
+            try {
+                ProductVersionStateWrap state = ProductVersionStateWrap.fromMemento(m, this);
+                versions.put(state.version, state);
+            } catch (MalformedURLException e) {
+                e.printStackTrace(); //!
+            }
         }
     }
     
@@ -79,6 +92,30 @@ public class ProductState {
         for (ProductVersionState version : versions.values())
             b.addVersion(version.toMemento());
         return b.build();
+    }
+    
+    public ProductVersion currentVersion() {
+        //>
+        
+        Collection<Request> requests = Collections.emptyList();
+        Collection<Component> components = Collections.emptyList();
+        return new ProductVersion(product, requests, components);
+    }
+    
+    public ComponentStopper componentStopper() {
+        //>
+        
+        return new ComponentStopper() {
+            public boolean stop() {
+                return true;
+            }
+        };
+    }
+    
+    public File rootFolder() throws IOException {
+        //>
+        
+        return YsFileUtils.createTempFolder("autoupdater.appRootFolder", null);
     }
     
 }

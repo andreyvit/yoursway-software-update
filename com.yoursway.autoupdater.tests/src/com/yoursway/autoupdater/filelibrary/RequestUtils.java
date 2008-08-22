@@ -1,6 +1,8 @@
 package com.yoursway.autoupdater.filelibrary;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,9 +24,14 @@ public class RequestUtils {
     }
     
     public static Collection<Request> requests(int first, int last) throws MalformedURLException {
+        return requests(first, last, "");
+    }
+    
+    public static Collection<Request> requests(int first, int last, String postfix)
+            throws MalformedURLException {
         Collection<Request> requests = newLinkedList();
         for (int i = first; i <= last; i++)
-            requests.add(request("url" + i, sizeOf(i), "hash" + i));
+            requests.add(request("url" + i + postfix, sizeOf(i), "hash" + i));
         return requests;
     }
     
@@ -33,26 +40,6 @@ public class RequestUtils {
             String path = request.url.getPath().substring(1);
             server.mount(path, fileContents((int) request.size));
         }
-    }
-    
-    public static String fileContents(long length) {
-        StringBuilder sb = new StringBuilder();
-        long rest = length;
-        while (rest > 20) {
-            String s = "file contents ";
-            sb.append(s);
-            rest -= s.length();
-        }
-        while (rest > 0) {
-            String s = "a";
-            sb.append(s);
-            rest -= s.length();
-        }
-        return sb.toString();
-    }
-    
-    public static int sizeOf(int i) {
-        return i * 100;
     }
     
     public static URL url(Request request) {

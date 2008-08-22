@@ -84,6 +84,8 @@ public class InstallerMain {
     }
     
     private static void setupFile(ComponentFile file, Iterable<String> collection) throws IOException {
+        System.out.println("setupFile" + file.hash());
+        
         ZipFile pack = null;
         ZipEntry entry = null;
         

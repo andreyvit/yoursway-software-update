@@ -1,9 +1,9 @@
 package com.yoursway.autoupdater.tests.internal;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.yoursway.autoupdater.filelibrary.RequestUtils.fileContents;
 import static com.yoursway.autoupdater.filelibrary.RequestUtils.size;
 import static com.yoursway.autoupdater.filelibrary.RequestUtils.url;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
 
 import java.io.File;
 import java.io.IOException;

@@ -11,7 +11,7 @@ public class ComponentFile {
     final long modified;
     final String path;
     
-    ComponentFile(String hash, long size, long modified, String path) {
+    public ComponentFile(String hash, long size, long modified, String path) {
         this.hash = hash;
         this.size = size;
         this.modified = modified;

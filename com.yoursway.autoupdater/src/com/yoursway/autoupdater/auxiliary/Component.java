@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.auxiliary;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Collection;
@@ -11,11 +12,16 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Bu
 
 public class Component {
     
-    private final Map<String, ComponentFile> files;
+    private final Map<String, ComponentFile> files = newHashMap();
     private final Collection<String> packs;
     
-    public Component(Map<String, ComponentFile> files, Collection<String> packs) {
-        this.files = files;
+    public Component(Collection<ComponentFile> files, Collection<String> packs) {
+        if (packs == null)
+            throw new NullPointerException("packs is null");
+        
+        for (ComponentFile file : files)
+            this.files.put(file.hash, file);
+        
         this.packs = packs;
     }
     
@@ -24,11 +30,9 @@ public class Component {
     }
     
     static Component fromMemento(ComponentMemento memento) {
-        Map<String, ComponentFile> files = newHashMap();
-        for (ComponentFileMemento m : memento.getFileList()) {
-            ComponentFile file = ComponentFile.fromMemento(m);
-            files.put(file.hash, file);
-        }
+        Collection<ComponentFile> files = newLinkedList();
+        for (ComponentFileMemento m : memento.getFileList())
+            files.add(ComponentFile.fromMemento(m));
         Collection<String> packs = memento.getPackList();
         return new Component(files, packs);
     }

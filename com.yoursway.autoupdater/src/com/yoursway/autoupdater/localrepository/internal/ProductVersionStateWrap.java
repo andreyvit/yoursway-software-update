@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import java.net.MalformedURLException;
 import java.util.Collection;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
@@ -19,14 +20,15 @@ public class ProductVersionStateWrap implements ProductVersionState {
         state = new ProductVersionState_Installing(this);
     }
     
-    private ProductVersionStateWrap(ProductVersionStateMemento memento, ProductState productState) {
+    private ProductVersionStateWrap(ProductVersionStateMemento memento, ProductState productState)
+            throws MalformedURLException {
         this.productState = productState;
         version = ProductVersion.fromMemento(memento.getVersion());
         state = AbstractProductVersionState.from(memento.getState(), this);
     }
     
     public static ProductVersionStateWrap fromMemento(ProductVersionStateMemento memento,
-            ProductState productState) {
+            ProductState productState) throws MalformedURLException {
         return new ProductVersionStateWrap(memento, productState);
     }
     
