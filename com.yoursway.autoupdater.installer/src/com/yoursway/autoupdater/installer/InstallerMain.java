@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.installer;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.autoupdater.installer.external.InstallerCommunication.OK;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.zip.ZipFile;
 import com.yoursway.autoupdater.auxiliary.Component;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.installer.external.InstallerCommunication;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.FileMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PackMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento;
@@ -29,7 +31,7 @@ public class InstallerMain {
     private static File target;
     
     public static void main(String[] args) {
-        InstallerServer server = null;
+        InstallerCommunication server = null;
         try {
             server = new InstallerServer();
             
@@ -45,9 +47,9 @@ public class InstallerMain {
                 for (ComponentFile file : component.files())
                     setupFile(file, component.packs());
             
-            //version.executable();
-            //server.send(OK);
-            //server.receive(OK);
+            version.execute();
+            server.send(OK);
+            server.receive(OK);
             
         } catch (Throwable e) {
             e.printStackTrace();

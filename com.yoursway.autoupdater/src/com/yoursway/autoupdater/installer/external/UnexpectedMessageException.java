@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.installer;
+package com.yoursway.autoupdater.installer.external;
 
 public class UnexpectedMessageException extends Exception {
     

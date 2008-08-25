@@ -1,4 +1,4 @@
-package com.yoursway.autoupdater.installer;
+package com.yoursway.autoupdater.installer.external;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,17 +9,22 @@ import java.util.Map;
 
 import com.google.protobuf.Message;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.FileMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PackMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento.Builder;
 import com.yoursway.utils.YsFileUtils;
 
-class ExternalInstaller {
+public class ExternalInstaller {
+    
+    public static final int PORT = 32123;
     
     private final File folder;
     private File installer;
     private boolean prepared;
+    
+    private static InstallerClient client;
     
     public ExternalInstaller(File folder) {
         if (folder == null)
@@ -36,7 +41,7 @@ class ExternalInstaller {
         
     }
     
-    void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
+    public void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
             throws InstallerException {
         
         try {
@@ -80,7 +85,7 @@ class ExternalInstaller {
         os.close();
     }
     
-    void start() throws InstallerException {
+    public void start() throws InstallerException {
         if (!prepared)
             throw new IllegalStateException("ExternalInstaller should be prepared before starting");
         
@@ -95,6 +100,12 @@ class ExternalInstaller {
         } catch (IOException e) {
             throw new InstallerException("Cannot start the external installer", e);
         }
-        
     }
+    
+    public static InstallerClient client() {
+        if (client == null)
+            client = new InstallerClient();
+        return client;
+    }
+    
 }

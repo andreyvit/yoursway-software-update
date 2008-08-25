@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.installer.external.ExternalInstaller;
+import com.yoursway.autoupdater.installer.external.InstallerClient;
 
 public class InstallerImpl implements Installer {
     
@@ -18,6 +20,13 @@ public class InstallerImpl implements Installer {
         installer.prepare(current, version, packs, target);
         
         installer.start();
+        
+        try {
+            ExternalInstaller.client().receive(InstallerClient.READY);
+            ExternalInstaller.client().send(InstallerClient.STOPPING);
+        } catch (Exception e) {
+            throw new InstallerException("Cannot communicate with the external installer", e);
+        }
         
         boolean stopped = stopper.stop();
         if (!stopped)

@@ -5,18 +5,20 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
+import static com.yoursway.utils.YsFileUtils.readAsString;
 import static com.yoursway.utils.YsFileUtils.writeString;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.junit.After;
 import org.junit.Test;
 
 import com.yoursway.autoupdater.auxiliary.Component;
@@ -28,23 +30,28 @@ import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.installer.InstallerImpl;
+import com.yoursway.autoupdater.installer.external.ExternalInstaller;
+import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
 import com.yoursway.utils.YsFileUtils;
 
 public class InstallerTests {
     
     private final Set<Integer> packIDs = newLinkedHashSet();
     
+    private final Collection<File> tempFolders = newLinkedList();
+    
     @Test
-    public void install() throws IOException, InstallerException {
+    public void install() throws IOException, InstallerException, UnexpectedMessageException {
         
         Installer installer = new InstallerImpl();
         
         Product product = new Product();
         Collection<Request> p = newLinkedList();
-        Collection<Component> components = components();
+        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
         
         ProductVersion current = new ProductVersion(product, p, components);
         ProductVersion version = new ProductVersion(product, p, components);
+        
         Map<String, File> packs = packs();
         File target = createTempFolder();
         File extInstallerFolder = createTempFolder();
@@ -55,14 +62,19 @@ public class InstallerTests {
         };
         
         installer.install(current, version, packs, target, extInstallerFolder, stopper);
+        
+        ExternalInstaller.client().receive("OK");
+        ExternalInstaller.client().send("OK");
+        
+        for (int i = 12; i <= 42; i++)
+            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+        
     }
     
     private File createTempFolder() throws IOException {
-        return YsFileUtils.createTempFolder("autoupdater.installer.test", null);
-    }
-    
-    private LinkedList<Component> components() {
-        return newLinkedList(component(12, 25), component(23, 42));
+        File folder = YsFileUtils.createTempFolder("autoupdater.installer.test", null);
+        tempFolders.add(folder);
+        return folder;
     }
     
     private Component component(int first, int last) {
@@ -72,8 +84,12 @@ public class InstallerTests {
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), 0, "filepath" + i));
+            files.add(new ComponentFile("filehash" + i, sizeOf(i), 0, filepath(i)));
         return files;
+    }
+    
+    private String filepath(int i) {
+        return "filepath" + i;
     }
     
     private Collection<String> packs(int first, int last) {
@@ -101,4 +117,13 @@ public class InstallerTests {
         }
         return packs;
     }
+    
+    @After
+    public void cleanEach() {
+        for (File folder : tempFolders)
+            YsFileUtils.deleteRecursively(folder);
+        
+        tempFolders.clear();
+    }
+    
 }
