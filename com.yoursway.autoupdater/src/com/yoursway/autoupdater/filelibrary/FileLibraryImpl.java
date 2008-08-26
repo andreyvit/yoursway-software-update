@@ -15,6 +15,7 @@ import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
+import com.yoursway.utils.log.Log;
 
 public class FileLibraryImpl implements FileLibrary {
     
@@ -54,6 +55,8 @@ public class FileLibraryImpl implements FileLibrary {
         });
         
         orderManager = new OrderManager(this);
+        
+        Log.write("FileLibrary has been created in " + placeDir + ".");
     }
     
     public void order(FileLibraryOrder order) {

@@ -16,6 +16,7 @@ import java.util.zip.ZipFile;
 import com.yoursway.autoupdater.auxiliary.Component;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.external.InstallerCommunication;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.FileMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PackMemento;
@@ -85,14 +86,15 @@ public class InstallerMain {
         return new File(memento.getPath());
     }
     
-    private static void setupFile(ComponentFile file, Iterable<String> collection) throws IOException {
+    private static void setupFile(ComponentFile file, Iterable<Request> packs) throws IOException {
         System.out.println("setupFile" + file.hash());
         
         ZipFile pack = null;
         ZipEntry entry = null;
         
-        for (String packHash : collection) {
-            pack = new ZipFile(packs.get(packHash));
+        for (Request request : packs) {
+            String packHash = request.hash();
+            pack = new ZipFile(InstallerMain.packs.get(packHash));
             entry = pack.getEntry(file.hash());
             if (entry != null)
                 break;
@@ -102,6 +104,8 @@ public class InstallerMain {
             throw new FileNotFoundException(); //?
             
         InputStream in = pack.getInputStream(entry);
-        saveToFile(in, new File(target, file.path()));
+        File targetFile = new File(target, file.path());
+        targetFile.getParentFile().mkdirs();
+        saveToFile(in, targetFile);
     }
 }

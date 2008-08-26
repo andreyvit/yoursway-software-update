@@ -20,6 +20,7 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder;
 import com.yoursway.utils.YsFileUtils;
+import com.yoursway.utils.log.Log;
 
 public class ProductState {
     
@@ -58,6 +59,8 @@ public class ProductState {
     public void startUpdating(ProductVersion version) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");
+        
+        Log.write("Starting updating to version " + version);
         
         ProductVersionState state = versions.get(version);
         if (state != null)

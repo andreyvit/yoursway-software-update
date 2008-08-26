@@ -3,48 +3,100 @@ package com.yoursway.autoupdater.auxiliary;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Builder;
 
 public class Component {
     
+    private static final String COMPONENTS_PATH = "components/";
+    private static final String PACKS_PATH = "packs/";
     private final Map<String, ComponentFile> files = newHashMap();
-    private final Collection<String> packs;
+    private final Collection<Request> packs;
     
-    public Component(Collection<ComponentFile> files, Collection<String> packs) {
+    private String name;
+    
+    public Component(Collection<ComponentFile> files, Collection<Request> packs) {
         if (packs == null)
             throw new NullPointerException("packs is null");
         
         for (ComponentFile file : files)
-            this.files.put(file.hash, file);
+            addFile(file);
         
         this.packs = packs;
+    }
+    
+    private void addFile(ComponentFile file) {
+        files.put(file.hash, file);
+    }
+    
+    public Component(URL updateSite, String name) throws IOException, InvalidFileFormatException {
+        this.name = name;
+        packs = newLinkedList();
+        
+        URL url = new URL(updateSite + COMPONENTS_PATH + filename());
+        InputStream stream = url.openStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        while (true) {
+            String line = reader.readLine();
+            if (line == null)
+                break;
+            
+            String[] fields = line.split("\t");
+            String type = fields[0];
+            String hash = fields[1];
+            long size = Long.parseLong(fields[2]);
+            if (type.equals("P")) {
+                URL packUrl = new URL(updateSite + PACKS_PATH + hash + ".zip");
+                Request request = new Request(packUrl, size, hash);
+                packs.add(request);
+            } else if (type.equals("F")) {
+                long modified = Long.parseLong(fields[3]);
+                addFile(new ComponentFile(hash, size, modified, fields[5]));
+            } else
+                throw new InvalidFileFormatException(url);
+        }
+    }
+    
+    private String filename() {
+        return name.replaceAll("/", "_") + ".txt";
     }
     
     public Iterable<ComponentFile> files() {
         return files.values();
     }
     
-    static Component fromMemento(ComponentMemento memento) {
+    static Component fromMemento(ComponentMemento memento) throws MalformedURLException {
         Collection<ComponentFile> files = newLinkedList();
+        Collection<Request> packs = newLinkedList();
+        for (RequestMemento m : memento.getPackList())
+            packs.add(Request.fromMemento(m));
         for (ComponentFileMemento m : memento.getFileList())
             files.add(ComponentFile.fromMemento(m));
-        Collection<String> packs = memento.getPackList();
         return new Component(files, packs);
     }
     
     ComponentMemento toMemento() {
-        Builder b = ComponentMemento.newBuilder().addAllPack(packs);
+        Builder b = ComponentMemento.newBuilder();
+        for (Request pack : packs)
+            b.addPack(pack.toMemento());
         for (ComponentFile file : files.values())
             b.addFile(file.toMemento());
         return b.build();
     }
     
-    public Iterable<String> packs() {
+    public Collection<Request> packs() {
         return packs;
     }
     

@@ -18,22 +18,23 @@ public final class LocalRepositoryProtos {
       "Memento\022\013\n\003url\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\014\n\004sh" +
       "a1\030\003 \002(\t\"R\n\024ComponentFileMemento\022\014\n\004hash" +
       "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\014" +
-      "\n\004path\030\004 \002(\t\"E\n\020ComponentMemento\022#\n\004file" +
-      "\030\001 \003(\0132\025.ComponentFileMemento\022\014\n\004pack\030\002 " +
-      "\003(\t\"\020\n\016ProductMemento\"~\n\025ProductVersionM" +
-      "emento\022 \n\007product\030\001 \002(\0132\017.ProductMemento" +
-      "\022\035\n\004pack\030\002 \003(\0132\017.RequestMemento\022$\n\tcompo" +
-      "nent\030\003 \003(\0132\021.ComponentMemento\"\300\001\n\032Produc" +
-      "tVersionStateMemento\022\'\n\007version\030\001 \002(\0132\026." +
-      "ProductVersionMemento\0220\n\005state\030\002 \002(\0162!.P" +
-      "roductVersionStateMemento.State\"G\n\005State" +
-      "\022\007\n\003New\020\000\022\017\n\013Downloading\020\001\022\016\n\nInstalling" +
-      "\020\002\022\013\n\007Current\020\003\022\007\n\003Old\020\004\"e\n\023ProductState" +
-      "Memento\022 \n\007product\030\001 \002(\0132\017.ProductMement" +
-      "o\022,\n\007version\030\002 \003(\0132\033.ProductVersionState" +
-      "Memento\"?\n\026LocalRepositoryMemento\022%\n\007pro" +
-      "duct\030\001 \003(\0132\024.ProductStateMementoB!\n\037com." +
-      "yoursway.autoupdater.protos";
+      "\n\004path\030\004 \002(\t\"V\n\020ComponentMemento\022#\n\004file" +
+      "\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002 " +
+      "\003(\0132\017.RequestMemento\"\020\n\016ProductMemento\"~" +
+      "\n\025ProductVersionMemento\022 \n\007product\030\001 \002(\013" +
+      "2\017.ProductMemento\022\035\n\004pack\030\002 \003(\0132\017.Reques" +
+      "tMemento\022$\n\tcomponent\030\003 \003(\0132\021.ComponentM" +
+      "emento\"\300\001\n\032ProductVersionStateMemento\022\'\n" +
+      "\007version\030\001 \002(\0132\026.ProductVersionMemento\0220" +
+      "\n\005state\030\002 \002(\0162!.ProductVersionStateMemen" +
+      "to.State\"G\n\005State\022\007\n\003New\020\000\022\017\n\013Downloadin" +
+      "g\020\001\022\016\n\nInstalling\020\002\022\013\n\007Current\020\003\022\007\n\003Old\020" +
+      "\004\"e\n\023ProductStateMemento\022 \n\007product\030\001 \002(" +
+      "\0132\017.ProductMemento\022,\n\007version\030\002 \003(\0132\033.Pr" +
+      "oductVersionStateMemento\"?\n\026LocalReposit" +
+      "oryMemento\022%\n\007product\030\001 \003(\0132\024.ProductSta" +
+      "teMementoB!\n\037com.yoursway.autoupdater.pr" +
+      "otos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -513,14 +514,14 @@ public final class LocalRepositoryProtos {
       return file_.get(index);
     }
     
-    // repeated string pack = 2;
-    private java.util.List<java.lang.String> pack_ =
+    // repeated .RequestMemento pack = 2;
+    private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> pack_ =
       java.util.Collections.emptyList();
-    public java.util.List<java.lang.String> getPackList() {
+    public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> getPackList() {
       return pack_;
     }
     public int getPackCount() { return pack_.size(); }
-    public java.lang.String getPack(int index) {
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getPack(int index) {
       return pack_.get(index);
     }
     
@@ -683,31 +684,42 @@ public final class LocalRepositoryProtos {
         return this;
       }
       
-      // repeated string pack = 2;
-      public java.util.List<java.lang.String> getPackList() {
+      // repeated .RequestMemento pack = 2;
+      public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> getPackList() {
         return java.util.Collections.unmodifiableList(result.pack_);
       }
       public int getPackCount() {
         return result.getPackCount();
       }
-      public java.lang.String getPack(int index) {
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getPack(int index) {
         return result.getPack(index);
       }
-      public Builder setPack(int index, java.lang.String value) {
+      public Builder setPack(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento value) {
         result.pack_.set(index, value);
         return this;
       }
-      public Builder addPack(java.lang.String value) {
+      public Builder setPack(int index, com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.Builder builderForValue) {
+        result.pack_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addPack(com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento value) {
         if (result.pack_.isEmpty()) {
-          result.pack_ = new java.util.ArrayList<java.lang.String>();
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
         }
         result.pack_.add(value);
         return this;
       }
-      public Builder addAllPack(
-          java.lang.Iterable<? extends java.lang.String> values) {
+      public Builder addPack(com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento.Builder builderForValue) {
         if (result.pack_.isEmpty()) {
-          result.pack_ = new java.util.ArrayList<java.lang.String>();
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
+        }
+        result.pack_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllPack(
+          java.lang.Iterable<? extends com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> values) {
+        if (result.pack_.isEmpty()) {
+          result.pack_ = new java.util.ArrayList<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento>();
         }
         super.addAll(values, result.pack_);
         return this;

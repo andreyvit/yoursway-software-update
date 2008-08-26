@@ -15,7 +15,7 @@ message ComponentFileMemento {
 
 message ComponentMemento {
 	repeated ComponentFileMemento file = 1;
-	repeated string pack = 2;
+	repeated RequestMemento pack = 2;
 }
 
 message ProductMemento {

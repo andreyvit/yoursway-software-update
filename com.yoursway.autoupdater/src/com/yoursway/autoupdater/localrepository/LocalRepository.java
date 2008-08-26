@@ -26,7 +26,7 @@ public class LocalRepository {
     private final Installer installer;
     private final FileLibrary fileLibrary;
     
-    private LocalRepository() throws IOException {
+    public LocalRepository() throws IOException {
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
         place.mkdir();

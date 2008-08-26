@@ -90,6 +90,7 @@ public class DownloaderImpl extends AbstractDownloader {
         
         public DownloadThread() {
             super(DownloaderImpl.this.toString());
+            //? setDaemon(true);
         }
         
         @Override

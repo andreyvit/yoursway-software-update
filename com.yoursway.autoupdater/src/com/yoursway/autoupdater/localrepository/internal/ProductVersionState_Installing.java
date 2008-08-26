@@ -14,6 +14,7 @@ import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
+import com.yoursway.utils.log.Log;
 
 public class ProductVersionState_Installing extends AbstractProductVersionState implements
         FileLibraryListener {
@@ -24,6 +25,7 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     
     @Override
     public void continueWork() {
+        Log.write("Ordering files.");
         orderManager().orderChanged();
     }
     
@@ -35,6 +37,8 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     @Override
     public void libraryChanged(LibraryState state) {
         if (state.filesReady(version().packs())) {
+            Log.write("Files ready.");
+            
             Collection<File> localPacks = state.getLocalFiles(version().packs());
             Map<String, File> packs = newHashMap();
             for (File file : localPacks) {

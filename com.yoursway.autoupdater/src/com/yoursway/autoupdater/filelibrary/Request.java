@@ -72,4 +72,8 @@ public class Request {
         return RequestMemento.newBuilder().setUrl(url.toString()).setSize(size).setSha1(sha1).build();
     }
     
+    public String hash() {
+        return sha1;
+    }
+    
 }

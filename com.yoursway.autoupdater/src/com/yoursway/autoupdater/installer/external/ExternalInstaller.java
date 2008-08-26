@@ -31,14 +31,11 @@ public class ExternalInstaller {
             throw new NullPointerException("folder is null");
         this.folder = folder;
         
-        System.out.println(folder);
-        
-        for (String s : folder.list())
-            System.out.println(s);
+        if (folder.list().length != 0)
+            throw new AssertionError("An external installer folder must be empty.");
         
         String currentDir = System.getProperty("user.dir");
         installer = new File(currentDir, "../com.yoursway.autoupdater.installer/installer.jar"); //!
-        
     }
     
     public void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)

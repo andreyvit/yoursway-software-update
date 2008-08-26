@@ -7,6 +7,7 @@ import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.InstallerClient;
+import com.yoursway.utils.log.Log;
 
 public class InstallerImpl implements Installer {
     
@@ -18,7 +19,9 @@ public class InstallerImpl implements Installer {
         
         ExternalInstaller installer = new ExternalInstaller(extInstallerFolder);
         installer.prepare(current, version, packs, target);
+        Log.write("External installer prepared in " + extInstallerFolder + ".");
         
+        Log.write("Starting installation to " + target + ".");
         installer.start();
         
         try {

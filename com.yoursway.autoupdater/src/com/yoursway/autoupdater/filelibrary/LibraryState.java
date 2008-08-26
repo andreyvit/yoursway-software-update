@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+
 public class LibraryState {
     
     private final Map<URL, FileState> fileStates = newHashMap();
