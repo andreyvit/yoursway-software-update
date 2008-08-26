@@ -58,6 +58,12 @@ public class InstallerClient extends InstallerCommunication {
     public void close() throws IOException {
         super.close();
         socket.close();
+        socket = null;
+    }
+    
+    public void reconnect() throws IOException {
+        close();
+        connect();
     }
     
 }

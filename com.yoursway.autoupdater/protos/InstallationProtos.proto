@@ -1,0 +1,15 @@
+option java_package = "com.yoursway.autoupdater.protos";
+
+import "LocalRepositoryProtos.proto";
+
+message PackMemento {
+	required string hash = 1;
+	required string path = 2;
+}
+
+message InstallationMemento {
+	required ProductVersionMemento current = 1;
+	required ProductVersionMemento version = 2;
+	repeated PackMemento pack = 3;
+	required string target = 4;
+}

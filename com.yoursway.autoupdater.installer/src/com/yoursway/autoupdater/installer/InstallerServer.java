@@ -44,16 +44,14 @@ public class InstallerServer extends InstallerCommunication {
     }
     
     private void accept() throws IOException {
-        Log.write("accepting");
         socket = server.accept();
-        Log.write("accepted");
         writer = new OutputStreamWriter(socket.getOutputStream());
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
     
     public void reconnect() throws IOException {
+        Log.write("Reconnecting");
         socket.close();
-        Log.write("socket closed");
         accept();
     }
     

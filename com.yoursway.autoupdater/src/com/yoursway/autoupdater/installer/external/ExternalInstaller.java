@@ -7,26 +7,52 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import com.google.protobuf.Message;
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.installer.Installation;
+import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.autoupdater.protos.ExternalInstallerProtos.FileMemento;
-import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PackMemento;
-import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento;
-import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento.Builder;
 import com.yoursway.utils.YsFileUtils;
+import com.yoursway.utils.log.Log;
 
-public class ExternalInstaller {
+public class ExternalInstaller implements Installer {
     
     public static final int PORT = 32123;
     
-    private final File folder;
+    private File folder;
     private File installer;
     private boolean prepared;
     
     private static InstallerClient client;
     
-    public ExternalInstaller(File folder) {
+    public void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
+            File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
+        
+        if (!current.product().equals(version.product()))
+            throw new AssertionError("Tried to update one product to another.");
+        
+        setFolder(extInstallerFolder);
+        
+        prepare(current, version, packs, target);
+        Log.write("External installer prepared in " + extInstallerFolder + ".");
+        
+        Log.write("Starting installation to " + target + ".");
+        start();
+        
+        try {
+            client().receive(InstallerClient.READY);
+            client().send(InstallerClient.STOPPING);
+        } catch (Exception e) {
+            throw new InstallerException("Cannot communicate with the external installer", e);
+        }
+        
+        boolean stopped = stopper.stop();
+        if (!stopped)
+            throw new InstallerException("Cannot stop the application");
+        
+    }
+    
+    private void setFolder(File folder) {
         if (folder == null)
             throw new NullPointerException("folder is null");
         this.folder = folder;
@@ -38,7 +64,7 @@ public class ExternalInstaller {
         installer = new File(currentDir, "../com.yoursway.autoupdater.installer/installer.jar"); //!
     }
     
-    public void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
+    private void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
             throws InstallerException {
         
         try {
@@ -50,11 +76,13 @@ public class ExternalInstaller {
         }
         
         try {
+            OutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(folder,
+                    "installation")));
             
-            write(current.toMemento(), "current");
-            write(version.toMemento(), "version");
-            write(packsToMemento(packs), "packs");
-            write(fileToMemento(target), "target");
+            Installation installation = new Installation(current, version, packs, target);
+            installation.toMemento().writeTo(stream);
+            
+            stream.close();
         } catch (IOException e) {
             throw new InstallerException("Cannot write data for external installer");
         }
@@ -62,27 +90,7 @@ public class ExternalInstaller {
         prepared = true;
     }
     
-    private FileMemento fileToMemento(File file) {
-        return FileMemento.newBuilder().setPath(file.getPath()).build();
-    }
-    
-    private PacksMemento packsToMemento(Map<String, File> packs) {
-        Builder b = PacksMemento.newBuilder();
-        for (Map.Entry<String, File> entry : packs.entrySet()) {
-            String hash = entry.getKey();
-            File file = entry.getValue();
-            b.addPack(PackMemento.newBuilder().setHash(hash).setPath(file.getPath()));
-        }
-        return b.build();
-    }
-    
-    private void write(Message message, String filename) throws IOException {
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(folder, filename)));
-        message.writeTo(os);
-        os.close();
-    }
-    
-    public void start() throws InstallerException {
+    private void start() throws InstallerException {
         if (!prepared)
             throw new IllegalStateException("ExternalInstaller should be prepared before starting");
         

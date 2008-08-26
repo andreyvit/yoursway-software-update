@@ -50,7 +50,7 @@ public class LocalRepositoryTests {
         
         Product product = new Product("UNNAMED");
         Collection<Component> packs = newLinkedList();
-        ProductVersion version = new ProductVersion(product, requests, packs);
+        ProductVersion version = new ProductVersion(product, requests, packs, "");
         
         LocalRepository repo = new LocalRepository(new Installer() {
             public void install(ProductVersion current, ProductVersion version, Map<String, File> packs,

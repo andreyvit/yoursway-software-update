@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.junit.After;
 import org.junit.Test;
 
 import com.yoursway.autoupdater.auxiliary.Component;
@@ -31,7 +30,6 @@ import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.autoupdater.installer.InstallerImpl;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
 import com.yoursway.utils.YsFileUtils;
@@ -45,14 +43,14 @@ public class InstallerTests {
     @Test
     public void install() throws IOException, InstallerException, UnexpectedMessageException {
         
-        Installer installer = new InstallerImpl();
+        Installer installer = new ExternalInstaller();
         
         Product product = new Product("UNNAMED");
         Collection<Request> p = newLinkedList();
         Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
         
-        ProductVersion current = new ProductVersion(product, p, components);
-        ProductVersion version = new ProductVersion(product, p, components);
+        ProductVersion current = new ProductVersion(product, p, components, "");
+        ProductVersion version = new ProductVersion(product, p, components, "");
         
         Map<String, File> packs = packs();
         File target = createTempFolder();
@@ -65,6 +63,7 @@ public class InstallerTests {
         
         installer.install(current, version, packs, target, extInstallerFolder, stopper);
         
+        ExternalInstaller.client().reconnect();
         ExternalInstaller.client().receive("OK");
         ExternalInstaller.client().send("OK");
         
@@ -120,7 +119,7 @@ public class InstallerTests {
         return packs;
     }
     
-    @After
+    //@After
     public void cleanEach() {
         for (File folder : tempFolders)
             YsFileUtils.deleteRecursively(folder);
