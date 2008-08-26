@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +47,7 @@ public class InstallerTests {
         
         Installer installer = new InstallerImpl();
         
-        Product product = new Product();
+        Product product = new Product("UNNAMED");
         Collection<Request> p = newLinkedList();
         Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
         
@@ -77,7 +79,7 @@ public class InstallerTests {
         return folder;
     }
     
-    private Component component(int first, int last) {
+    private Component component(int first, int last) throws MalformedURLException {
         return new Component(files(first, last), packs(first, last));
     }
     
@@ -92,10 +94,10 @@ public class InstallerTests {
         return "filepath" + i;
     }
     
-    private Collection<String> packs(int first, int last) {
-        Collection<String> packs = newLinkedList();
+    private Collection<Request> packs(int first, int last) throws MalformedURLException {
+        Collection<Request> packs = newLinkedList();
         for (int i = first / 10; i <= last / 10; i++) {
-            packs.add("packhash" + i);
+            packs.add(new Request(new URL("http://localhost/"), 0, "packhash" + i));
             packIDs.add(i);
         }
         return packs;

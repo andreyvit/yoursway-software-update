@@ -48,7 +48,7 @@ public class LocalRepositoryTests {
         Collection<Request> requests = RequestUtils.requests(first, last, ".zip");
         RequestUtils.mount(server, requests);
         
-        Product product = new Product();
+        Product product = new Product("UNNAMED");
         Collection<Component> packs = newLinkedList();
         ProductVersion version = new ProductVersion(product, requests, packs);
         
