@@ -102,7 +102,7 @@ public class ProductState {
         
         Collection<Request> requests = Collections.emptyList();
         Collection<Component> components = Collections.emptyList();
-        return new ProductVersion(product, requests, components);
+        return new ProductVersion(product, requests, components, ""); //! executable
     }
     
     public ComponentStopper componentStopper() {
@@ -110,6 +110,7 @@ public class ProductState {
         
         return new ComponentStopper() {
             public boolean stop() {
+                System.exit(0);
                 return true;
             }
         };

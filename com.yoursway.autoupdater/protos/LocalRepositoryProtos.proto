@@ -27,6 +27,8 @@ message ProductVersionMemento {
 	
 	repeated RequestMemento pack = 2;
 	repeated ComponentMemento component = 3;
+	
+	required string executable = 4;
 }
 
 message ProductVersionStateMemento {

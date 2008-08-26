@@ -14,14 +14,16 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemen
 
 public class ProductVersion {
     
-    private static final String PACKS_PATH = "packs/";
     private final Product product;
     private Collection<Request> packs;
     private final Collection<Component> components;
     private final String status;
     private final String name;
     
-    public ProductVersion(Product product, Collection<Request> packs, Collection<Component> components) {
+    private final String executable;
+    
+    public ProductVersion(Product product, Collection<Request> packs, Collection<Component> components,
+            String executable) {
         if (product == null)
             throw new NullPointerException("product is null");
         if (packs == null)
@@ -37,6 +39,8 @@ public class ProductVersion {
         
         status = "";
         name = "";
+        
+        this.executable = executable;
     }
     
     public ProductVersion(Product product, String status, String name, URL updateSite) {
@@ -48,6 +52,9 @@ public class ProductVersion {
         
         this.status = status;
         this.name = name;
+        
+        //executable = System.getProperty("user.dir") + "/bin com.yoursway.autoupdater.demo.AfterUpdate class"; //!
+        executable = System.getProperty("user.dir") + "/afterupdate.jar";
     }
     
     @Override
@@ -93,11 +100,13 @@ public class ProductVersion {
         Collection<Component> components = newLinkedList();
         for (ComponentMemento m : memento.getComponentList())
             components.add(Component.fromMemento(m));
-        return new ProductVersion(product, packs, components);
+        String executable = memento.getExecutable();
+        return new ProductVersion(product, packs, components, executable);
     }
     
     public ProductVersionMemento toMemento() {
-        Builder b = ProductVersionMemento.newBuilder().setProduct(product.toMemento());
+        Builder b = ProductVersionMemento.newBuilder().setProduct(product.toMemento()).setExecutable(
+                executable);
         for (Request r : packs)
             b.addPack(r.toMemento());
         for (Component c : components)
@@ -105,8 +114,7 @@ public class ProductVersion {
         return b.build();
     }
     
-    public void execute() {
-        //> throw new UnsupportedOperationException();
+    public String executable() {
+        return executable; //> relative
     }
-    
 }

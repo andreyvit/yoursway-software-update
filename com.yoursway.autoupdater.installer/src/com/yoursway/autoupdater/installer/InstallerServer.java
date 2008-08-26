@@ -10,12 +10,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.yoursway.autoupdater.installer.external.InstallerCommunication;
+import com.yoursway.utils.log.Log;
 
 public class InstallerServer extends InstallerCommunication {
     
     private final ServerSocket server;
     private BufferedReader reader;
     private OutputStreamWriter writer;
+    private Socket socket;
     
     public InstallerServer() throws IOException {
         server = new ServerSocket(PORT);
@@ -42,9 +44,17 @@ public class InstallerServer extends InstallerCommunication {
     }
     
     private void accept() throws IOException {
-        Socket socket = server.accept();
+        Log.write("accepting");
+        socket = server.accept();
+        Log.write("accepted");
         writer = new OutputStreamWriter(socket.getOutputStream());
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    }
+    
+    public void reconnect() throws IOException {
+        socket.close();
+        Log.write("socket closed");
+        accept();
     }
     
 }

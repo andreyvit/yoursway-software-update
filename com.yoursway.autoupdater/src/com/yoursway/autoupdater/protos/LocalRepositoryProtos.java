@@ -20,21 +20,21 @@ public final class LocalRepositoryProtos {
       "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\014" +
       "\n\004path\030\004 \002(\t\"V\n\020ComponentMemento\022#\n\004file" +
       "\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002 " +
-      "\003(\0132\017.RequestMemento\"\020\n\016ProductMemento\"~" +
-      "\n\025ProductVersionMemento\022 \n\007product\030\001 \002(\013" +
-      "2\017.ProductMemento\022\035\n\004pack\030\002 \003(\0132\017.Reques" +
-      "tMemento\022$\n\tcomponent\030\003 \003(\0132\021.ComponentM" +
-      "emento\"\300\001\n\032ProductVersionStateMemento\022\'\n" +
-      "\007version\030\001 \002(\0132\026.ProductVersionMemento\0220" +
-      "\n\005state\030\002 \002(\0162!.ProductVersionStateMemen" +
-      "to.State\"G\n\005State\022\007\n\003New\020\000\022\017\n\013Downloadin" +
-      "g\020\001\022\016\n\nInstalling\020\002\022\013\n\007Current\020\003\022\007\n\003Old\020" +
-      "\004\"e\n\023ProductStateMemento\022 \n\007product\030\001 \002(" +
-      "\0132\017.ProductMemento\022,\n\007version\030\002 \003(\0132\033.Pr" +
-      "oductVersionStateMemento\"?\n\026LocalReposit" +
-      "oryMemento\022%\n\007product\030\001 \003(\0132\024.ProductSta" +
-      "teMementoB!\n\037com.yoursway.autoupdater.pr" +
-      "otos";
+      "\003(\0132\017.RequestMemento\"\020\n\016ProductMemento\"\222" +
+      "\001\n\025ProductVersionMemento\022 \n\007product\030\001 \002(" +
+      "\0132\017.ProductMemento\022\035\n\004pack\030\002 \003(\0132\017.Reque" +
+      "stMemento\022$\n\tcomponent\030\003 \003(\0132\021.Component" +
+      "Memento\022\022\n\nexecutable\030\004 \002(\t\"\300\001\n\032ProductV" +
+      "ersionStateMemento\022\'\n\007version\030\001 \002(\0132\026.Pr" +
+      "oductVersionMemento\0220\n\005state\030\002 \002(\0162!.Pro" +
+      "ductVersionStateMemento.State\"G\n\005State\022\007" +
+      "\n\003New\020\000\022\017\n\013Downloading\020\001\022\016\n\nInstalling\020\002" +
+      "\022\013\n\007Current\020\003\022\007\n\003Old\020\004\"e\n\023ProductStateMe" +
+      "mento\022 \n\007product\030\001 \002(\0132\017.ProductMemento\022" +
+      ",\n\007version\030\002 \003(\0132\033.ProductVersionStateMe" +
+      "mento\"?\n\026LocalRepositoryMemento\022%\n\007produ" +
+      "ct\030\001 \003(\0132\024.ProductStateMementoB!\n\037com.yo" +
+      "ursway.autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -915,6 +915,12 @@ public final class LocalRepositoryProtos {
       return component_.get(index);
     }
     
+    // required string executable = 4;
+    private boolean hasExecutable;
+    private java.lang.String executable_ = "";
+    public boolean hasExecutable() { return hasExecutable; }
+    public java.lang.String getExecutable() { return executable_; }
+    
     public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1150,6 +1156,24 @@ public final class LocalRepositoryProtos {
       }
       public Builder clearComponent() {
         result.component_ = java.util.Collections.emptyList();
+        return this;
+      }
+      
+      // required string executable = 4;
+      public boolean hasExecutable() {
+        return result.hasExecutable();
+      }
+      public java.lang.String getExecutable() {
+        return result.getExecutable();
+      }
+      public Builder setExecutable(java.lang.String value) {
+        result.hasExecutable = true;
+        result.executable_ = value;
+        return this;
+      }
+      public Builder clearExecutable() {
+        result.hasExecutable = false;
+        result.executable_ = "";
         return this;
       }
     }
@@ -1881,7 +1905,7 @@ public final class LocalRepositoryProtos {
       internal_static_ProductVersionMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ProductVersionMemento_descriptor,
-          new java.lang.String[] { "Product", "Pack", "Component", },
+          new java.lang.String[] { "Product", "Pack", "Component", "Executable", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor

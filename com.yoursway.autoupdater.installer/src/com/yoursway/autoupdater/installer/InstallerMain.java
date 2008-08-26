@@ -17,11 +17,12 @@ import com.yoursway.autoupdater.auxiliary.Component;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.installer.external.InstallerCommunication;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.FileMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PackMemento;
 import com.yoursway.autoupdater.protos.ExternalInstallerProtos.PacksMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento;
+import com.yoursway.utils.log.Log;
+import com.yoursway.utils.log.TcpIpLogger;
 
 public class InstallerMain {
     
@@ -32,7 +33,9 @@ public class InstallerMain {
     private static File target;
     
     public static void main(String[] args) {
-        InstallerCommunication server = null;
+        Log.setLogger(new TcpIpLogger());
+        
+        InstallerServer server = null;
         try {
             server = new InstallerServer();
             
@@ -48,9 +51,15 @@ public class InstallerMain {
                 for (ComponentFile file : component.files())
                     setupFile(file, component.packs());
             
-            version.execute();
+            start(version.executable());
+            
+            Log.write("Reconnecting");
+            server.reconnect();
+            Log.write("Sending OK");
             server.send(OK);
+            Log.write("Receiving OK");
             server.receive(OK);
+            Log.write("Closing");
             
         } catch (Throwable e) {
             e.printStackTrace();
@@ -61,6 +70,37 @@ public class InstallerMain {
                 e.printStackTrace();
             }
         }
+    }
+    
+    private static void start(String executable) throws IOException {
+        Log.write("Starting " + executable);
+        
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.directory(target);
+        
+        //> target + executable = absolute
+        
+        final String JAR = ".jar";
+        final String CLASS = " class";
+        
+        if (executable.endsWith(JAR) || executable.endsWith(CLASS)) {
+            String javaHome = System.getProperty("java.home");
+            String java = new File(javaHome, "bin/java").getAbsolutePath(); //! check "bin/java" at windows
+            
+            if (executable.endsWith(JAR))
+                pb.command(java, "-jar", executable);
+            else {
+                String e = executable.substring(0, executable.length() - CLASS.length());
+                int space = e.lastIndexOf(' ');
+                String classpath = e.substring(0, space);
+                String classname = e.substring(space + 1);
+                Log.write(java + " -classpath " + classpath + " " + classname);
+                pb.command(java, "-classpath", classpath, classname);
+            }
+        } else
+            pb.command(executable);
+        
+        pb.start();
     }
     
     private static ProductVersion versionFromFile(String filename) throws IOException {

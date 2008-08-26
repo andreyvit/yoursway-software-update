@@ -8,10 +8,14 @@ import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.auxiliary.Suite;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
+import com.yoursway.utils.log.Log;
+import com.yoursway.utils.log.TcpIpLogger;
 
 public class ConsoleDemo {
     
     public static void main(String[] args) {
+        Log.setLogger(new TcpIpLogger());
+        
         try {
             URL updateSite = new URL(args[0]);
             System.out.println("Update site: " + updateSite);
