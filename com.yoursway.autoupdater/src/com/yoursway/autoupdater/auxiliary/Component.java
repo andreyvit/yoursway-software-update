@@ -73,7 +73,7 @@ public class Component {
         return name.replaceAll("/", "_") + ".txt";
     }
     
-    public Iterable<ComponentFile> files() {
+    public Collection<ComponentFile> files() {
         return files.values();
     }
     

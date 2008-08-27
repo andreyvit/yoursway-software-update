@@ -8,6 +8,8 @@ import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
 import static com.yoursway.utils.YsFileUtils.writeString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +22,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.junit.After;
 import org.junit.Test;
 
 import com.yoursway.autoupdater.auxiliary.Component;
@@ -30,6 +33,7 @@ import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
+import com.yoursway.autoupdater.installer.InternalInstaller;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
 import com.yoursway.utils.YsFileUtils;
@@ -41,19 +45,70 @@ public class InstallerTests {
     private final Collection<File> tempFolders = newLinkedList();
     
     @Test
-    public void install() throws IOException, InstallerException, UnexpectedMessageException {
-        
+    public void external() throws IOException, InstallerException, UnexpectedMessageException {
         Installer installer = new ExternalInstaller();
+        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        File target = createTempFolder();
+        
+        install(installer, components, components, target);
+        
+        ExternalInstaller.client().reconnect();
+        ExternalInstaller.client().receive("OK");
+        ExternalInstaller.client().send("OK");
+        
+        for (int i = 12; i <= 42; i++)
+            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+    }
+    
+    @Test
+    public void internal() throws IOException, InstallerException {
+        Installer installer = new InternalInstaller();
+        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        File target = createTempFolder();
+        
+        install(installer, components, components, target);
+        
+        for (int i = 12; i <= 42; i++)
+            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+    }
+    
+    @Test
+    public void deleting() throws IOException, InstallerException {
+        Installer installer = new InternalInstaller();
+        Collection<Component> components1 = newLinkedList(component(8, 15), component(33, 48));
+        Collection<Component> components2 = newLinkedList(component(12, 25), component(23, 42));
+        File target = createTempFolder();
+        
+        createFiles(target, components1);
+        for (int i = 8; i < 12; i++)
+            assertTrue(new File(target, filepath(i)).exists());
+        
+        install(installer, components1, components2, target);
+        
+        for (int i = 8; i < 12; i++)
+            assertFalse(new File(target, filepath(i)).exists());
+        for (int i = 12; i <= 42; i++)
+            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+    }
+    
+    @After
+    public void cleanEach() {
+        for (File folder : tempFolders)
+            YsFileUtils.deleteRecursively(folder);
+        
+        tempFolders.clear();
+    }
+    
+    private void install(Installer installer, Collection<Component> oldComponents,
+            Collection<Component> newComponents, File target) throws IOException, InstallerException {
         
         Product product = new Product("UNNAMED");
         Collection<Request> p = newLinkedList();
-        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
         
-        ProductVersion current = new ProductVersion(product, p, components, "");
-        ProductVersion version = new ProductVersion(product, p, components, "");
+        ProductVersion current = new ProductVersion(product, p, oldComponents, "");
+        ProductVersion version = new ProductVersion(product, p, newComponents, "");
         
         Map<String, File> packs = packs();
-        File target = createTempFolder();
         File extInstallerFolder = createTempFolder();
         ComponentStopper stopper = new ComponentStopper() {
             public boolean stop() {
@@ -62,14 +117,12 @@ public class InstallerTests {
         };
         
         installer.install(current, version, packs, target, extInstallerFolder, stopper);
-        
-        ExternalInstaller.client().reconnect();
-        ExternalInstaller.client().receive("OK");
-        ExternalInstaller.client().send("OK");
-        
-        for (int i = 12; i <= 42; i++)
-            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
-        
+    }
+    
+    private void createFiles(File target, Collection<Component> components) throws IOException {
+        for (Component component : components)
+            for (ComponentFile file : component.files())
+                new File(target, file.path()).createNewFile();
     }
     
     private File createTempFolder() throws IOException {
@@ -117,14 +170,6 @@ public class InstallerTests {
             packs.put("packhash" + i, pack);
         }
         return packs;
-    }
-    
-    //@After
-    public void cleanEach() {
-        for (File folder : tempFolders)
-            YsFileUtils.deleteRecursively(folder);
-        
-        tempFolders.clear();
     }
     
 }

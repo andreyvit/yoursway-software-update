@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -116,5 +117,12 @@ public class ProductVersion {
     
     public String executable() {
         return executable; //> relative
+    }
+    
+    public Collection<ComponentFile> files() {
+        Collection<ComponentFile> files = newHashSet();
+        for (Component component : components)
+            files.addAll(component.files());
+        return files;
     }
 }
