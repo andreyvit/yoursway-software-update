@@ -19,4 +19,8 @@ public class ConsoleView implements InstallerView {
         // nothing
     }
     
+    public void done() {
+        // nothing
+    }
+    
 }

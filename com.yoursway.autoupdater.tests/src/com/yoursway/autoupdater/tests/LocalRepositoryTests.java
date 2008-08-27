@@ -27,6 +27,7 @@ import com.yoursway.autoupdater.filelibrary.RequestUtils;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
+import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
 
 public class LocalRepositoryTests {
@@ -90,7 +91,7 @@ public class LocalRepositoryTests {
         });
         
         synchronized (this) {
-            repo.startUpdating(version);
+            repo.startUpdating(version, UpdatingListener.EMPTY);
             wait();
         }
         
