@@ -23,6 +23,8 @@ public class ProductVersion {
     
     private final String executable;
     
+    private boolean damaged;
+    
     public ProductVersion(Product product, Collection<Request> packs, Collection<Component> components,
             String executable) {
         if (product == null)
@@ -125,4 +127,13 @@ public class ProductVersion {
             files.addAll(component.files());
         return files;
     }
+    
+    void damage() {
+        damaged = true;
+    }
+    
+    public boolean damaged() {
+        return damaged;
+    }
+    
 }

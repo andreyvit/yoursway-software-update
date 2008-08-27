@@ -1,15 +1,15 @@
 package com.yoursway.autoupdater.auxiliary;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.yoursway.utils.log.LogEntryType.ERROR;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Map;
 
 import com.yoursway.utils.log.Log;
@@ -23,7 +23,7 @@ public class Suite {
     private final String name;
     private final Map<String, Product> products = newHashMap();
     
-    public Suite(URL updateSite, String name) throws InvalidFileFormatException, MalformedURLException {
+    public Suite(URL updateSite, String name) throws InvalidFileFormatException, IOException {
         this.updateSite = updateSite;
         this.name = name;
         
@@ -58,6 +58,7 @@ public class Suite {
                     try {
                         addComponentVersion(productVersion, componentName);
                     } catch (Exception e) {
+                        productVersion.damage();
                         Log.write("Cannot add component " + componentName + " to product version "
                                 + productVersion + ": " + e.getClass().getSimpleName(), ERROR);
                     }
@@ -65,10 +66,6 @@ public class Suite {
                     throw new InvalidFileFormatException(versions); //! ignore line?
             }
             
-        } catch (FileNotFoundException e) {
-            e.printStackTrace(); //!
-        } catch (IOException e) {
-            e.printStackTrace(); //!
         } finally {
             if (stream != null)
                 try {
@@ -104,6 +101,13 @@ public class Suite {
         if (product == null)
             throw new IllegalArgumentException("productName");
         return product.versions();
+    }
+    
+    public Collection<ProductVersion> versions() {
+        Collection<ProductVersion> versions = newLinkedList();
+        for (Product product : products.values())
+            versions.addAll(product.versions());
+        return versions;
     }
     
 }

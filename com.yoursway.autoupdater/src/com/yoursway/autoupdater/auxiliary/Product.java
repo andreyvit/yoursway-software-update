@@ -40,7 +40,7 @@ public class Product {
         versions.add(version);
     }
     
-    public Iterable<ProductVersion> versions() {
+    public Collection<ProductVersion> versions() {
         return versions;
     }
     
