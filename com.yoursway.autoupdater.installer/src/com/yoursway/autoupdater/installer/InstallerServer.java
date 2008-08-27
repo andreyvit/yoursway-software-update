@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.yoursway.autoupdater.installer.external.InstallerCommunication;
-import com.yoursway.utils.log.Log;
 
 public class InstallerServer extends InstallerCommunication {
     
@@ -25,7 +24,7 @@ public class InstallerServer extends InstallerCommunication {
     
     @Override
     public void close() throws IOException {
-        super.close();
+        //super.close();
         server.close();
     }
     
@@ -50,9 +49,15 @@ public class InstallerServer extends InstallerCommunication {
     }
     
     public void reconnect() throws IOException {
-        Log.write("Reconnecting");
         socket.close();
         accept();
     }
     
+    public void waitDisconnect() throws IOException {
+        String line;
+        do
+            line = reader.readLine();
+        while (line != null);
+        
+    }
 }

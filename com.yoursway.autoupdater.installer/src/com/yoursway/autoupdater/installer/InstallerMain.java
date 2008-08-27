@@ -1,68 +1,18 @@
 package com.yoursway.autoupdater.installer;
 
-import static com.yoursway.autoupdater.installer.external.InstallerCommunication.OK;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Map;
-
-import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
-import com.yoursway.utils.log.Log;
-import com.yoursway.utils.log.TcpIpLogger;
+import com.yoursway.autoupdater.installer.gui.ConsoleView;
+import com.yoursway.autoupdater.installer.gui.InstallerView;
+import com.yoursway.autoupdater.installer.gui.SWTView;
 
 public class InstallerMain {
     
-    static final String READY = "READY";
-    static final String STOPPING = "STOPPING";
-    
-    private static Map<String, File> packs;
-    private static File target;
-    
     public static void main(String[] args) {
-        Log.setLogger(new TcpIpLogger());
+        boolean gui = args.length > 0 && args[0].equals("gui");
+        InstallerView view = gui ? new SWTView() : new ConsoleView();
         
-        InstallerServer server = null;
-        try {
-            server = new InstallerServer();
-            
-            InputStream input = new FileInputStream("installation");
-            InstallationMemento memento = InstallationMemento.parseFrom(input);
-            input.close();
-            
-            Installation installation = Installation.fromMemento(memento);
-            
-            server.send(READY);
-            server.receive(STOPPING);
-            
-            installation.perform();
-            
-            installation.startVersionExecutable();
-            
-            server.reconnect();
-            Log.write("Sending OK");
-            server.send(OK);
-            Log.write("Receiving OK");
-            server.receive(OK);
-            Log.write("Closing");
-            
-        } catch (Throwable e) {
-            OutputStream stream = Log.stream();
-            e.printStackTrace(new PrintStream(stream));
-            try {
-                stream.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } finally {
-            try {
-                server.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        InstallerThread thread = new InstallerThread(view);
+        thread.start();
+        
+        view.cycle();
     }
 }

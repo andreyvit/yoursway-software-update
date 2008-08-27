@@ -20,10 +20,21 @@ public class ExternalInstaller implements Installer {
     public static final int PORT = 32123;
     
     private File folder;
-    private File installer;
     private boolean prepared;
     
+    private final boolean gui;
+    
+    private File installerBuild;
+    
     private static InstallerClient client;
+    
+    public ExternalInstaller() {
+        this(false);
+    }
+    
+    public ExternalInstaller(boolean gui) {
+        this.gui = gui;
+    }
     
     public void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
             File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
@@ -61,16 +72,17 @@ public class ExternalInstaller implements Installer {
             throw new AssertionError("An external installer folder must be empty.");
         
         String currentDir = System.getProperty("user.dir");
-        installer = new File(currentDir, "../com.yoursway.autoupdater.installer/installer.jar"); //!
+        installerBuild = new File(currentDir, "../com.yoursway.autoupdater.installer/build"); //!
     }
     
     private void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
             throws InstallerException {
         
         try {
-            File copy = new File(folder, "installer.jar");
-            YsFileUtils.fileCopy(installer, copy);
-            installer = copy;
+            for (File file : installerBuild.listFiles()) {
+                File copy = new File(folder, file.getName());
+                YsFileUtils.fileCopy(file, copy);
+            }
         } catch (IOException e) {
             throw new InstallerException("Cannot copy external installer");
         }
@@ -79,7 +91,7 @@ public class ExternalInstaller implements Installer {
             OutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(folder,
                     "installation")));
             
-            Installation installation = new Installation(current, version, packs, target);
+            Installation installation = new Installation(current, version, packs, target, null);
             installation.toMemento().writeTo(stream);
             
             stream.close();
@@ -96,10 +108,17 @@ public class ExternalInstaller implements Installer {
         
         String javaHome = System.getProperty("java.home");
         File java = new File(javaHome, "bin/java"); //! check at windows
+        File installer = new File(folder, "installer.jar"); //!
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(folder);
-        pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());
+        
+        if (gui)
+            pb.command(java.getAbsolutePath(), "-XstartOnFirstThread", "-jar", installer.getAbsolutePath(),
+                    "gui");
+        else
+            pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());
+        
         try {
             pb.start();
         } catch (IOException e) {

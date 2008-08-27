@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.yoursway.autoupdater.auxiliary.Suite;
 import com.yoursway.autoupdater.gui.view.VersionsView;
+import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 
 public class UpdaterDemo {
@@ -34,7 +35,7 @@ public class UpdaterDemo {
         
         LocalRepository localRepository = null;
         try {
-            localRepository = new LocalRepository();
+            localRepository = new LocalRepository(new ExternalInstaller(true));
         } catch (Throwable e) {
             fatalError("Cannod create a local repository", e);
         }

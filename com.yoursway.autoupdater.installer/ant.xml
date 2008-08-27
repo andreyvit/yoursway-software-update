@@ -3,7 +3,7 @@
 <!--this file was created by Eclipse Runnable JAR Export Wizard-->
 <!--ANT 1.7 is required                                        -->
 <target name="create_run_jar">
-<jar destfile="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater.installer/installer.jar" filesetmanifest="mergewithoutmain">
+<jar destfile="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater.installer/build/installer.jar" filesetmanifest="mergewithoutmain">
 <manifest>
 <attribute name="Built-By" value="${user.name}"/>
 <attribute name="Main-Class" value="com.yoursway.autoupdater.installer.InstallerMain"/>
@@ -14,6 +14,9 @@
 <fileset dir="/Users/lliypik/Projects/libraries/com.google.protobuf/bin"/>
 <zipfileset excludes="META-INF/*.SF" src="/Users/lliypik/Projects/libraries/com.google.protobuf/protobuf-java-2.0.0beta.jar"/>
 <fileset dir="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater/bin"/>
+<fileset dir="/Users/lliypik/Projects/swt/org.eclipse.swt/bin"/>
+<zipfileset excludes="META-INF/*.SF" src="/Users/lliypik/Projects/swt/org.eclipse.swt/extra_jars/exceptions.jar"/>
+<fileset dir="/Users/lliypik/Projects/ide/com.yoursway.swt.macosx/bin"/>
 <fileset dir="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater.installer/bin"/>
 </jar>
 </target>

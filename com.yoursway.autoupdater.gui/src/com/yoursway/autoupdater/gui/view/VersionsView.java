@@ -92,6 +92,13 @@ public class VersionsView {
                                 progress.setSelection(value);
                             }
                         });
+                        
+                        //! remove it
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            //!
+                        }
                     }
                     
                     public void downloadingCompleted() {
