@@ -16,6 +16,7 @@ import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
+import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento.Builder;
@@ -26,7 +27,7 @@ public class ProductState {
     
     private final Product product;
     
-    private final Map<ProductVersion, ProductVersionState> versions = new HashMap<ProductVersion, ProductVersionState>();
+    private final Map<ProductVersion, ProductVersionStateWrap> versions = new HashMap<ProductVersion, ProductVersionStateWrap>();
     
     private final FileLibrary fileLibrary;
     final OrderManager orderManager;
@@ -56,17 +57,18 @@ public class ProductState {
         this.product = product;
     }
     
-    public void startUpdating(ProductVersion version) {
+    public void startUpdating(ProductVersion version, UpdatingListener listener) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");
         
         Log.write("Starting updating to version " + version);
         
-        ProductVersionState state = versions.get(version);
-        if (state != null)
+        ProductVersionStateWrap state = versions.get(version);
+        if (state != null) {
+            state.setListener(listener);
             state.startUpdating();
-        else {
-            state = new ProductVersionStateWrap(version, this);
+        } else {
+            state = new ProductVersionStateWrap(this, version, listener);
             versions.put(version, state);
             fileLibrary.events().addListener(state);
             orderManager.register(state);

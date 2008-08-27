@@ -10,13 +10,16 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.yoursway.autoupdater.auxiliary.Suite;
 import com.yoursway.autoupdater.gui.view.VersionsView;
+import com.yoursway.autoupdater.localrepository.LocalRepository;
 
 public class UpdaterDemo {
+    
+    private static Shell shell;
     
     public static void main(String[] args) {
         Display display = new Display();
         
-        Shell shell = new Shell(display);
+        shell = new Shell(display);
         shell.setText("Autoupdater");
         shell.setBounds(new Rectangle(480, 320, 320, 240));
         
@@ -26,11 +29,17 @@ public class UpdaterDemo {
             String suiteName = args[1];
             suite = new Suite(updateSite, suiteName);
         } catch (Throwable e) {
-            MessageBox msg = new MessageBox(shell, SWT.NONE);
-            msg.setMessage("Cannot load suite.\n" + e.getClass().getSimpleName() + ": " + e.getMessage());
-            msg.open();
+            fatalError("Cannot load the suite", e);
         }
-        new VersionsView(shell, suite, new UpdaterStyleMock(display));
+        
+        LocalRepository localRepository = null;
+        try {
+            localRepository = new LocalRepository();
+        } catch (Throwable e) {
+            fatalError("Cannod create a local repository", e);
+        }
+        
+        new VersionsView(shell, suite, localRepository, new UpdaterStyleMock(display));
         
         shell.open();
         
@@ -44,5 +53,12 @@ public class UpdaterDemo {
         }
         
         display.dispose();
+    }
+    
+    private static void fatalError(String message, Throwable e) {
+        MessageBox msg = new MessageBox(shell, SWT.NONE);
+        msg.setMessage(message + ".\n" + e.getClass().getSimpleName() + ": " + e.getMessage());
+        msg.open();
+        System.exit(-1);
     }
 }

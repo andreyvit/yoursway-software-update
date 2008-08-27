@@ -42,14 +42,14 @@ public class LocalRepository {
         this.installer = installer;
     }
     
-    public void startUpdating(ProductVersion version) {
+    public void startUpdating(ProductVersion version, UpdatingListener listener) {
         Product product = version.product();
         ProductState productState = products.get(product);
         if (productState == null) {
             productState = new ProductState(product, fileLibrary, installer);
             products.put(product, productState);
         }
-        productState.startUpdating(version);
+        productState.startUpdating(version, listener);
     }
     
     public void atStartup() {

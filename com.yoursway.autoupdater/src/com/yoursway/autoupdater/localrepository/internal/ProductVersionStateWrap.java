@@ -6,18 +6,24 @@ import java.util.Collection;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
 
 public class ProductVersionStateWrap implements ProductVersionState {
     
     private ProductVersionState state;
-    final ProductVersion version;
     final ProductState productState;
     
-    public ProductVersionStateWrap(ProductVersion version, ProductState productState) {
+    final ProductVersion version;
+    UpdatingListener listener;
+    
+    public ProductVersionStateWrap(ProductState productState, ProductVersion version,
+            UpdatingListener listener) {
         this.productState = productState;
         this.version = version;
         state = new ProductVersionState_Installing(this);
+        
+        setListener(listener);
     }
     
     private ProductVersionStateWrap(ProductVersionStateMemento memento, ProductState productState)
@@ -59,6 +65,12 @@ public class ProductVersionStateWrap implements ProductVersionState {
     
     public void libraryChanged(LibraryState s) {
         state.libraryChanged(s);
+    }
+    
+    public void setListener(UpdatingListener listener) {
+        if (listener == null)
+            throw new NullPointerException("listener is null");
+        this.listener = listener;
     }
     
 }

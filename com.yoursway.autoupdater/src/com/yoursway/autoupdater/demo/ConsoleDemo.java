@@ -8,6 +8,7 @@ import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.auxiliary.Suite;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
+import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.utils.log.Log;
 import com.yoursway.utils.log.TcpIpLogger;
 
@@ -44,7 +45,7 @@ public class ConsoleDemo {
             
             ProductVersion version = productVersion(versions, versionName);
             LocalRepository localRepository = new LocalRepository();
-            localRepository.startUpdating(version);
+            localRepository.startUpdating(version, UpdatingListener.EMPTY);
             
         } catch (Throwable e) {
             e.printStackTrace();

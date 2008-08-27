@@ -26,6 +26,7 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     @Override
     public void continueWork() {
         Log.write("Ordering files.");
+        listener().downloadingStarted();
         orderManager().orderChanged();
     }
     
@@ -36,21 +37,23 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     
     @Override
     public void libraryChanged(LibraryState state) {
-        if (state.filesReady(version().packs())) {
+        Collection<Request> packs = version().packs();
+        if (state.filesReady(packs)) {
             Log.write("Files ready.");
+            listener().downloadingCompleted();
             
-            Collection<File> localPacks = state.getLocalFiles(version().packs());
-            Map<String, File> packs = newHashMap();
+            Collection<File> localPacks = state.getLocalFiles(packs);
+            Map<String, File> packsMap = newHashMap();
             for (File file : localPacks) {
                 String name = file.getName();
                 if (!name.endsWith(".zip"))
                     throw new AssertionError("A pack file name must ends with .zip"); //!
                 String hash = name.substring(0, name.length() - 4);
-                packs.put(hash, file);
+                packsMap.put(hash, file);
             }
             try {
                 File extInstallerFolder = createTempFolder("com.yoursway.autoupdater.installer", null);
-                installer().install(productState().currentVersion(), version(), packs,
+                installer().install(productState().currentVersion(), version(), packsMap,
                         productState().rootFolder(), extInstallerFolder, productState().componentStopper());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -59,6 +62,9 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        } else {
+            double progress = state.localBytes(packs) * 1.0 / state.totalBytes(packs);
+            listener().downloading(progress);
         }
     }
     

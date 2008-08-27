@@ -9,6 +9,7 @@ import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
+import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
 
 abstract class AbstractProductVersionState implements ProductVersionState {
@@ -45,6 +46,10 @@ abstract class AbstractProductVersionState implements ProductVersionState {
     
     protected OrderManager orderManager() {
         return wrap.productState.orderManager;
+    }
+    
+    protected UpdatingListener listener() {
+        return wrap.listener;
     }
     
     public void startUpdating() {

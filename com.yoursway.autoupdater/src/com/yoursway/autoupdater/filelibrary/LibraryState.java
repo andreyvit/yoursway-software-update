@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-
 public class LibraryState {
     
     private final Map<URL, FileState> fileStates = newHashMap();
@@ -38,6 +37,22 @@ public class LibraryState {
             files.add(state.getLocalFile());
         }
         return files;
+    }
+    
+    public long totalBytes(Collection<Request> requests) {
+        long size = 0;
+        for (Request request : requests)
+            size += request.size;
+        return size;
+    }
+    
+    public long localBytes(Collection<Request> requests) {
+        long size = 0;
+        for (Request request : requests) {
+            FileState state = stateOf(request.url);
+            size += state.doneSize;
+        }
+        return size;
     }
     
 }

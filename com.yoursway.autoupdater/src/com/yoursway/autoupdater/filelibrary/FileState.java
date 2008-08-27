@@ -9,7 +9,7 @@ import com.yoursway.utils.annotations.Immutable;
 public class FileState {
     
     private final LibraryFile file;
-    private final long doneSize;
+    final long doneSize;
     private final long prevDoneSize;
     
     FileState(LibraryFile file, long doneSize, long prevDoneSize) {
