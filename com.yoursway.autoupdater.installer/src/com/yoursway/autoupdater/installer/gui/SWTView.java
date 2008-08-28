@@ -24,8 +24,11 @@ public class SWTView implements InstallerView {
         shell.setBounds(240, 240, 480, 320);
         shell.setLayout(new FillLayout());
         
-        styledText = new StyledText(shell, SWT.NONE);
+        styledText = new StyledText(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+        styledText.setEditable(false);
         errorColor = new Color(styledText.getDisplay(), 255, 0, 0);
+        
+        //> forbid window closing
         
         shell.open();
     }
@@ -70,8 +73,7 @@ public class SWTView implements InstallerView {
     }
     
     public void done() {
-        // TODO Auto-generated method stub
-        
+        //> allow user to close the window
     }
     
 }
