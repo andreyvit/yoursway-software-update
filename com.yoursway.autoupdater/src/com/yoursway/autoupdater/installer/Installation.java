@@ -96,6 +96,10 @@ public class Installation {
         File targetFile = new File(target, file.path());
         targetFile.getParentFile().mkdirs();
         saveToFile(in, targetFile);
+        
+        boolean ok = targetFile.setLastModified(file.modified());
+        if (!ok)
+            view.error("Cannot set lastmodified property of file " + targetFile);
     }
     
     public InstallationMemento toMemento() {

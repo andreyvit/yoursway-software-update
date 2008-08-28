@@ -34,4 +34,8 @@ public class ComponentFile {
         return path;
     }
     
+    public long modified() {
+        return modified;
+    }
+    
 }

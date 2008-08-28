@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
 import static com.yoursway.utils.YsFileUtils.writeString;
@@ -91,6 +92,18 @@ public class InstallerTests {
             assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
     }
     
+    @Test
+    public void date() throws IOException, InstallerException {
+        Installer installer = new InternalInstaller();
+        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        File target = createTempFolder();
+        
+        install(installer, components, components, target);
+        
+        for (int i = 12; i <= 42; i++)
+            assertEquals(lastModifiedOf(i), new File(target, filepath(i)).lastModified());
+    }
+    
     @After
     public void cleanEach() {
         for (File folder : tempFolders)
@@ -138,7 +151,7 @@ public class InstallerTests {
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), 0, filepath(i)));
+            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), filepath(i)));
         return files;
     }
     

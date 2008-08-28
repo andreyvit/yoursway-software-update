@@ -1,5 +1,7 @@
 package com.yoursway.autoupdater.tests.internal;
 
+import java.util.GregorianCalendar;
+
 public class FileTestUtils {
     
     public static String fileContents(long length) {
@@ -20,6 +22,11 @@ public class FileTestUtils {
     
     public static int sizeOf(int i) {
         return i * 100;
+    }
+    
+    public static long lastModifiedOf(int i) {
+        GregorianCalendar calendar = new GregorianCalendar(2008, 8, 28, 11, 26);
+        return calendar.getTimeInMillis() - i * 100000;
     }
     
 }
