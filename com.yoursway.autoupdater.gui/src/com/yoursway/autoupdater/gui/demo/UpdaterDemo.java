@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.yoursway.autoupdater.auxiliary.Suite;
+import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.gui.view.VersionsView;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 
@@ -21,10 +21,10 @@ public class UpdaterDemo {
         shell.setText("Autoupdater");
         shell.setBounds(new Rectangle(480, 320, 320, 240));
         
-        Suite suite = null;
+        SuiteDefinition suite = null;
         LocalRepository localRepository = null;
         try {
-            suite = Suite.load(args[0], args[1]);
+            suite = SuiteDefinition.load(args[0], args[1]);
             localRepository = LocalRepository.createForGUI();
         } catch (Throwable e) {
             fatalError(e);

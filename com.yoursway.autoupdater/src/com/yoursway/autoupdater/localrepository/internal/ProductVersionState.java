@@ -2,7 +2,7 @@ package com.yoursway.autoupdater.localrepository.internal;
 
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibrarySubscriber;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 
 public interface ProductVersionState extends FileLibraryListener, LibrarySubscriber {
     
@@ -12,6 +12,6 @@ public interface ProductVersionState extends FileLibraryListener, LibrarySubscri
     
     void continueWork();
     
-    ProductVersionStateMemento toMemento();
+    State toMementoState();
     
 }

@@ -12,14 +12,12 @@ import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 import com.yoursway.utils.log.Log;
 
-public class ProductVersionState_Installing extends AbstractProductVersionState implements
-        FileLibraryListener {
+class ProductVersionState_Installing extends AbstractProductVersionState implements FileLibraryListener {
     
-    public ProductVersionState_Installing(ProductVersionStateWrap wrap) {
+    ProductVersionState_Installing(LocalProductVersion wrap) {
         super(wrap);
     }
     
@@ -32,12 +30,12 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
     
     @Override
     public Collection<Request> requiredFiles() {
-        return version().packs();
+        return versionDefinition().packs();
     }
     
     @Override
     public void libraryChanged(LibraryState state) {
-        Collection<Request> packs = version().packs();
+        Collection<Request> packs = versionDefinition().packs();
         if (state.filesReady(packs)) {
             Log.write("Files ready.");
             listener().downloadingCompleted();
@@ -53,14 +51,12 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
             }
             try {
                 File extInstallerFolder = createTempFolder("com.yoursway.autoupdater.installer", null);
-                installer().install(productState().currentVersion(), version(), packsMap,
-                        productState().rootFolder(), extInstallerFolder, productState().componentStopper());
+                installer().install(product().currentVersion(), versionDefinition(), packsMap,
+                        product().rootFolder(), extInstallerFolder, product().componentStopper());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace(); //!
             } catch (InstallerException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace(); //!
             }
         } else {
             double progress = state.localBytes(packs) * 1.0 / state.totalBytes(packs);
@@ -73,9 +69,8 @@ public class ProductVersionState_Installing extends AbstractProductVersionState 
         return true;
     }
     
-    public ProductVersionStateMemento toMemento() {
-        return ProductVersionStateMemento.newBuilder().setState(State.Installing).setVersion(
-                version().toMemento()).build();
+    public State toMementoState() {
+        return State.Installing;
     }
     
 }

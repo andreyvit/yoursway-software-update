@@ -26,11 +26,11 @@ import java.util.zip.ZipOutputStream;
 import org.junit.After;
 import org.junit.Test;
 
-import com.yoursway.autoupdater.auxiliary.Component;
+import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.Product;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductDefinition;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
@@ -48,7 +48,7 @@ public class InstallerTests {
     @Test
     public void external() throws IOException, InstallerException, UnexpectedMessageException {
         Installer installer = new ExternalInstaller();
-        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        Collection<ComponentDefinition> components = newLinkedList(component(12, 25), component(23, 42));
         File target = createTempFolder();
         
         install(installer, components, components, target);
@@ -64,7 +64,7 @@ public class InstallerTests {
     @Test
     public void internal() throws IOException, InstallerException {
         Installer installer = new InternalInstaller();
-        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        Collection<ComponentDefinition> components = newLinkedList(component(12, 25), component(23, 42));
         File target = createTempFolder();
         
         install(installer, components, components, target);
@@ -76,8 +76,8 @@ public class InstallerTests {
     @Test
     public void deleting() throws IOException, InstallerException {
         Installer installer = new InternalInstaller();
-        Collection<Component> components1 = newLinkedList(component(8, 15), component(33, 48));
-        Collection<Component> components2 = newLinkedList(component(12, 25), component(23, 42));
+        Collection<ComponentDefinition> components1 = newLinkedList(component(8, 15), component(33, 48));
+        Collection<ComponentDefinition> components2 = newLinkedList(component(12, 25), component(23, 42));
         File target = createTempFolder();
         
         createFiles(target, components1);
@@ -95,7 +95,7 @@ public class InstallerTests {
     @Test
     public void date() throws IOException, InstallerException {
         Installer installer = new InternalInstaller();
-        Collection<Component> components = newLinkedList(component(12, 25), component(23, 42));
+        Collection<ComponentDefinition> components = newLinkedList(component(12, 25), component(23, 42));
         File target = createTempFolder();
         
         install(installer, components, components, target);
@@ -112,14 +112,14 @@ public class InstallerTests {
         tempFolders.clear();
     }
     
-    private void install(Installer installer, Collection<Component> oldComponents,
-            Collection<Component> newComponents, File target) throws IOException, InstallerException {
+    private void install(Installer installer, Collection<ComponentDefinition> oldComponents,
+            Collection<ComponentDefinition> newComponents, File target) throws IOException, InstallerException {
         
-        Product product = new Product("UNNAMED");
+        ProductDefinition product = new ProductDefinition("UNNAMED");
         Collection<Request> p = newLinkedList();
         
-        ProductVersion current = new ProductVersion(product, p, oldComponents, "");
-        ProductVersion version = new ProductVersion(product, p, newComponents, "");
+        ProductVersionDefinition current = new ProductVersionDefinition(product, p, oldComponents, "");
+        ProductVersionDefinition version = new ProductVersionDefinition(product, p, newComponents, "");
         
         Map<String, File> packs = packs();
         File extInstallerFolder = createTempFolder();
@@ -132,8 +132,8 @@ public class InstallerTests {
         installer.install(current, version, packs, target, extInstallerFolder, stopper);
     }
     
-    private void createFiles(File target, Collection<Component> components) throws IOException {
-        for (Component component : components)
+    private void createFiles(File target, Collection<ComponentDefinition> components) throws IOException {
+        for (ComponentDefinition component : components)
             for (ComponentFile file : component.files())
                 new File(target, file.path()).createNewFile();
     }
@@ -144,8 +144,8 @@ public class InstallerTests {
         return folder;
     }
     
-    private Component component(int first, int last) throws MalformedURLException {
-        return new Component(files(first, last), packs(first, last));
+    private ComponentDefinition component(int first, int last) throws MalformedURLException {
+        return new ComponentDefinition(files(first, last), packs(first, last));
     }
     
     private Collection<ComponentFile> files(int first, int last) {

@@ -18,10 +18,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdater.auxiliary.Component;
+import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.Product;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductDefinition;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.filelibrary.RequestUtils;
 import com.yoursway.autoupdater.installer.Installer;
@@ -49,13 +49,14 @@ public class LocalRepositoryTests {
         Collection<Request> requests = RequestUtils.requests(first, last, ".zip");
         RequestUtils.mount(server, requests);
         
-        Product product = new Product("UNNAMED");
-        Collection<Component> packs = newLinkedList();
-        ProductVersion version = new ProductVersion(product, requests, packs, "");
+        ProductDefinition product = new ProductDefinition("UNNAMED");
+        Collection<ComponentDefinition> components = newLinkedList();
+        ProductVersionDefinition version = new ProductVersionDefinition(product, requests, components, "");
         
         LocalRepository repo = new LocalRepository(new Installer() {
-            public void install(ProductVersion current, ProductVersion version, Map<String, File> packs,
-                    File target, File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
+            public void install(ProductVersionDefinition current, ProductVersionDefinition version,
+                    Map<String, File> packs, File target, File extInstallerFolder, ComponentStopper stopper)
+                    throws InstallerException {
                 
                 System.out.println("Installation started!");
                 

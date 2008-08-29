@@ -4,52 +4,52 @@ import static com.google.common.collect.Lists.newLinkedList;
 
 import java.util.Collection;
 
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 
 abstract class AbstractProductVersionState implements ProductVersionState {
     
-    protected final ProductVersionStateWrap wrap;
+    protected final LocalProductVersion version;
     
-    public AbstractProductVersionState(ProductVersionStateWrap wrap) {
-        this.wrap = wrap;
+    public AbstractProductVersionState(LocalProductVersion version) {
+        this.version = version;
     }
     
-    public static ProductVersionState from(State s, ProductVersionStateWrap w) {
+    public static ProductVersionState from(State s, LocalProductVersion v) {
         if (s == State.Installing)
-            return new ProductVersionState_Installing(w);
-        if (s == State.Old)
-            return new ProductVersionState_Idle(w);
+            return new ProductVersionState_Installing(v);
+        if (s == State.Idle)
+            return new ProductVersionState_Idle(v);
         throw new IllegalArgumentException("State s == " + s.toString());
     }
     
     protected final void changeState(ProductVersionState newState) {
-        wrap.changeState(newState);
+        version.changeState(newState);
     }
     
-    protected ProductVersion version() {
-        return wrap.version;
+    protected ProductVersionDefinition versionDefinition() {
+        return version.definition;
     }
     
-    protected ProductState productState() {
-        return wrap.productState;
+    protected LocalProduct product() {
+        return version.product;
     }
     
     protected Installer installer() {
-        return wrap.productState.installer;
+        return version.product.installer;
     }
     
     protected OrderManager orderManager() {
-        return wrap.productState.orderManager;
+        return version.product.orderManager;
     }
     
     protected UpdatingListener listener() {
-        return wrap.listener;
+        return version.listener;
     }
     
     public void startUpdating() {

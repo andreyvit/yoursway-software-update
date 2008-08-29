@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
@@ -37,7 +37,7 @@ public class ExternalInstaller implements Installer {
         this.gui = gui;
     }
     
-    public void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
+    public void install(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
             File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
         
         if (!current.product().equals(version.product()))
@@ -76,7 +76,7 @@ public class ExternalInstaller implements Installer {
         installerBuild = new File(currentDir, "../com.yoursway.autoupdater.installer/build"); //!
     }
     
-    private void prepare(ProductVersion current, ProductVersion version, Map<String, File> packs, File target)
+    private void prepare(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target)
             throws InstallerException {
         
         try {

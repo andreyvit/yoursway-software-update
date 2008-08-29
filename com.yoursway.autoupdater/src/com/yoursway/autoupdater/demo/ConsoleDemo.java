@@ -3,9 +3,9 @@ package com.yoursway.autoupdater.demo;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import com.yoursway.autoupdater.auxiliary.Product;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
-import com.yoursway.autoupdater.auxiliary.Suite;
+import com.yoursway.autoupdater.auxiliary.ProductDefinition;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.utils.log.Log;
@@ -23,11 +23,11 @@ public class ConsoleDemo {
             String suiteName = args[1];
             System.out.println("Suite name: " + suiteName);
             
-            Suite suite = Suite.load(updateSite, suiteName);
+            SuiteDefinition suite = SuiteDefinition.load(updateSite, suiteName);
             
             System.out.println();
             System.out.println("Select product:");
-            for (Product product : suite.products())
+            for (ProductDefinition product : suite.products())
                 System.out.println(product.name());
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -35,14 +35,14 @@ public class ConsoleDemo {
             System.out.println();
             
             System.out.println("Select version:");
-            Iterable<ProductVersion> versions = suite.productVersions(productName);
-            for (ProductVersion version : versions)
+            Iterable<ProductVersionDefinition> versions = suite.versions(productName);
+            for (ProductVersionDefinition version : versions)
                 System.out.println(version.name() + " - " + version);
             
             String versionName = reader.readLine();
             System.out.println();
             
-            ProductVersion version = productVersion(versions, versionName);
+            ProductVersionDefinition version = productVersion(versions, versionName);
             LocalRepository localRepository = new LocalRepository();
             localRepository.startUpdating(version, UpdatingListener.NOP);
             
@@ -51,8 +51,8 @@ public class ConsoleDemo {
         }
     }
     
-    private static ProductVersion productVersion(Iterable<ProductVersion> versions, String versionName) {
-        for (ProductVersion version : versions)
+    private static ProductVersionDefinition productVersion(Iterable<ProductVersionDefinition> versions, String versionName) {
+        for (ProductVersionDefinition version : versions)
             if (version.name().equals(versionName))
                 return version;
         return null;

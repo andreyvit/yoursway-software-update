@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.installer.log.ConsoleLog;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
 
@@ -21,7 +21,7 @@ public class InternalInstaller implements Installer {
         this.log = log;
     }
     
-    public void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
+    public void install(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
             File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
         
         Installation installation = new Installation(current, version, packs, target, log);

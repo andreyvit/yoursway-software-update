@@ -1,11 +1,10 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionStateMemento.State;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 
-public class ProductVersionState_Idle extends AbstractProductVersionState implements ProductVersionState {
+class ProductVersionState_Idle extends AbstractProductVersionState implements ProductVersionState {
     
-    public ProductVersionState_Idle(ProductVersionStateWrap wrap) {
+    ProductVersionState_Idle(LocalProductVersion wrap) {
         super(wrap);
     }
     
@@ -15,9 +14,8 @@ public class ProductVersionState_Idle extends AbstractProductVersionState implem
         throw new UnsupportedOperationException();
     }
     
-    public ProductVersionStateMemento toMemento() {
-        return ProductVersionStateMemento.newBuilder().setState(State.Old).setVersion(version().toMemento())
-                .build();
+    public State toMementoState() {
+        return State.Idle;
     }
     
 }

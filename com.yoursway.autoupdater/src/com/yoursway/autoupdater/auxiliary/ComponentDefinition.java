@@ -13,21 +13,22 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento.Builder;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento.Builder;
 
-public class Component {
+public class ComponentDefinition {
     
     private static final String COMPONENTS_PATH = "components/";
     private static final String PACKS_PATH = "packs/";
+    
     private final Map<String, ComponentFile> files = newHashMap();
     private final Collection<Request> packs;
     
     private String name;
     
-    public Component(Collection<ComponentFile> files, Collection<Request> packs) {
+    public ComponentDefinition(Collection<ComponentFile> files, Collection<Request> packs) {
         if (packs == null)
             throw new NullPointerException("packs is null");
         
@@ -41,7 +42,7 @@ public class Component {
         files.put(file.hash, file);
     }
     
-    public Component(URL updateSite, String name) throws IOException, InvalidFileFormatException {
+    public ComponentDefinition(URL updateSite, String name) throws IOException, InvalidFileFormatException {
         this.name = name;
         packs = newLinkedList();
         
@@ -77,18 +78,18 @@ public class Component {
         return files.values();
     }
     
-    static Component fromMemento(ComponentMemento memento) throws MalformedURLException {
+    static ComponentDefinition fromMemento(ComponentDefinitionMemento memento) throws MalformedURLException {
         Collection<ComponentFile> files = newLinkedList();
         Collection<Request> packs = newLinkedList();
         for (RequestMemento m : memento.getPackList())
             packs.add(Request.fromMemento(m));
         for (ComponentFileMemento m : memento.getFileList())
             files.add(ComponentFile.fromMemento(m));
-        return new Component(files, packs);
+        return new ComponentDefinition(files, packs);
     }
     
-    ComponentMemento toMemento() {
-        Builder b = ComponentMemento.newBuilder();
+    ComponentDefinitionMemento toMemento() {
+        Builder b = ComponentDefinitionMemento.newBuilder();
         for (Request pack : packs)
             b.addPack(pack.toMemento());
         for (ComponentFile file : files.values())

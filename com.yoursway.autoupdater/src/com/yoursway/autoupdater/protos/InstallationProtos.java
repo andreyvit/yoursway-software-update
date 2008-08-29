@@ -16,12 +16,12 @@ public final class InstallationProtos {
     java.lang.String descriptorData =
       "\n\030InstallationProtos.proto\032\033LocalReposit" +
       "oryProtos.proto\")\n\013PackMemento\022\014\n\004hash\030\001" +
-      " \002(\t\022\014\n\004path\030\002 \002(\t\"\223\001\n\023InstallationMemen" +
-      "to\022\'\n\007current\030\001 \002(\0132\026.ProductVersionMeme" +
-      "nto\022\'\n\007version\030\002 \002(\0132\026.ProductVersionMem" +
-      "ento\022\032\n\004pack\030\003 \003(\0132\014.PackMemento\022\016\n\006targ" +
-      "et\030\004 \002(\tB!\n\037com.yoursway.autoupdater.pro" +
-      "tos";
+      " \002(\t\022\014\n\004path\030\002 \002(\t\"\247\001\n\023InstallationMemen" +
+      "to\0221\n\007current\030\001 \002(\0132 .ProductVersionDefi" +
+      "nitionMemento\0221\n\007version\030\002 \002(\0132 .Product" +
+      "VersionDefinitionMemento\022\032\n\004pack\030\003 \003(\0132\014" +
+      ".PackMemento\022\016\n\006target\030\004 \002(\tB!\n\037com.your" +
+      "sway.autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -239,17 +239,17 @@ public final class InstallationProtos {
       return com.yoursway.autoupdater.protos.InstallationProtos.internal_static_InstallationMemento_fieldAccessorTable;
     }
     
-    // required .ProductVersionMemento current = 1;
+    // required .ProductVersionDefinitionMemento current = 1;
     private boolean hasCurrent;
-    private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento current_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance();
+    private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento current_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance();
     public boolean hasCurrent() { return hasCurrent; }
-    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento getCurrent() { return current_; }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento getCurrent() { return current_; }
     
-    // required .ProductVersionMemento version = 2;
+    // required .ProductVersionDefinitionMemento version = 2;
     private boolean hasVersion;
-    private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento version_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance();
+    private com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento version_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance();
     public boolean hasVersion() { return hasVersion; }
-    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento getVersion() { return version_; }
+    public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento getVersion() { return version_; }
     
     // repeated .PackMemento pack = 3;
     private java.util.List<com.yoursway.autoupdater.protos.InstallationProtos.PackMemento> pack_ =
@@ -378,28 +378,28 @@ public final class InstallationProtos {
       }
       
       
-      // required .ProductVersionMemento current = 1;
+      // required .ProductVersionDefinitionMemento current = 1;
       public boolean hasCurrent() {
         return result.hasCurrent();
       }
-      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento getCurrent() {
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento getCurrent() {
         return result.getCurrent();
       }
-      public Builder setCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento value) {
+      public Builder setCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento value) {
         result.hasCurrent = true;
         result.current_ = value;
         return this;
       }
-      public Builder setCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.Builder builderForValue) {
+      public Builder setCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder builderForValue) {
         result.hasCurrent = true;
         result.current_ = builderForValue.build();
         return this;
       }
-      public Builder mergeCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento value) {
+      public Builder mergeCurrent(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento value) {
         if (result.hasCurrent() &&
-            result.current_ != com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance()) {
+            result.current_ != com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance()) {
           result.current_ =
-            com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.newBuilder(result.current_).mergeFrom(value).buildPartial();
+            com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.newBuilder(result.current_).mergeFrom(value).buildPartial();
         } else {
           result.current_ = value;
         }
@@ -408,32 +408,32 @@ public final class InstallationProtos {
       }
       public Builder clearCurrent() {
         result.hasCurrent = false;
-        result.current_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance();
+        result.current_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance();
         return this;
       }
       
-      // required .ProductVersionMemento version = 2;
+      // required .ProductVersionDefinitionMemento version = 2;
       public boolean hasVersion() {
         return result.hasVersion();
       }
-      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento getVersion() {
+      public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento getVersion() {
         return result.getVersion();
       }
-      public Builder setVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento value) {
+      public Builder setVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento value) {
         result.hasVersion = true;
         result.version_ = value;
         return this;
       }
-      public Builder setVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.Builder builderForValue) {
+      public Builder setVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder builderForValue) {
         result.hasVersion = true;
         result.version_ = builderForValue.build();
         return this;
       }
-      public Builder mergeVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento value) {
+      public Builder mergeVersion(com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento value) {
         if (result.hasVersion() &&
-            result.version_ != com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance()) {
+            result.version_ != com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance()) {
           result.version_ =
-            com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.newBuilder(result.version_).mergeFrom(value).buildPartial();
+            com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.newBuilder(result.version_).mergeFrom(value).buildPartial();
         } else {
           result.version_ = value;
         }
@@ -442,7 +442,7 @@ public final class InstallationProtos {
       }
       public Builder clearVersion() {
         result.hasVersion = false;
-        result.version_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.getDefaultInstance();
+        result.version_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.getDefaultInstance();
         return this;
       }
       

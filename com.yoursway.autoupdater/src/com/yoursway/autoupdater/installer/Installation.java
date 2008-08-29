@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.yoursway.autoupdater.auxiliary.Component;
+import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
@@ -25,14 +25,14 @@ import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Bu
 
 public class Installation {
     
-    private final ProductVersion current;
-    private final ProductVersion version;
+    private final ProductVersionDefinition current;
+    private final ProductVersionDefinition version;
     private final Map<String, File> packs;
     private final File target;
     
     private final InstallerLog log;
     
-    public Installation(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
+    public Installation(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
             InstallerLog log) {
         if (current == null)
             throw new NullPointerException("current is null");
@@ -56,7 +56,7 @@ public class Installation {
     public void perform() throws IOException {
         Set<String> newVersionFilePaths = newHashSet();
         
-        for (Component component : version.components()) {
+        for (ComponentDefinition component : version.components()) {
             for (ComponentFile file : component.files()) {
                 newVersionFilePaths.add(file.path());
                 setupFile(file, component.packs());
@@ -114,8 +114,8 @@ public class Installation {
     }
     
     public static Installation fromMemento(InstallationMemento memento, InstallerLog log) throws MalformedURLException {
-        ProductVersion current = ProductVersion.fromMemento(memento.getCurrent());
-        ProductVersion version = ProductVersion.fromMemento(memento.getVersion());
+        ProductVersionDefinition current = ProductVersionDefinition.fromMemento(memento.getCurrent());
+        ProductVersionDefinition version = ProductVersionDefinition.fromMemento(memento.getVersion());
         Map<String, File> packs = newHashMap();
         for (PackMemento m : memento.getPackList())
             packs.put(m.getHash(), new File(m.getPath()));

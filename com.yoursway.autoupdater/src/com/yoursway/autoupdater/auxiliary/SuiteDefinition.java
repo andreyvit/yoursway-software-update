@@ -14,16 +14,16 @@ import java.util.Map;
 
 import com.yoursway.utils.log.Log;
 
-public class Suite {
+public class SuiteDefinition {
     
     private static final String SUITES_PATH = "suites/";
     private static final String VERSIONS_FILENAME = "versions_mac.txt";
     
     private final URL updateSite;
     private final String name;
-    private final Map<String, Product> products = newHashMap();
+    private final Map<String, ProductDefinition> products = newHashMap();
     
-    Suite(URL updateSite, String name) throws InvalidFileFormatException, IOException {
+    SuiteDefinition(URL updateSite, String name) throws InvalidFileFormatException, IOException {
         this.updateSite = updateSite;
         this.name = name;
         
@@ -33,7 +33,7 @@ public class Suite {
             stream = versions.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             
-            ProductVersion productVersion = null;
+            ProductVersionDefinition productVersion = null;
             while (true) {
                 String line = reader.readLine();
                 if (line == null)
@@ -50,17 +50,17 @@ public class Suite {
                     try {
                         productVersion = addProductVersion(fields[1], fields[2], fields[3]);
                     } catch (Throwable e) {
-                        Log.write("Cannot add product version to suite: " + e.getClass().getSimpleName(),
-                                ERROR);
+                        Log.write("Cannot add product version to suite definition: "
+                                + e.getClass().getSimpleName(), ERROR);
                     }
                 } else if (type.equals("CVB")) {
                     String componentName = fields[1];
                     try {
-                        addComponentVersion(productVersion, componentName);
+                        addComponent(productVersion, componentName);
                     } catch (Exception e) {
                         productVersion.damage();
                         Log.write("Cannot add component " + componentName + " to product version "
-                                + productVersion + ": " + e.getClass().getSimpleName(), ERROR);
+                                + productVersion + " definition: " + e.getClass().getSimpleName(), ERROR);
                     }
                 } else
                     throw new InvalidFileFormatException(versions); //! ignore line?
@@ -77,44 +77,44 @@ public class Suite {
         
     }
     
-    public static Suite load(String updateSite, String name) throws SuiteLoadingException {
+    public static SuiteDefinition load(String updateSite, String name) throws SuiteDefinitionLoadingException {
         try {
             URL url = new URL(updateSite);
-            return new Suite(url, name);
+            return new SuiteDefinition(url, name);
         } catch (Throwable e) {
-            throw new SuiteLoadingException(e);
+            throw new SuiteDefinitionLoadingException(e);
         }
     }
     
-    private void addComponentVersion(ProductVersion productVersion, String name) throws IOException,
+    private void addComponent(ProductVersionDefinition productVersion, String name) throws IOException,
             InvalidFileFormatException {
-        productVersion.addComponentVersion(new Component(updateSite, name));
+        productVersion.addComponent(new ComponentDefinition(updateSite, name));
         
     }
     
-    private ProductVersion addProductVersion(String productName, String status, String versionName) {
-        Product product = products.get(productName);
+    private ProductVersionDefinition addProductVersion(String productName, String status, String versionName) {
+        ProductDefinition product = products.get(productName);
         if (product == null) {
-            product = new Product(productName);
+            product = new ProductDefinition(productName);
             products.put(productName, product);
         }
-        return new ProductVersion(product, status, versionName, updateSite);
+        return new ProductVersionDefinition(product, status, versionName, updateSite);
     }
     
-    public Iterable<Product> products() {
+    public Iterable<ProductDefinition> products() {
         return products.values();
     }
     
-    public Iterable<ProductVersion> productVersions(String productName) {
-        Product product = products.get(productName);
+    public Iterable<ProductVersionDefinition> versions(String productName) {
+        ProductDefinition product = products.get(productName);
         if (product == null)
             throw new IllegalArgumentException("productName");
         return product.versions();
     }
     
-    public Collection<ProductVersion> versions() {
-        Collection<ProductVersion> versions = newLinkedList();
-        for (Product product : products.values())
+    public Collection<ProductVersionDefinition> versions() {
+        Collection<ProductVersionDefinition> versions = newLinkedList();
+        for (ProductDefinition product : products.values())
             versions.addAll(product.versions());
         return versions;
     }

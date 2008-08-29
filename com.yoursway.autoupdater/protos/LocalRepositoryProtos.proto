@@ -13,44 +13,41 @@ message ComponentFileMemento {
 	required string path = 4;
 }
 
-message ComponentMemento {
+message ComponentDefinitionMemento {
 	repeated ComponentFileMemento file = 1;
 	repeated RequestMemento pack = 2;
 }
 
-message ProductMemento {
+message ProductDefinitionMemento {
 
 }
 
-message ProductVersionMemento {
-	required ProductMemento product = 1;
+message ProductVersionDefinitionMemento {
+	required ProductDefinitionMemento product = 1;
 	
 	repeated RequestMemento pack = 2;
-	repeated ComponentMemento component = 3;
+	repeated ComponentDefinitionMemento component = 3;
 	
 	required string executable = 4;
 }
 
-message ProductVersionStateMemento {
-	required ProductVersionMemento version = 1;
+message LocalProductVersionMemento {
+	required ProductVersionDefinitionMemento definition = 1;
 	
 	enum State {
-		New = 0;
-		Downloading = 1;
-		Installing = 2;
-		Current = 3;
-		Old = 4;
+		Idle = 0;
+		Installing = 1;
 	}
 	
 	required State state = 2;
 }
 
-message ProductStateMemento {
-	required ProductMemento product = 1;
+message LocalProductMemento {
+	required ProductDefinitionMemento definition = 1;
 
-	repeated ProductVersionStateMemento version = 2;
+	repeated LocalProductVersionMemento version = 2;
 }
 
 message LocalRepositoryMemento {
-	repeated ProductStateMemento product = 1;
+	repeated LocalProductMemento product = 1;
 }

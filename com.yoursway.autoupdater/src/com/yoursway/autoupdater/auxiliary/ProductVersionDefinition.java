@@ -8,16 +8,16 @@ import java.net.URL;
 import java.util.Collection;
 
 import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionMemento.Builder;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder;
 
-public class ProductVersion {
+public class ProductVersionDefinition {
     
-    private final Product product;
+    private final ProductDefinition product;
     private Collection<Request> packs;
-    private final Collection<Component> components;
+    private final Collection<ComponentDefinition> components;
     private final String status;
     private final String name;
     
@@ -25,8 +25,8 @@ public class ProductVersion {
     
     private boolean damaged;
     
-    public ProductVersion(Product product, Collection<Request> packs, Collection<Component> components,
-            String executable) {
+    public ProductVersionDefinition(ProductDefinition product, Collection<Request> packs,
+            Collection<ComponentDefinition> components, String executable) {
         if (product == null)
             throw new NullPointerException("product is null");
         if (packs == null)
@@ -46,7 +46,7 @@ public class ProductVersion {
         this.executable = executable;
     }
     
-    public ProductVersion(Product product, String status, String name, URL updateSite) {
+    public ProductVersionDefinition(ProductDefinition product, String status, String name, URL updateSite) {
         this.product = product;
         product.addVersion(this);
         
@@ -69,7 +69,7 @@ public class ProductVersion {
         return name;
     }
     
-    public void addComponentVersion(Component component) {
+    public void addComponent(ComponentDefinition component) {
         if (packs != null)
             throw new IllegalStateException(
                     "A product version must not add components after collecting its packs.");
@@ -77,42 +77,43 @@ public class ProductVersion {
         components.add(component);
     }
     
-    public Product product() {
+    public ProductDefinition product() {
         return product;
     }
     
     public Collection<Request> packs() {
         if (packs == null) {
             packs = newLinkedList();
-            for (Component component : components)
+            for (ComponentDefinition component : components)
                 packs.addAll(component.packs());
         }
         
         return packs;
     }
     
-    public Collection<Component> components() {
+    public Collection<ComponentDefinition> components() {
         return components;
     }
     
-    public static ProductVersion fromMemento(ProductVersionMemento memento) throws MalformedURLException {
-        Product product = Product.fromMemento(memento.getProduct());
+    public static ProductVersionDefinition fromMemento(ProductVersionDefinitionMemento memento)
+            throws MalformedURLException {
+        ProductDefinition product = ProductDefinition.fromMemento(memento.getProduct());
         Collection<Request> packs = newLinkedList();
         for (RequestMemento m : memento.getPackList())
             packs.add(Request.fromMemento(m));
-        Collection<Component> components = newLinkedList();
-        for (ComponentMemento m : memento.getComponentList())
-            components.add(Component.fromMemento(m));
+        Collection<ComponentDefinition> components = newLinkedList();
+        for (ComponentDefinitionMemento m : memento.getComponentList())
+            components.add(ComponentDefinition.fromMemento(m));
         String executable = memento.getExecutable();
-        return new ProductVersion(product, packs, components, executable);
+        return new ProductVersionDefinition(product, packs, components, executable);
     }
     
-    public ProductVersionMemento toMemento() {
-        Builder b = ProductVersionMemento.newBuilder().setProduct(product.toMemento()).setExecutable(
-                executable);
+    public ProductVersionDefinitionMemento toMemento() {
+        Builder b = ProductVersionDefinitionMemento.newBuilder().setProduct(product.toMemento())
+                .setExecutable(executable);
         for (Request r : packs)
             b.addPack(r.toMemento());
-        for (Component c : components)
+        for (ComponentDefinition c : components)
             b.addComponent(c.toMemento());
         return b.build();
     }
@@ -123,7 +124,7 @@ public class ProductVersion {
     
     public Collection<ComponentFile> files() {
         Collection<ComponentFile> files = newHashSet();
-        for (Component component : components)
+        for (ComponentDefinition component : components)
             files.addAll(component.files());
         return files;
     }

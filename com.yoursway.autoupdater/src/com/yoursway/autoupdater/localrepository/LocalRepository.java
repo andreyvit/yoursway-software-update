@@ -6,23 +6,23 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.yoursway.autoupdater.auxiliary.Product;
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
+import com.yoursway.autoupdater.auxiliary.ProductDefinition;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
 import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
-import com.yoursway.autoupdater.localrepository.internal.ProductState;
+import com.yoursway.autoupdater.localrepository.internal.LocalProduct;
+import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
-import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductStateMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
 import com.yoursway.utils.YsFileUtils;
 
 public class LocalRepository {
     
-    private final Map<Product, ProductState> products = new HashMap<Product, ProductState>();
+    private final Map<ProductDefinition, LocalProduct> products = new HashMap<ProductDefinition, LocalProduct>();
     private final Installer installer;
     private final FileLibrary fileLibrary;
     
@@ -42,14 +42,14 @@ public class LocalRepository {
         this.installer = installer;
     }
     
-    public void startUpdating(ProductVersion version, UpdatingListener listener) {
-        Product product = version.product();
-        ProductState productState = products.get(product);
-        if (productState == null) {
-            productState = new ProductState(product, fileLibrary, installer);
-            products.put(product, productState);
+    public void startUpdating(ProductVersionDefinition version, UpdatingListener listener) {
+        ProductDefinition productDefinition = version.product();
+        LocalProduct localProduct = products.get(productDefinition);
+        if (localProduct == null) {
+            localProduct = new LocalProduct(productDefinition, fileLibrary, installer);
+            products.put(productDefinition, localProduct);
         }
-        productState.startUpdating(version, listener);
+        localProduct.startUpdating(version, listener);
     }
     
     public void atStartup() {
@@ -63,20 +63,20 @@ public class LocalRepository {
             e.printStackTrace();
         }
         
-        for (ProductState product : products.values())
+        for (LocalProduct product : products.values())
             product.continueWork();
     }
     
     private void fromMemento(LocalRepositoryMemento memento) {
-        for (ProductStateMemento m : memento.getProductList()) {
-            ProductState state = new ProductState(m, fileLibrary, installer);
-            products.put(state.product(), state);
+        for (LocalProductMemento m : memento.getProductList()) {
+            LocalProduct product = new LocalProduct(m, fileLibrary, installer);
+            products.put(product.definition(), product);
         }
     }
     
     private LocalRepositoryMemento toMemento() {
         Builder b = LocalRepositoryMemento.newBuilder();
-        for (ProductState product : products.values())
+        for (LocalProduct product : products.values())
             b.addProduct(product.toMemento());
         return b.build();
     }

@@ -16,15 +16,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.yoursway.autoupdater.auxiliary.ProductVersion;
-import com.yoursway.autoupdater.auxiliary.Suite;
+import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
 public class VersionsView {
     
-    public VersionsView(Composite parent, Suite suite, final LocalRepository localRepository,
+    public VersionsView(Composite parent, SuiteDefinition suite, final LocalRepository localRepository,
             UpdaterStyle style) {
         
         parent.setLayout(new GridLayout());
@@ -32,7 +32,7 @@ public class VersionsView {
         final Table versions = new Table(parent, SWT.SINGLE);
         versions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        for (ProductVersion version : suite.versions()) {
+        for (ProductVersionDefinition version : suite.versions()) {
             TableItem item = new TableItem(versions, SWT.NONE);
             item.setData(version);
             item.setText(version.toString());
@@ -75,7 +75,7 @@ public class VersionsView {
                 TableItem[] selection = versions.getSelection();
                 assertion(selection.length == 1, "Only one item must be selected");
                 TableItem item = selection[0];
-                ProductVersion version = (ProductVersion) item.getData();
+                ProductVersionDefinition version = (ProductVersionDefinition) item.getData();
                 
                 localRepository.startUpdating(version, new UpdatingListener() {
                     public void downloadingStarted() {
@@ -135,7 +135,7 @@ public class VersionsView {
         
     }
     
-    public static void show(Suite suite, LocalRepository localRepository) {
+    public static void show(SuiteDefinition suite, LocalRepository localRepository) {
         Shell shell = new Shell();
         //! magic
         shell.setText("Autoupdater");
