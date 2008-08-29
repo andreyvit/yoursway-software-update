@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.gui.view;
 
 import static com.yoursway.utils.assertions.Assert.assertion;
+import static org.eclipse.jface.layout.GridLayoutFactory.swtDefaults;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,9 +42,7 @@ public class VersionsView {
         
         Composite panel = new Composite(parent, SWT.NONE);
         panel.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginWidth = layout.marginRight = layout.marginHeight = layout.marginBottom = 0;
-        panel.setLayout(layout);
+        panel.setLayout(swtDefaults().margins(0, 0).extendedMargins(0, 0, 0, 0).numColumns(2).create());
         
         final ProgressBar progress = new ProgressBar(panel, SWT.HORIZONTAL);
         progress.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -82,6 +81,8 @@ public class VersionsView {
                     public void downloadingStarted() {
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
+                                if (progress.isDisposed())
+                                    return;
                                 progress.setSelection(0);
                                 progress.setVisible(true);
                             }
@@ -91,6 +92,8 @@ public class VersionsView {
                     public void downloading(final double p) {
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
+                                if (progress.isDisposed())
+                                    return;
                                 int value = (int) (progress.getMaximum() * p);
                                 progress.setSelection(value);
                             }
@@ -108,6 +111,8 @@ public class VersionsView {
                         /*
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
+                                if (progress.isDisposed())
+                                    return;
                                 progress.setSelection(progress.getMaximum());
                             }
                         });
@@ -117,7 +122,10 @@ public class VersionsView {
 
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
+                                if (progress.isDisposed())
+                                    return;
                                 progress.setVisible(false);
+                                //? set progress to indeterminate instead of hiding
                             }
                         });
                     }
