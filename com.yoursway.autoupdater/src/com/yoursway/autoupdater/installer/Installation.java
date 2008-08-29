@@ -18,11 +18,10 @@ import com.yoursway.autoupdater.auxiliary.Component;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.installer.gui.InstallerView;
+import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.PackMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Builder;
-import com.yoursway.utils.annotations.Nullable;
 
 public class Installation {
     
@@ -31,11 +30,10 @@ public class Installation {
     private final Map<String, File> packs;
     private final File target;
     
-    @Nullable
-    private final InstallerView view;
+    private final InstallerLog log;
     
     public Installation(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
-            @Nullable InstallerView view) {
+            InstallerLog log) {
         if (current == null)
             throw new NullPointerException("current is null");
         if (version == null)
@@ -44,13 +42,15 @@ public class Installation {
             throw new NullPointerException("packs is null");
         if (target == null)
             throw new NullPointerException("target is null");
+        if (log == null)
+            throw new NullPointerException("log is null");
         
         this.current = current;
         this.version = version;
         this.packs = packs;
         this.target = target;
         
-        this.view = view;
+        this.log = log;
     }
     
     public void perform() throws IOException {
@@ -66,17 +66,17 @@ public class Installation {
         for (ComponentFile file : current.files()) {
             String path = file.path();
             if (!newVersionFilePaths.contains(path)) {
-                view.debug("Deleting old file " + path);
+                log.debug("Deleting old file " + path);
                 File localFile = new File(target, path);
                 boolean deleted = localFile.delete();
                 if (!deleted)
-                    view.error("Cannot delete file " + localFile);
+                    log.error("Cannot delete file " + localFile);
             }
         }
     }
     
     private void setupFile(ComponentFile file, Iterable<Request> packs) throws IOException {
-        view.debug("Setting up file " + file.path());
+        log.debug("Setting up file " + file.path());
         
         ZipFile pack = null;
         ZipEntry entry = null;
@@ -99,7 +99,7 @@ public class Installation {
         
         boolean ok = targetFile.setLastModified(file.modified());
         if (!ok)
-            view.error("Cannot set lastmodified property of file " + targetFile);
+            log.error("Cannot set lastmodified property of file " + targetFile);
     }
     
     public InstallationMemento toMemento() {
@@ -113,15 +113,14 @@ public class Installation {
         return b.build();
     }
     
-    public static Installation fromMemento(InstallationMemento memento, InstallerView view)
-            throws MalformedURLException {
+    public static Installation fromMemento(InstallationMemento memento, InstallerLog log) throws MalformedURLException {
         ProductVersion current = ProductVersion.fromMemento(memento.getCurrent());
         ProductVersion version = ProductVersion.fromMemento(memento.getVersion());
         Map<String, File> packs = newHashMap();
         for (PackMemento m : memento.getPackList())
             packs.put(m.getHash(), new File(m.getPath()));
         File target = new File(memento.getTarget());
-        return new Installation(current, version, packs, target, view);
+        return new Installation(current, version, packs, target, log);
     }
     
     public void startVersionExecutable() throws IOException {

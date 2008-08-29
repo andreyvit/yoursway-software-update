@@ -10,9 +10,9 @@ public class InstallerMain {
         boolean gui = args.length > 0 && args[0].equals("gui");
         InstallerView view = gui ? new SWTView() : new ConsoleView();
         
-        InstallerThread thread = new InstallerThread(view);
+        InstallerThread thread = new InstallerThread(view, view.getLog());
         thread.start();
         
-        view.cycle();
+        view.doMessageLoop();
     }
 }

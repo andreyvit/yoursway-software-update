@@ -8,6 +8,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.yoursway.autoupdater.installer.log.InstallerLog;
+
 public class SWTView implements InstallerView {
     
     private final Display display;
@@ -33,7 +35,39 @@ public class SWTView implements InstallerView {
         shell.open();
     }
     
-    public void cycle() {
+    public InstallerLog getLog() {
+        return new InstallerLog() {
+            
+            public void debug(final String msg) {
+                styledText.getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        styledText.append(msg + "\n");
+                    }
+                });
+            }
+            
+            public void error(final String msg) {
+                styledText.getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        StyleRange sr = new StyleRange();
+                        sr.start = styledText.getCharCount();
+                        sr.length = msg.length();
+                        sr.foreground = errorColor;
+                        
+                        styledText.append(msg + "\n");
+                        styledText.setStyleRange(sr);
+                    }
+                });
+            }
+            
+            public void error(Throwable e) {
+                error(e.getClass().getSimpleName() + ": " + e.getMessage());
+            }
+            
+        };
+    }
+
+    public void doMessageLoop() {
         while (!shell.isDisposed()) {
             try {
                 if (!display.readAndDispatch())
@@ -44,32 +78,6 @@ public class SWTView implements InstallerView {
         }
         
         display.dispose();
-    }
-    
-    public void debug(final String msg) {
-        styledText.getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                styledText.append(msg + "\n");
-            }
-        });
-    }
-    
-    public void error(final String msg) {
-        styledText.getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                StyleRange sr = new StyleRange();
-                sr.start = styledText.getCharCount();
-                sr.length = msg.length();
-                sr.foreground = errorColor;
-                
-                styledText.append(msg + "\n");
-                styledText.setStyleRange(sr);
-            }
-        });
-    }
-    
-    public void error(Throwable e) {
-        error(e.getClass().getSimpleName() + ": " + e.getMessage());
     }
     
     public void done() {

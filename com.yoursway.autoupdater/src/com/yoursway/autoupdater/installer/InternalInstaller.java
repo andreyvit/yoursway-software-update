@@ -6,25 +6,25 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
-import com.yoursway.autoupdater.installer.gui.ConsoleView;
-import com.yoursway.autoupdater.installer.gui.InstallerView;
+import com.yoursway.autoupdater.installer.log.ConsoleLog;
+import com.yoursway.autoupdater.installer.log.InstallerLog;
 
 public class InternalInstaller implements Installer {
     
-    private final InstallerView view;
+    private final InstallerLog log;
     
     public InternalInstaller() {
-        this(new ConsoleView());
+        this(ConsoleLog.inst());
     }
     
-    public InternalInstaller(InstallerView view) {
-        this.view = view;
+    public InternalInstaller(InstallerLog log) {
+        this.log = log;
     }
     
     public void install(ProductVersion current, ProductVersion version, Map<String, File> packs, File target,
             File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
         
-        Installation installation = new Installation(current, version, packs, target, view);
+        Installation installation = new Installation(current, version, packs, target, log);
         try {
             installation.perform();
         } catch (IOException e) {

@@ -8,60 +8,65 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import com.yoursway.autoupdater.installer.gui.InstallerView;
+import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 
 public class InstallerThread extends Thread {
     
     private final InstallerView view;
+    private final InstallerLog log;
     
-    public InstallerThread(InstallerView view) {
+    public InstallerThread(InstallerView view, InstallerLog log) {
         super(InstallerThread.class.getSimpleName());
         setDaemon(false);
         
         if (view == null)
             throw new NullPointerException("view is null");
+        if (log == null)
+            throw new NullPointerException("log is null");
         this.view = view;
+        this.log = log;
     }
     
     @Override
     public void run() {
         InstallerServer server = null;
         try {
-            view.debug("Initializing communication with the application");
+            log.debug("Initializing communication with the application");
             server = new InstallerServer();
             
-            view.debug("Restoring installation from file");
+            log.debug("Restoring installation from file");
             InputStream input = new FileInputStream("installation");
             InstallationMemento memento = InstallationMemento.parseFrom(input);
             input.close();
-            Installation installation = Installation.fromMemento(memento, view);
+            Installation installation = Installation.fromMemento(memento, log);
             
-            view.debug("Stopping the application");
+            log.debug("Stopping the application");
             server.send(READY);
             server.receive(STOPPING);
             server.waitDisconnect();
             
-            view.debug("Starting installation");
+            log.debug("Starting installation");
             installation.perform();
             
-            view.debug("Restarting the application");
+            log.debug("Restarting the application");
             installation.startVersionExecutable();
             
-            view.debug("Checking application state");
+            log.debug("Checking application state");
             server.reconnect();
             server.send(OK);
             server.receive(OK);
             
         } catch (Throwable e) {
-            view.error(e);
+            log.error(e);
         } finally {
             try {
                 server.close();
             } catch (Exception e) {
-                view.error(e);
+                log.error(e);
             }
             
-            view.debug("Termination");
+            log.debug("Termination");
             view.done();
             interrupt();
         }

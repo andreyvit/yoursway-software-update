@@ -1,14 +1,12 @@
 package com.yoursway.autoupdater.installer.gui;
 
+import com.yoursway.autoupdater.installer.log.InstallerLog;
+
 public interface InstallerView {
     
-    void debug(String msg);
+    InstallerLog getLog();
     
-    void error(String msg);
-    
-    void error(Throwable e);
-    
-    void cycle();
+    void doMessageLoop();
     
     void done();
     

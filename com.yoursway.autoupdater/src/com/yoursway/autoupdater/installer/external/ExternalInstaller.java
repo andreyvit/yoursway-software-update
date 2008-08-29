@@ -12,6 +12,7 @@ import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
+import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.log.Log;
 
@@ -91,7 +92,7 @@ public class ExternalInstaller implements Installer {
             OutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(folder,
                     "installation")));
             
-            Installation installation = new Installation(current, version, packs, target, null);
+            Installation installation = new Installation(current, version, packs, target, InstallerLog.NOP);
             installation.toMemento().writeTo(stream);
             
             stream.close();
