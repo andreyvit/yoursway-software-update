@@ -45,7 +45,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
             for (File file : localPacks) {
                 String name = file.getName();
                 if (!name.endsWith(".zip"))
-                    throw new AssertionError("A pack file name must ends with .zip"); //!
+                    throw new AssertionError("A pack file name must ends with .zip");
                 String hash = name.substring(0, name.length() - 4);
                 packsMap.put(hash, file);
             }

@@ -9,7 +9,7 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
 
 public class Request {
     
-    final URL url;
+    private final URL url;
     final long size;
     private final String sha1;
     
@@ -70,6 +70,10 @@ public class Request {
     
     public RequestMemento toMemento() {
         return RequestMemento.newBuilder().setUrl(url.toString()).setSize(size).setSha1(sha1).build();
+    }
+    
+    public URL url() {
+        return url;
     }
     
     public String hash() {

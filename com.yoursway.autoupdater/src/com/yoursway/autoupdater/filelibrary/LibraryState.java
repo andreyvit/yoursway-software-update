@@ -23,7 +23,7 @@ public class LibraryState {
     
     public boolean filesReady(Collection<Request> requests) {
         for (Request request : requests) {
-            FileState state = stateOf(request.url);
+            FileState state = stateOf(request.url());
             if (!state.isDone())
                 return false;
         }
@@ -33,7 +33,7 @@ public class LibraryState {
     public Collection<File> getLocalFiles(Collection<Request> requests) {
         Collection<File> files = newLinkedList();
         for (Request request : requests) {
-            FileState state = stateOf(request.url);
+            FileState state = stateOf(request.url());
             files.add(state.getLocalFile());
         }
         return files;
@@ -49,7 +49,7 @@ public class LibraryState {
     public long localBytes(Collection<Request> requests) {
         long size = 0;
         for (Request request : requests) {
-            FileState state = stateOf(request.url);
+            FileState state = stateOf(request.url());
             size += state.doneSize;
         }
         return size;

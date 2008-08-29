@@ -37,13 +37,13 @@ public class RequestUtils {
     
     public static void mount(WebServer server, Collection<Request> requests) {
         for (Request request : requests) {
-            String path = request.url.getPath().substring(1);
+            String path = request.url().getPath().substring(1);
             server.mount(path, fileContents((int) request.size));
         }
     }
     
     public static URL url(Request request) {
-        return request.url;
+        return request.url();
     }
     
     public static long size(Request request) {

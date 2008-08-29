@@ -34,6 +34,10 @@ public class ProductVersionDefinition {
         if (components == null)
             throw new NullPointerException("components is null");
         
+        for (Request packRequest : packs)
+            if (!packRequest.url().toString().endsWith(".zip"))
+                throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
+        
         this.product = product;
         product.addVersion(this);
         

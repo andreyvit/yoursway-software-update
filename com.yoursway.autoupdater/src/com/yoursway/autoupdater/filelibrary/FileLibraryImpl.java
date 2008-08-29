@@ -65,7 +65,7 @@ public class FileLibraryImpl implements FileLibrary {
                 downloader.cancel(file.url);
         
         for (Request request : order) {
-            URL url = request.url;
+            URL url = request.url();
             URLFileMapping mapping = urlFileMapper.mappingFor(url);
             
             LibraryFile file = files.get(url);

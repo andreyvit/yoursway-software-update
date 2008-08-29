@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-
 class FileLibraryOrder implements Iterable<Request> {
     
     private final Map<URL, Request> requests = newHashMap();
@@ -29,7 +28,7 @@ class FileLibraryOrder implements Iterable<Request> {
     }
     
     void add(Request request) {
-        requests.put(request.url, request);
+        requests.put(request.url(), request);
     }
     
     void add(Collection<Request> requests) {
