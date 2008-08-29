@@ -3,17 +3,17 @@
 <!--this file was created by Eclipse Runnable JAR Export Wizard-->
 <!--ANT 1.7 is required                                        -->
 <target name="create_run_jar">
-<jar destfile="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater/afterupdate.jar" filesetmanifest="mergewithoutmain">
+<jar destfile="${basedir}/afterupdate.jar" filesetmanifest="mergewithoutmain">
 <manifest>
 <attribute name="Built-By" value="${user.name}"/>
 <attribute name="Main-Class" value="com.yoursway.autoupdater.demo.AfterUpdate"/>
 <attribute name="Class-Path" value="."/>
 </manifest>
-<fileset dir="/Users/lliypik/Projects/common/com.yoursway.utils/bin"/>
-<zipfileset excludes="META-INF/*.SF" src="/Users/lliypik/Projects/libraries/com.google.collections/google-collect-snapshot-20071022.jar"/>
-<fileset dir="/Users/lliypik/Projects/libraries/com.google.protobuf/bin"/>
-<zipfileset excludes="META-INF/*.SF" src="/Users/lliypik/Projects/libraries/com.google.protobuf/protobuf-java-2.0.0beta.jar"/>
-<fileset dir="/Users/lliypik/Projects/autoupdate/com.yoursway.autoupdater/bin"/>
+<fileset dir="${com.yoursway.utils}/bin"/>
+<zipfileset excludes="META-INF/*.SF" src="${com.google.collections}/google-collect-snapshot-20071022.jar"/>
+<fileset dir="${com.google.protobuf}/bin"/>
+<zipfileset excludes="META-INF/*.SF" src="${com.google.protobuf}/protobuf-java-2.0.0beta.jar"/>
+<fileset dir="${com.yoursway.autoupdater}/bin"/>
 </jar>
 </target>
 </project>
