@@ -64,7 +64,7 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public Collection<Request> requiredFiles() {
+    public Collection<Request> libraryRequests() {
         return newLinkedList();
     }
     

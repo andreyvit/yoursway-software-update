@@ -26,7 +26,7 @@ public class OrderManager {
         FileLibraryOrder order = new FileLibraryOrder();
         
         for (LibrarySubscriber s : subscribers)
-            order.add(s.requiredFiles());
+            order.add(s.libraryRequests());
         
         fileLibrary.order(order);
     }

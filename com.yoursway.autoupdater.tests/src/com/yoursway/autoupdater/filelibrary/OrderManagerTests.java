@@ -43,9 +43,9 @@ public class OrderManagerTests {
         LibrarySubscriber s2 = createMock(LibrarySubscriber.class);
         LibrarySubscriber s3 = createMock(LibrarySubscriber.class);
         
-        expect(s1.requiredFiles()).andReturn(requests(1, 3));
-        expect(s2.requiredFiles()).andReturn(requests(5, 8));
-        expect(s3.requiredFiles()).andReturn(requests(3, 6));
+        expect(s1.libraryRequests()).andReturn(requests(1, 3));
+        expect(s2.libraryRequests()).andReturn(requests(5, 8));
+        expect(s3.libraryRequests()).andReturn(requests(3, 6));
         fileLibrary.order(new FileLibraryOrder(requests(1, 8)));
         replay(fileLibrary, s1, s2, s3);
         

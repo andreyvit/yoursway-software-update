@@ -5,6 +5,6 @@ import java.util.Collection;
 
 public interface LibrarySubscriber {
     
-    Collection<Request> requiredFiles();
+    Collection<Request> libraryRequests();
     
 }

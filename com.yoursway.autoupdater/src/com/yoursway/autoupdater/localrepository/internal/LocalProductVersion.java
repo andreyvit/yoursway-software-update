@@ -61,8 +61,8 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         state.continueWork();
     }
     
-    public Collection<Request> requiredFiles() {
-        return state.requiredFiles();
+    public Collection<Request> libraryRequests() {
+        return state.libraryRequests();
     }
     
     public void libraryChanged(LibraryState s) {

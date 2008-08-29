@@ -81,7 +81,7 @@ public class ProductVersionDefinition {
         return product;
     }
     
-    public Collection<Request> packs() {
+    public Collection<Request> packRequests() {
         if (packs == null) {
             packs = newLinkedList();
             for (ComponentDefinition component : components)

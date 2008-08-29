@@ -29,18 +29,18 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
     }
     
     @Override
-    public Collection<Request> requiredFiles() {
-        return versionDefinition().packs();
+    public Collection<Request> libraryRequests() {
+        return versionDefinition().packRequests();
     }
     
     @Override
     public void libraryChanged(LibraryState state) {
-        Collection<Request> packs = versionDefinition().packs();
-        if (state.filesReady(packs)) {
+        Collection<Request> packRequests = versionDefinition().packRequests();
+        if (state.filesReady(packRequests)) {
             Log.write("Files ready.");
             listener().downloadingCompleted();
             
-            Collection<File> localPacks = state.getLocalFiles(packs);
+            Collection<File> localPacks = state.getLocalFiles(packRequests);
             Map<String, File> packsMap = newHashMap();
             for (File file : localPacks) {
                 String name = file.getName();
@@ -59,7 +59,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
                 e.printStackTrace(); //!
             }
         } else {
-            double progress = state.localBytes(packs) * 1.0 / state.totalBytes(packs);
+            double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
             listener().downloading(progress);
         }
     }
