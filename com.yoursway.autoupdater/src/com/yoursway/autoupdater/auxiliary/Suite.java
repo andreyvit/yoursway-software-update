@@ -23,7 +23,7 @@ public class Suite {
     private final String name;
     private final Map<String, Product> products = newHashMap();
     
-    public Suite(URL updateSite, String name) throws InvalidFileFormatException, IOException {
+    Suite(URL updateSite, String name) throws InvalidFileFormatException, IOException {
         this.updateSite = updateSite;
         this.name = name;
         
@@ -75,6 +75,15 @@ public class Suite {
                 }
         }
         
+    }
+    
+    public static Suite load(String updateSite, String name) throws SuiteLoadingException {
+        try {
+            URL url = new URL(updateSite);
+            return new Suite(url, name);
+        } catch (Throwable e) {
+            throw new SuiteLoadingException(e);
+        }
     }
     
     private void addComponentVersion(ProductVersion productVersion, String name) throws IOException,

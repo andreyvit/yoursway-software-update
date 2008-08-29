@@ -2,7 +2,6 @@ package com.yoursway.autoupdater.demo;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
 
 import com.yoursway.autoupdater.auxiliary.Product;
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
@@ -18,13 +17,13 @@ public class ConsoleDemo {
         Log.setLogger(new TcpIpLogger());
         
         try {
-            URL updateSite = new URL(args[0]);
+            String updateSite = args[0];
             System.out.println("Update site: " + updateSite);
             
             String suiteName = args[1];
             System.out.println("Suite name: " + suiteName);
             
-            Suite suite = new Suite(updateSite, suiteName);
+            Suite suite = Suite.load(updateSite, suiteName);
             
             System.out.println();
             System.out.println("Select product:");

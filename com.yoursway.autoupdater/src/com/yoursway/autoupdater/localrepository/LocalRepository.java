@@ -80,4 +80,13 @@ public class LocalRepository {
             b.addProduct(product.toMemento());
         return b.build();
     }
+    
+    public static LocalRepository createForGUI() throws LocalRepositoryException {
+        try {
+            ExternalInstaller installer = new ExternalInstaller(true);
+            return new LocalRepository(installer);
+        } catch (Throwable e) {
+            throw new LocalRepositoryException(e);
+        }
+    }
 }

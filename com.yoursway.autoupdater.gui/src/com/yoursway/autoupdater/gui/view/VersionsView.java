@@ -5,16 +5,19 @@ import static com.yoursway.utils.assertions.Assert.assertion;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersion;
 import com.yoursway.autoupdater.auxiliary.Suite;
+import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
@@ -122,5 +125,17 @@ public class VersionsView {
             }
         });
         
+    }
+    
+    public static void show(Suite suite, LocalRepository localRepository) {
+        Shell shell = new Shell();
+        //! magic
+        shell.setText("Autoupdater");
+        shell.setBounds(new Rectangle(480, 320, 320, 240));
+        
+        UpdaterStyleMock style = new UpdaterStyleMock(shell.getDisplay());
+        new VersionsView(shell, suite, localRepository, style);
+        
+        shell.open();
     }
 }
