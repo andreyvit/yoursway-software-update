@@ -44,7 +44,7 @@ public class ConsoleDemo {
             
             ProductVersion version = productVersion(versions, versionName);
             LocalRepository localRepository = new LocalRepository();
-            localRepository.startUpdating(version, UpdatingListener.EMPTY);
+            localRepository.startUpdating(version, UpdatingListener.NOP);
             
         } catch (Throwable e) {
             e.printStackTrace();

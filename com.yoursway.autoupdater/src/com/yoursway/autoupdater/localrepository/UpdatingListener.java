@@ -2,12 +2,21 @@ package com.yoursway.autoupdater.localrepository;
 
 public interface UpdatingListener {
     
-    public static UpdatingListener EMPTY = new EmptyUpdatingListener();
-    
     void downloadingStarted();
     
     void downloading(double progress);
     
     void downloadingCompleted();
+    
+    public static UpdatingListener NOP = new UpdatingListener() {
+        public void downloading(double progress) {
+        }
+        
+        public void downloadingCompleted() {
+        }
+        
+        public void downloadingStarted() {
+        }
+    };
     
 }

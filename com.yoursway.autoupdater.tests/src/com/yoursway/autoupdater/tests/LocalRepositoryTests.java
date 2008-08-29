@@ -91,7 +91,7 @@ public class LocalRepositoryTests {
         });
         
         synchronized (this) {
-            repo.startUpdating(version, UpdatingListener.EMPTY);
+            repo.startUpdating(version, UpdatingListener.NOP);
             wait();
         }
         
