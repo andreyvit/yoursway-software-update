@@ -1,18 +1,17 @@
 package com.yoursway.autoupdater.installer.external;
 
+import static com.yoursway.utils.YsFileUtils.createTempFolder;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.log.Log;
 
@@ -37,18 +36,16 @@ public class ExternalInstaller implements Installer {
         this.gui = gui;
     }
     
-    public void install(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
-            File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
+    public void install(Installation installation, ComponentStopper stopper) throws InstallerException {
+        try {
+            setFolder();
+        } catch (IOException e) {
+            throw new InstallerException("Cannot set temprary folder for external installer", e);
+        }
         
-        if (!current.product().equals(version.product()))
-            throw new AssertionError("Tried to update one product to another.");
+        prepare(installation);
+        Log.write("External installer prepared in " + folder + ".");
         
-        setFolder(extInstallerFolder);
-        
-        prepare(current, version, packs, target);
-        Log.write("External installer prepared in " + extInstallerFolder + ".");
-        
-        Log.write("Starting installation to " + target + ".");
         start();
         
         try {
@@ -64,10 +61,8 @@ public class ExternalInstaller implements Installer {
         
     }
     
-    private void setFolder(File folder) {
-        if (folder == null)
-            throw new NullPointerException("folder is null");
-        this.folder = folder;
+    private void setFolder() throws IOException {
+        folder = createTempFolder("com.yoursway.autoupdater.installer", null); //!
         
         if (folder.list().length != 0)
             throw new AssertionError("An external installer folder must be empty.");
@@ -76,8 +71,7 @@ public class ExternalInstaller implements Installer {
         installerBuild = new File(currentDir, "../com.yoursway.autoupdater.installer/build"); //!
     }
     
-    private void prepare(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target)
-            throws InstallerException {
+    private void prepare(Installation installation) throws InstallerException {
         
         try {
             for (File file : installerBuild.listFiles()) {
@@ -92,7 +86,6 @@ public class ExternalInstaller implements Installer {
             OutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(folder,
                     "installation")));
             
-            Installation installation = new Installation(current, version, packs, target, InstallerLog.NOP);
             installation.toMemento().writeTo(stream);
             
             stream.close();

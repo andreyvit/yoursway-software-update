@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 
 import java.util.Collection;
 
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
@@ -36,16 +37,16 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         return version.definition;
     }
     
-    protected LocalProduct product() {
-        return version.product;
-    }
-    
     protected Installer installer() {
-        return version.product.installer;
+        return version.product().installer;
     }
     
     protected OrderManager orderManager() {
-        return version.product.orderManager;
+        return version.product().orderManager;
+    }
+    
+    protected ComponentStopper componentStopper() {
+        return version.product().componentStopper();
     }
     
     protected UpdatingListener listener() {

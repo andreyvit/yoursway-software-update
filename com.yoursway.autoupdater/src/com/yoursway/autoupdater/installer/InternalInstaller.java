@@ -1,11 +1,8 @@
 package com.yoursway.autoupdater.installer;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.installer.log.ConsoleLog;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
 
@@ -21,12 +18,9 @@ public class InternalInstaller implements Installer {
         this.log = log;
     }
     
-    public void install(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
-            File extInstallerFolder, ComponentStopper stopper) throws InstallerException {
-        
-        Installation installation = new Installation(current, version, packs, target, log);
+    public void install(Installation installation, ComponentStopper stopper) throws InstallerException {
         try {
-            installation.perform();
+            installation.perform(log);
         } catch (IOException e) {
             throw new InstallerException("Cannot perform the installation", e);
         }

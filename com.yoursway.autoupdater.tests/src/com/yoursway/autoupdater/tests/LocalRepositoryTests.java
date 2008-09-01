@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.tests;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.yoursway.autoupdater.installer.InstallationUtils.packs;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +24,7 @@ import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.filelibrary.RequestUtils;
+import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
@@ -54,15 +55,14 @@ public class LocalRepositoryTests {
         ProductVersionDefinition version = new ProductVersionDefinition(product, requests, components, "");
         
         LocalRepository repo = new LocalRepository(new Installer() {
-            public void install(ProductVersionDefinition current, ProductVersionDefinition version,
-                    Map<String, File> packs, File target, File extInstallerFolder, ComponentStopper stopper)
+            public void install(Installation installation, ComponentStopper stopper)
                     throws InstallerException {
                 
                 System.out.println("Installation started!");
                 
                 boolean[] a = new boolean[last - first + 1];
                 
-                Iterator<File> it = packs.values().iterator();
+                Iterator<File> it = packs(installation).values().iterator();
                 for (int i = first; i <= last; i++) {
                     File file = it.next();
                     System.out.println(file.getPath() + " - size: " + file.length());

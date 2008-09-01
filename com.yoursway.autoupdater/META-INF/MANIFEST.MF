@@ -14,6 +14,7 @@ Export-Package:
  com.yoursway.autoupdater.installer.external;x-friends:="com.yoursway.autoupdater.installer,com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.installer.log;x-friends:="com.yoursway.autoupdater.installer",
  com.yoursway.autoupdater.localrepository,
+ com.yoursway.autoupdater.localrepository.internal;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.protos;x-friends:="com.yoursway.autoupdater.installer"
 Require-Bundle: com.yoursway.utils,
  com.google.collections;bundle-version="1.0.0",

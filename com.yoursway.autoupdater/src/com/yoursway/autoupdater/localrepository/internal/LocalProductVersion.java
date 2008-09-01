@@ -16,12 +16,12 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersion
 public class LocalProductVersion implements FileLibraryListener, LibrarySubscriber {
     
     private ProductVersionState state;
-    final LocalProduct product;
+    private final LocalProduct product;
     final ProductVersionDefinition definition;
     UpdatingListener listener;
     
-    LocalProductVersion(LocalProduct productState, ProductVersionDefinition version, UpdatingListener listener) {
-        this.product = productState;
+    LocalProductVersion(LocalProduct product, ProductVersionDefinition version, UpdatingListener listener) {
+        this.product = product;
         this.definition = version;
         state = new ProductVersionState_Installing(this);
         
@@ -73,6 +73,14 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         if (listener == null)
             throw new NullPointerException("listener is null");
         this.listener = listener;
+    }
+    
+    public LocalProduct product() {
+        return product;
+    }
+    
+    public ProductVersionDefinition definition() {
+        return definition;
     }
     
 }

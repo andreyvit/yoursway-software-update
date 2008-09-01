@@ -19,51 +19,65 @@ import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
+import com.yoursway.autoupdater.localrepository.internal.LocalProduct;
+import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.PackMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Builder;
 
 public class Installation {
     
-    private final ProductVersionDefinition current;
-    private final ProductVersionDefinition version;
-    private final Map<String, File> packs;
+    private final ProductVersionDefinition currentVD;
+    private final ProductVersionDefinition newVD;
+    final Map<String, File> packs;
     private final File target;
     
-    private final InstallerLog log;
-    
-    public Installation(ProductVersionDefinition current, ProductVersionDefinition version, Map<String, File> packs, File target,
-            InstallerLog log) {
-        if (current == null)
+    Installation(ProductVersionDefinition currentVD, ProductVersionDefinition newVD, Map<String, File> packs,
+            File target) {
+        if (currentVD == null)
             throw new NullPointerException("current is null");
-        if (version == null)
+        if (newVD == null)
             throw new NullPointerException("version is null");
         if (packs == null)
             throw new NullPointerException("packs is null");
         if (target == null)
             throw new NullPointerException("target is null");
-        if (log == null)
-            throw new NullPointerException("log is null");
         
-        this.current = current;
-        this.version = version;
+        this.currentVD = currentVD;
+        this.newVD = newVD;
         this.packs = packs;
         this.target = target;
-        
-        this.log = log;
     }
     
-    public void perform() throws IOException {
+    public Installation(LocalProductVersion version, Map<String, File> packs) throws InstallerException {
+        LocalProduct product = version.product();
+        
+        currentVD = product.currentVersion();
+        newVD = version.definition();
+        
+        if (!currentVD.product().equals(newVD.product()))
+            throw new AssertionError("Must not update one product to another.");
+        
+        try {
+            target = product.rootFolder();
+        } catch (IOException e) {
+            throw new InstallerException("Cannot get application root folder", e);
+        }
+        
+        this.packs = packs;
+    }
+    
+    public void perform(InstallerLog log) throws IOException {
         Set<String> newVersionFilePaths = newHashSet();
         
-        for (ComponentDefinition component : version.components()) {
+        for (ComponentDefinition component : newVD.components()) {
             for (ComponentFile file : component.files()) {
                 newVersionFilePaths.add(file.path());
-                setupFile(file, component.packs());
+                setupFile(file, component.packs(), log);
             }
         }
         
-        for (ComponentFile file : current.files()) {
+        for (ComponentFile file : currentVD.files()) {
             String path = file.path();
             if (!newVersionFilePaths.contains(path)) {
                 log.debug("Deleting old file " + path);
@@ -75,7 +89,7 @@ public class Installation {
         }
     }
     
-    private void setupFile(ComponentFile file, Iterable<Request> packs) throws IOException {
+    private void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log) throws IOException {
         log.debug("Setting up file " + file.path());
         
         ZipFile pack = null;
@@ -103,8 +117,8 @@ public class Installation {
     }
     
     public InstallationMemento toMemento() {
-        Builder b = InstallationMemento.newBuilder().setCurrent(current.toMemento()).setVersion(
-                version.toMemento()).setTarget(target.getAbsolutePath());
+        Builder b = InstallationMemento.newBuilder().setCurrent(currentVD.toMemento()).setVersion(
+                newVD.toMemento()).setTarget(target.getAbsolutePath());
         for (Map.Entry<String, File> entry : packs.entrySet()) {
             String hash = entry.getKey();
             File file = entry.getValue();
@@ -113,18 +127,18 @@ public class Installation {
         return b.build();
     }
     
-    public static Installation fromMemento(InstallationMemento memento, InstallerLog log) throws MalformedURLException {
+    public static Installation fromMemento(InstallationMemento memento) throws MalformedURLException {
         ProductVersionDefinition current = ProductVersionDefinition.fromMemento(memento.getCurrent());
         ProductVersionDefinition version = ProductVersionDefinition.fromMemento(memento.getVersion());
         Map<String, File> packs = newHashMap();
         for (PackMemento m : memento.getPackList())
             packs.put(m.getHash(), new File(m.getPath()));
         File target = new File(memento.getTarget());
-        return new Installation(current, version, packs, target, log);
+        return new Installation(current, version, packs, target);
     }
     
     public void startVersionExecutable() throws IOException {
-        String executable = version.executable();
+        String executable = newVD.executable();
         if (executable.length() == 0)
             return;
         

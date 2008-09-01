@@ -3,6 +3,7 @@ package com.yoursway.autoupdater.tests;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.yoursway.autoupdater.installer.InstallationUtils.createInstallation;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
@@ -32,6 +33,7 @@ import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.installer.InternalInstaller;
@@ -113,23 +115,24 @@ public class InstallerTests {
     }
     
     private void install(Installer installer, Collection<ComponentDefinition> oldComponents,
-            Collection<ComponentDefinition> newComponents, File target) throws IOException, InstallerException {
+            Collection<ComponentDefinition> newComponents, File target) throws IOException,
+            InstallerException {
         
-        ProductDefinition product = new ProductDefinition("UNNAMED");
+        ProductDefinition productD = new ProductDefinition("UNNAMED");
         Collection<Request> p = newLinkedList();
         
-        ProductVersionDefinition current = new ProductVersionDefinition(product, p, oldComponents, "");
-        ProductVersionDefinition version = new ProductVersionDefinition(product, p, newComponents, "");
+        ProductVersionDefinition currentVD = new ProductVersionDefinition(productD, p, oldComponents, "");
+        ProductVersionDefinition newVD = new ProductVersionDefinition(productD, p, newComponents, "");
         
         Map<String, File> packs = packs();
-        File extInstallerFolder = createTempFolder();
         ComponentStopper stopper = new ComponentStopper() {
             public boolean stop() {
                 return true;
             }
         };
         
-        installer.install(current, version, packs, target, extInstallerFolder, stopper);
+        Installation installation = createInstallation(currentVD, newVD, packs, target);
+        installer.install(installation, stopper);
     }
     
     private void createFiles(File target, Collection<ComponentDefinition> components) throws IOException {
@@ -162,7 +165,7 @@ public class InstallerTests {
     private Collection<Request> packs(int first, int last) throws MalformedURLException {
         Collection<Request> packs = newLinkedList();
         for (int i = first / 10; i <= last / 10; i++) {
-            packs.add(new Request(new URL("http://localhost/"), 0, "packhash" + i));
+            packs.add(new Request(new URL("http://localhost/packfile" + i + ".zip"), 0, "packhash" + i));
             packIDs.add(i);
         }
         return packs;

@@ -1,16 +1,15 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.yoursway.utils.YsFileUtils.createTempFolder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 import com.yoursway.utils.log.Log;
@@ -50,11 +49,8 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
                 packsMap.put(hash, file);
             }
             try {
-                File extInstallerFolder = createTempFolder("com.yoursway.autoupdater.installer", null);
-                installer().install(product().currentVersion(), versionDefinition(), packsMap,
-                        product().rootFolder(), extInstallerFolder, product().componentStopper());
-            } catch (IOException e) {
-                e.printStackTrace(); //!
+                Installation installation = new Installation(version, packsMap);
+                installer().install(installation, componentStopper());
             } catch (InstallerException e) {
                 e.printStackTrace(); //!
             }

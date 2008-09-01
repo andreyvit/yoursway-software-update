@@ -39,7 +39,7 @@ public class InstallerThread extends Thread {
             InputStream input = new FileInputStream("installation");
             InstallationMemento memento = InstallationMemento.parseFrom(input);
             input.close();
-            Installation installation = Installation.fromMemento(memento, log);
+            Installation installation = Installation.fromMemento(memento);
             
             log.debug("Stopping the application");
             server.send(READY);
@@ -47,7 +47,7 @@ public class InstallerThread extends Thread {
             server.waitDisconnect();
             
             log.debug("Starting installation");
-            installation.perform();
+            installation.perform(log);
             
             log.debug("Restarting the application");
             installation.startVersionExecutable();
