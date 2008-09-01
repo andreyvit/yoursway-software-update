@@ -2,7 +2,6 @@ package com.yoursway.autoupdater.tests;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.yoursway.autoupdater.installer.InstallationUtils.createInstallation;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
@@ -16,15 +15,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
@@ -39,13 +37,24 @@ import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.installer.InternalInstaller;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
+import com.yoursway.autoupdater.tests.internal.Pack;
+import com.yoursway.autoupdater.tests.internal.Tagger;
 import com.yoursway.utils.YsFileUtils;
 
 public class InstallerTests {
     
-    private final Set<Integer> packIDs = newLinkedHashSet();
+    //private final Set<Integer> packIDs = newLinkedHashSet();
     
     private final Collection<File> tempFolders = newLinkedList();
+    
+    Map<String, File> packs;
+    File packsFolder;
+    
+    @Before
+    public void setupEach() throws IOException {
+        packs = newHashMap();
+        packsFolder = createTempFolder();
+    }
     
     @Test
     public void external() throws IOException, InstallerException, UnexpectedMessageException {
@@ -53,6 +62,7 @@ public class InstallerTests {
         Collection<ComponentDefinition> components = newLinkedList(component(12, 25), component(23, 42));
         File target = createTempFolder();
         
+        components.add(createInstallerComponent());
         install(installer, components, components, target);
         
         ExternalInstaller.client().reconnect();
@@ -61,6 +71,26 @@ public class InstallerTests {
         
         for (int i = 12; i <= 42; i++)
             assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+    }
+    
+    private ComponentDefinition createInstallerComponent() throws IOException {
+        String root = System.getProperty("user.dir");
+        File installerDir = new File(root, "../com.yoursway.autoupdater.installer/build");
+        Pack pack = new Pack(installerDir, new Tagger() {
+            public String[] tagsFor(File file) {
+                if (file.getName().equals("installer.jar"))
+                    return newLinkedList("runjar").toArray(new String[1]);
+                
+                return new String[0];
+            }
+        });
+        
+        Collection<Request> packs = newLinkedList(pack.request());
+        Collection<ComponentFile> files = pack.files();
+        String[] tags = newLinkedList("installer").toArray(new String[1]);
+        
+        this.packs.put(pack.hash(), pack.packFile());
+        return new ComponentDefinition(files, packs, tags);
     }
     
     @Test
@@ -124,7 +154,6 @@ public class InstallerTests {
         ProductVersionDefinition currentVD = new ProductVersionDefinition(productD, p, oldComponents, "");
         ProductVersionDefinition newVD = new ProductVersionDefinition(productD, p, newComponents, "");
         
-        Map<String, File> packs = packs();
         ComponentStopper stopper = new ComponentStopper() {
             public boolean stop() {
                 return true;
@@ -147,14 +176,15 @@ public class InstallerTests {
         return folder;
     }
     
-    private ComponentDefinition component(int first, int last) throws MalformedURLException {
-        return new ComponentDefinition(files(first, last), packs(first, last));
+    private ComponentDefinition component(int first, int last) throws IOException {
+        return new ComponentDefinition(files(first, last), packs(first, last), new String[0]);
     }
     
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), filepath(i)));
+            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), new String[0],
+                    filepath(i)));
         return files;
     }
     
@@ -162,30 +192,25 @@ public class InstallerTests {
         return "filepath" + i;
     }
     
-    private Collection<Request> packs(int first, int last) throws MalformedURLException {
+    private Collection<Request> packs(int first, int last) throws IOException {
         Collection<Request> packs = newLinkedList();
         for (int i = first / 10; i <= last / 10; i++) {
             packs.add(new Request(new URL("http://localhost/packfile" + i + ".zip"), 0, "packhash" + i));
-            packIDs.add(i);
+            addPack(i);
         }
         return packs;
     }
     
-    private Map<String, File> packs() throws IOException {
-        File folder = createTempFolder();
-        Map<String, File> packs = newHashMap();
-        for (int i : packIDs) {
-            File pack = new File(folder, "packfile" + i + ".zip");
-            ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(pack));
-            for (int j = i * 10; j <= i * 10 + 14; j++) {
-                zip.putNextEntry(new ZipEntry("filehash" + j));
-                writeString(zip, fileContents(sizeOf(j)));
-                zip.closeEntry();
-            }
-            zip.close();
-            packs.put("packhash" + i, pack);
+    private void addPack(int i) throws IOException {
+        File pack = new File(packsFolder, "packfile" + i + ".zip");
+        ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(pack));
+        for (int j = i * 10; j <= i * 10 + 14; j++) {
+            zip.putNextEntry(new ZipEntry("filehash" + j));
+            writeString(zip, fileContents(sizeOf(j)));
+            zip.closeEntry();
         }
-        return packs;
+        zip.close();
+        packs.put("packhash" + i, pack);
     }
     
 }

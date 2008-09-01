@@ -55,8 +55,9 @@ public class SuiteDefinition {
                     }
                 } else if (type.equals("CVB")) {
                     String componentName = fields[1];
+                    String[] tags = fields[2].split(",");
                     try {
-                        addComponent(productVersion, componentName);
+                        addComponent(productVersion, componentName, tags);
                     } catch (Exception e) {
                         productVersion.damage();
                         Log.write("Cannot add component " + componentName + " to product version "
@@ -86,10 +87,11 @@ public class SuiteDefinition {
         }
     }
     
-    private void addComponent(ProductVersionDefinition productVersion, String name) throws IOException,
-            InvalidFileFormatException {
-        productVersion.addComponent(new ComponentDefinition(updateSite, name));
+    private void addComponent(ProductVersionDefinition productVersion, String name, String[] tags)
+            throws IOException, InvalidFileFormatException {
         
+        ComponentDefinition component = new ComponentDefinition(updateSite, name, tags);
+        productVersion.addComponent(component);
     }
     
     private ProductVersionDefinition addProductVersion(String productName, String status, String versionName) {

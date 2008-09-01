@@ -2,6 +2,7 @@ package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento;
@@ -27,8 +29,9 @@ public class ComponentDefinition {
     private final Collection<Request> packs;
     
     private String name;
+    private final Set<String> tags;
     
-    public ComponentDefinition(Collection<ComponentFile> files, Collection<Request> packs) {
+    public ComponentDefinition(Collection<ComponentFile> files, Collection<Request> packs, String[] tags) {
         if (packs == null)
             throw new NullPointerException("packs is null");
         for (Request packRequest : packs)
@@ -36,6 +39,7 @@ public class ComponentDefinition {
                 throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
         
         this.packs = packs;
+        this.tags = newHashSet(tags);
         
         for (ComponentFile file : files)
             addFile(file);
@@ -45,8 +49,11 @@ public class ComponentDefinition {
         files.put(file.hash, file);
     }
     
-    public ComponentDefinition(URL updateSite, String name) throws IOException, InvalidFileFormatException {
+    public ComponentDefinition(URL updateSite, String name, String[] tags) throws IOException,
+            InvalidFileFormatException {
+        
         this.name = name;
+        this.tags = newHashSet(tags);
         packs = newLinkedList();
         
         URL url = new URL(updateSite + COMPONENTS_PATH + filename());
@@ -67,7 +74,8 @@ public class ComponentDefinition {
                 packs.add(request);
             } else if (type.equals("F")) {
                 long modified = Long.parseLong(fields[3]);
-                addFile(new ComponentFile(hash, size, modified, fields[5]));
+                String[] fileTags = fields[5].split(",");
+                addFile(new ComponentFile(hash, size, modified, fileTags, fields[6]));
             } else
                 throw new InvalidFileFormatException(url);
         }
@@ -88,7 +96,8 @@ public class ComponentDefinition {
             packs.add(Request.fromMemento(m));
         for (ComponentFileMemento m : memento.getFileList())
             files.add(ComponentFile.fromMemento(m));
-        return new ComponentDefinition(files, packs);
+        String[] tags = memento.getTagList().toArray(new String[memento.getTagCount()]);
+        return new ComponentDefinition(files, packs, tags);
     }
     
     ComponentDefinitionMemento toMemento() {
@@ -97,11 +106,23 @@ public class ComponentDefinition {
             b.addPack(pack.toMemento());
         for (ComponentFile file : files.values())
             b.addFile(file.toMemento());
+        b.addAllTag(tags);
         return b.build();
     }
     
     public Collection<Request> packs() {
         return packs;
+    }
+    
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
+    }
+    
+    public ComponentFile runJar() throws Exception {
+        for (ComponentFile file : files.values())
+            if (file.hasTag("runjar"))
+                return file;
+        throw new Exception("The component has not runjar file"); //???
     }
     
 }

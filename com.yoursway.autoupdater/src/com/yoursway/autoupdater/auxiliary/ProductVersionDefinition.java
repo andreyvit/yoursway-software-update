@@ -17,13 +17,15 @@ public class ProductVersionDefinition {
     
     private final ProductDefinition product;
     private Collection<Request> packs;
-    private final Collection<ComponentDefinition> components;
     private final String status;
     private final String name;
     
     private final String executable;
     
     private boolean damaged;
+    
+    private final Collection<ComponentDefinition> regularComponents = newLinkedList();
+    private ComponentDefinition installer;
     
     public ProductVersionDefinition(ProductDefinition product, Collection<Request> packs,
             Collection<ComponentDefinition> components, String executable) {
@@ -41,8 +43,9 @@ public class ProductVersionDefinition {
         this.product = product;
         product.addVersion(this);
         
+        for (ComponentDefinition component : components)
+            addComponent(component);
         this.packs = packs;
-        this.components = components;
         
         status = "";
         name = "";
@@ -55,7 +58,6 @@ public class ProductVersionDefinition {
         product.addVersion(this);
         
         packs = null;
-        components = newLinkedList();
         
         this.status = status;
         this.name = name;
@@ -78,7 +80,13 @@ public class ProductVersionDefinition {
             throw new IllegalStateException(
                     "A product version must not add components after collecting its packs.");
         
-        components.add(component);
+        if (component.hasTag("installer")) {
+            if (installer == null)
+                installer = component;
+            else
+                throw new IllegalArgumentException("The product version have an installer already.");
+        } else
+            regularComponents.add(component);
     }
     
     public ProductDefinition product() {
@@ -88,7 +96,7 @@ public class ProductVersionDefinition {
     public Collection<Request> packRequests() {
         if (packs == null) {
             packs = newLinkedList();
-            for (ComponentDefinition component : components)
+            for (ComponentDefinition component : regularComponents)
                 packs.addAll(component.packs());
         }
         
@@ -96,7 +104,7 @@ public class ProductVersionDefinition {
     }
     
     public Collection<ComponentDefinition> components() {
-        return components;
+        return regularComponents;
     }
     
     public static ProductVersionDefinition fromMemento(ProductVersionDefinitionMemento memento)
@@ -117,7 +125,7 @@ public class ProductVersionDefinition {
                 .setExecutable(executable);
         for (Request r : packs)
             b.addPack(r.toMemento());
-        for (ComponentDefinition c : components)
+        for (ComponentDefinition c : regularComponents)
             b.addComponent(c.toMemento());
         return b.build();
     }
@@ -128,7 +136,7 @@ public class ProductVersionDefinition {
     
     public Collection<ComponentFile> files() {
         Collection<ComponentFile> files = newHashSet();
-        for (ComponentDefinition component : components)
+        for (ComponentDefinition component : regularComponents)
             files.addAll(component.files());
         return files;
     }
@@ -139,6 +147,13 @@ public class ProductVersionDefinition {
     
     public boolean damaged() {
         return damaged;
+    }
+    
+    public ComponentDefinition installer() throws Exception {
+        if (installer == null)
+            throw new Exception("The product version doesn't have installer."); //?
+            
+        return installer;
     }
     
 }

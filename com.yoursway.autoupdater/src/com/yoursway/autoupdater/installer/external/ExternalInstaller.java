@@ -12,7 +12,6 @@ import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.log.Log;
 
 public class ExternalInstaller implements Installer {
@@ -24,7 +23,7 @@ public class ExternalInstaller implements Installer {
     
     private final boolean gui;
     
-    private File installerBuild;
+    private Object jarPath;
     
     private static InstallerClient client;
     
@@ -66,20 +65,14 @@ public class ExternalInstaller implements Installer {
         
         if (folder.list().length != 0)
             throw new AssertionError("An external installer folder must be empty.");
-        
-        String currentDir = System.getProperty("user.dir");
-        installerBuild = new File(currentDir, "../com.yoursway.autoupdater.installer/build"); //!
     }
     
     private void prepare(Installation installation) throws InstallerException {
         
         try {
-            for (File file : installerBuild.listFiles()) {
-                File copy = new File(folder, file.getName());
-                YsFileUtils.fileCopy(file, copy);
-            }
-        } catch (IOException e) {
-            throw new InstallerException("Cannot copy external installer");
+            installation.setupExternalInstaller(folder);
+        } catch (Exception e) {
+            throw new InstallerException("Cannot setup external installer", e);
         }
         
         try {
@@ -90,7 +83,13 @@ public class ExternalInstaller implements Installer {
             
             stream.close();
         } catch (IOException e) {
-            throw new InstallerException("Cannot write data for external installer");
+            throw new InstallerException("Cannot write data for external installer", e);
+        }
+        
+        try {
+            jarPath = installation.externalInstallerRunJarPath();
+        } catch (Exception e) {
+            throw new InstallerException("ExternalInstaller component runjar file doesn't exist", e);
         }
         
         prepared = true;
@@ -102,6 +101,7 @@ public class ExternalInstaller implements Installer {
         
         String javaHome = System.getProperty("java.home");
         File java = new File(javaHome, "bin/java"); //! check at windows
+        
         File installer = new File(folder, "installer.jar"); //!
         
         ProcessBuilder pb = new ProcessBuilder();

@@ -11,11 +11,14 @@ message ComponentFileMemento {
 	required int64 size = 2;
 	required int64 modified = 3;
 	required string path = 4;
+	
+	repeated string tag = 5;
 }
 
 message ComponentDefinitionMemento {
 	repeated ComponentFileMemento file = 1;
 	repeated RequestMemento pack = 2;
+	repeated string tag = 3;
 }
 
 message ProductDefinitionMemento {

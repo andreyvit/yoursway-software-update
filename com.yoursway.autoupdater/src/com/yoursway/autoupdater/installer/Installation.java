@@ -73,7 +73,7 @@ public class Installation {
         for (ComponentDefinition component : newVD.components()) {
             for (ComponentFile file : component.files()) {
                 newVersionFilePaths.add(file.path());
-                setupFile(file, component.packs(), log);
+                setupFile(file, component.packs(), log, target);
             }
         }
         
@@ -89,7 +89,8 @@ public class Installation {
         }
     }
     
-    private void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log) throws IOException {
+    private void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log, File target)
+            throws IOException {
         log.debug("Setting up file " + file.path());
         
         ZipFile pack = null;
@@ -154,6 +155,23 @@ public class Installation {
             pb.command(executable);
         
         pb.start();
+    }
+    
+    public ComponentDefinition getInstallerComponent() throws Exception {
+        return newVD.installer();
+    }
+    
+    public void setupExternalInstaller(File dir) throws Exception {
+        ComponentDefinition externalInstaller = newVD.installer();
+        
+        for (ComponentFile file : externalInstaller.files())
+            setupFile(file, externalInstaller.packs(), InstallerLog.NOP, dir);
+    }
+    
+    public String externalInstallerRunJarPath() throws Exception {
+        ComponentDefinition externalInstaller = newVD.installer();
+        
+        return externalInstaller.runJar().path();
     }
     
 }
