@@ -10,6 +10,7 @@ message ComponentFileMemento {
 	required string hash = 1;
 	required int64 size = 2;
 	required int64 modified = 3;
+	required string attribs = 6;
 	required string path = 4;
 	
 	repeated string tag = 5;

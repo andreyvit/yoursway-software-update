@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
@@ -22,19 +24,42 @@ import com.yoursway.utils.YsFileUtils;
 
 public class LocalRepository {
     
+    private final class UpdatableApplicationWithLocalRepository implements UpdatableApplication {
+        public LocalRepository localRepository() {
+            return LocalRepository.this;
+        }
+        
+        public File rootFolder(String productName) {
+            throw new UnsupportedOperationException();
+        }
+        
+        public SuiteDefinition suite() {
+            throw new UnsupportedOperationException();
+        }
+    }
+    
     private final Map<ProductDefinition, LocalProduct> products = new HashMap<ProductDefinition, LocalProduct>();
     private final Installer installer;
     private final FileLibrary fileLibrary;
+    private final UpdatableApplication app;
     
     public LocalRepository() throws IOException {
+        this(new ExternalInstaller());
+    }
+    
+    public LocalRepository(UpdatableApplication app, Installer installer) throws IOException {
+        this.app = app;
+        
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
         place.mkdir();
         fileLibrary = new FileLibraryImpl(downloader, place);
-        installer = new ExternalInstaller();
+        this.installer = installer;
     }
     
     public LocalRepository(Installer installer) throws IOException {
+        app = new UpdatableApplicationWithLocalRepository();
+        
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
         place.mkdir();
@@ -46,7 +71,7 @@ public class LocalRepository {
         ProductDefinition productDefinition = version.product();
         LocalProduct localProduct = products.get(productDefinition);
         if (localProduct == null) {
-            localProduct = new LocalProduct(productDefinition, fileLibrary, installer);
+            localProduct = new LocalProduct(productDefinition, fileLibrary, installer, app);
             products.put(productDefinition, localProduct);
         }
         localProduct.startUpdating(version, listener);
@@ -69,7 +94,7 @@ public class LocalRepository {
     
     private void fromMemento(LocalRepositoryMemento memento) {
         for (LocalProductMemento m : memento.getProductList()) {
-            LocalProduct product = new LocalProduct(m, fileLibrary, installer);
+            LocalProduct product = new LocalProduct(m, fileLibrary, installer, app);
             products.put(product.definition(), product);
         }
     }
@@ -81,10 +106,10 @@ public class LocalRepository {
         return b.build();
     }
     
-    public static LocalRepository createForGUI() throws LocalRepositoryException {
+    public static LocalRepository createForGUI(UpdatableApplication app) throws LocalRepositoryException {
         try {
             ExternalInstaller installer = new ExternalInstaller(true);
-            return new LocalRepository(installer);
+            return new LocalRepository(app, installer);
         } catch (Throwable e) {
             throw new LocalRepositoryException(e);
         }

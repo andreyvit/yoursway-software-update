@@ -50,7 +50,7 @@ public class InstallerThread extends Thread {
             installation.perform(log);
             
             log.debug("Restarting the application");
-            installation.startVersionExecutable();
+            installation.startVersionExecutable(log);
             
             log.debug("Checking application state");
             server.reconnect();

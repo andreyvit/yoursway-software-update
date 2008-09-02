@@ -24,7 +24,7 @@ public class ProductVersionDefinition {
     
     private boolean damaged;
     
-    private final Collection<ComponentDefinition> regularComponents = newLinkedList();
+    private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;
     
     public ProductVersionDefinition(ProductDefinition product, Collection<Request> packs,
@@ -80,13 +80,14 @@ public class ProductVersionDefinition {
             throw new IllegalStateException(
                     "A product version must not add components after collecting its packs.");
         
-        if (component.hasTag("installer")) {
+        components.add(component);
+        
+        if (component.isInstaller()) {
             if (installer == null)
                 installer = component;
             else
                 throw new IllegalArgumentException("The product version have an installer already.");
-        } else
-            regularComponents.add(component);
+        }
     }
     
     public ProductDefinition product() {
@@ -96,7 +97,7 @@ public class ProductVersionDefinition {
     public Collection<Request> packRequests() {
         if (packs == null) {
             packs = newLinkedList();
-            for (ComponentDefinition component : regularComponents)
+            for (ComponentDefinition component : components)
                 packs.addAll(component.packs());
         }
         
@@ -104,7 +105,7 @@ public class ProductVersionDefinition {
     }
     
     public Collection<ComponentDefinition> components() {
-        return regularComponents;
+        return components;
     }
     
     public static ProductVersionDefinition fromMemento(ProductVersionDefinitionMemento memento)
@@ -125,18 +126,23 @@ public class ProductVersionDefinition {
                 .setExecutable(executable);
         for (Request r : packs)
             b.addPack(r.toMemento());
-        for (ComponentDefinition c : regularComponents)
+        for (ComponentDefinition c : components)
             b.addComponent(c.toMemento());
         return b.build();
     }
     
-    public String executable() {
-        return executable; //> relative
+    public ComponentFile executable() throws Exception {
+        for (ComponentDefinition component : components) {
+            ComponentFile exec = component.getExecIfExists();
+            if (exec != null)
+                return exec;
+        }
+        throw new Exception("The product version hasn't executable");
     }
     
     public Collection<ComponentFile> files() {
         Collection<ComponentFile> files = newHashSet();
-        for (ComponentDefinition component : regularComponents)
+        for (ComponentDefinition component : components)
             files.addAll(component.files());
         return files;
     }

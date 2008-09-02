@@ -28,8 +28,8 @@ public class Pack {
         ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(packFile));
         for (File file : dir.listFiles()) {
             String hash = "filehash_" + file.getName();
-            files.add(new ComponentFile(hash, file.length(), file.lastModified(), tagger.tagsFor(file), file
-                    .getName()));
+            files.add(new ComponentFile(hash, file.length(), file.lastModified(), "-", tagger.tagsFor(file),
+                    file.getName()));
             
             zip.putNextEntry(new ZipEntry(hash));
             transfer(new FileInputStream(file), zip);

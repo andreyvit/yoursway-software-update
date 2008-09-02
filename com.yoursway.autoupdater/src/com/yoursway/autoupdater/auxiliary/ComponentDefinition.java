@@ -75,7 +75,7 @@ public class ComponentDefinition {
             } else if (type.equals("F")) {
                 long modified = Long.parseLong(fields[3]);
                 String[] fileTags = fields[5].split(",");
-                addFile(new ComponentFile(hash, size, modified, fileTags, fields[6]));
+                addFile(new ComponentFile(hash, size, modified, fields[4], fileTags, fields[6]));
             } else
                 throw new InvalidFileFormatException(url);
         }
@@ -114,15 +114,25 @@ public class ComponentDefinition {
         return packs;
     }
     
-    public boolean hasTag(String tag) {
+    private boolean hasTag(String tag) {
         return tags.contains(tag);
+    }
+    
+    public boolean isInstaller() {
+        return hasTag("installer");
     }
     
     public ComponentFile runJar() throws Exception {
         for (ComponentFile file : files.values())
-            if (file.hasTag("runjar"))
+            if (file.isRunJar())
                 return file;
-        throw new Exception("The component has not runjar file"); //???
+        throw new Exception("The component has not runjar file"); //!
     }
     
+    public ComponentFile getExecIfExists() {
+        for (ComponentFile file : files.values())
+            if (file.isAppExec())
+                return file;
+        return null;
+    }
 }

@@ -1,10 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Autoupdater
-Bundle-SymbolicName: com.yoursway.autoupdater
+Bundle-SymbolicName: com.yoursway.autoupdater;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: autoupdater.jar,
- protobuf-java-2.0.0beta.jar
+Bundle-ClassPath: .
 Export-Package: 
  com.yoursway.autoupdater.auxiliary,
  com.yoursway.autoupdater.filelibrary;x-friends:="com.yoursway.autoupdater.tests",

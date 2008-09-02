@@ -17,22 +17,19 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
-import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
-import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
 public class VersionsView {
     
-    public VersionsView(Composite parent, SuiteDefinition suite, final LocalRepository localRepository,
-            UpdaterStyle style) {
-        
+    public VersionsView(Composite parent, final UpdatableApplication app, UpdaterStyle style) {
         parent.setLayout(new GridLayout());
         
         final Table versions = new Table(parent, SWT.SINGLE);
         versions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        for (ProductVersionDefinition version : suite.versions()) {
+        for (ProductVersionDefinition version : app.suite().versions()) {
             TableItem item = new TableItem(versions, SWT.NONE);
             item.setData(version);
             item.setText(version.toString());
@@ -77,7 +74,7 @@ public class VersionsView {
                 TableItem item = selection[0];
                 ProductVersionDefinition version = (ProductVersionDefinition) item.getData();
                 
-                localRepository.startUpdating(version, new UpdatingListener() {
+                app.localRepository().startUpdating(version, new UpdatingListener() {
                     public void downloadingStarted() {
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
@@ -135,14 +132,14 @@ public class VersionsView {
         
     }
     
-    public static void show(SuiteDefinition suite, LocalRepository localRepository) {
+    public static void show(UpdatableApplication app) {
         Shell shell = new Shell();
         //! magic
         shell.setText("Autoupdater");
         shell.setBounds(new Rectangle(480, 320, 320, 240));
         
         UpdaterStyleMock style = new UpdaterStyleMock(shell.getDisplay());
-        new VersionsView(shell, suite, localRepository, style);
+        new VersionsView(shell, app, style);
         
         shell.open();
     }

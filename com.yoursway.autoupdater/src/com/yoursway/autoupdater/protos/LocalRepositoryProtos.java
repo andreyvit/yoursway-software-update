@@ -16,27 +16,27 @@ public final class LocalRepositoryProtos {
     java.lang.String descriptorData =
       "\n\033LocalRepositoryProtos.proto\"9\n\016Request" +
       "Memento\022\013\n\003url\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\014\n\004sh" +
-      "a1\030\003 \002(\t\"_\n\024ComponentFileMemento\022\014\n\004hash" +
-      "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\014" +
-      "\n\004path\030\004 \002(\t\022\013\n\003tag\030\005 \003(\t\"m\n\032ComponentDe" +
-      "finitionMemento\022#\n\004file\030\001 \003(\0132\025.Componen" +
-      "tFileMemento\022\035\n\004pack\030\002 \003(\0132\017.RequestMeme" +
-      "nto\022\013\n\003tag\030\003 \003(\t\"\032\n\030ProductDefinitionMem" +
-      "ento\"\260\001\n\037ProductVersionDefinitionMemento" +
-      "\022*\n\007product\030\001 \002(\0132\031.ProductDefinitionMem" +
-      "ento\022\035\n\004pack\030\002 \003(\0132\017.RequestMemento\022.\n\tc" +
-      "omponent\030\003 \003(\0132\033.ComponentDefinitionMeme" +
-      "nto\022\022\n\nexecutable\030\004 \002(\t\"\247\001\n\032LocalProduct" +
-      "VersionMemento\0224\n\ndefinition\030\001 \002(\0132 .Pro" +
-      "ductVersionDefinitionMemento\0220\n\005state\030\002 " +
-      "\002(\0162!.LocalProductVersionMemento.State\"!" +
-      "\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001\"r\n\023Loc" +
-      "alProductMemento\022-\n\ndefinition\030\001 \002(\0132\031.P" +
-      "roductDefinitionMemento\022,\n\007version\030\002 \003(\013" +
-      "2\033.LocalProductVersionMemento\"?\n\026LocalRe" +
-      "positoryMemento\022%\n\007product\030\001 \003(\0132\024.Local" +
-      "ProductMementoB!\n\037com.yoursway.autoupdat" +
-      "er.protos";
+      "a1\030\003 \002(\t\"p\n\024ComponentFileMemento\022\014\n\004hash" +
+      "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\017" +
+      "\n\007attribs\030\006 \002(\t\022\014\n\004path\030\004 \002(\t\022\013\n\003tag\030\005 \003" +
+      "(\t\"m\n\032ComponentDefinitionMemento\022#\n\004file" +
+      "\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002 " +
+      "\003(\0132\017.RequestMemento\022\013\n\003tag\030\003 \003(\t\"\032\n\030Pro" +
+      "ductDefinitionMemento\"\260\001\n\037ProductVersion" +
+      "DefinitionMemento\022*\n\007product\030\001 \002(\0132\031.Pro" +
+      "ductDefinitionMemento\022\035\n\004pack\030\002 \003(\0132\017.Re" +
+      "questMemento\022.\n\tcomponent\030\003 \003(\0132\033.Compon" +
+      "entDefinitionMemento\022\022\n\nexecutable\030\004 \002(\t" +
+      "\"\247\001\n\032LocalProductVersionMemento\0224\n\ndefin" +
+      "ition\030\001 \002(\0132 .ProductVersionDefinitionMe" +
+      "mento\0220\n\005state\030\002 \002(\0162!.LocalProductVersi" +
+      "onMemento.State\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\nIn" +
+      "stalling\020\001\"r\n\023LocalProductMemento\022-\n\ndef" +
+      "inition\030\001 \002(\0132\031.ProductDefinitionMemento" +
+      "\022,\n\007version\030\002 \003(\0132\033.LocalProductVersionM" +
+      "emento\"?\n\026LocalRepositoryMemento\022%\n\007prod" +
+      "uct\030\001 \003(\0132\024.LocalProductMementoB!\n\037com.y" +
+      "oursway.autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -295,6 +295,12 @@ public final class LocalRepositoryProtos {
     public boolean hasModified() { return hasModified; }
     public long getModified() { return modified_; }
     
+    // required string attribs = 6;
+    private boolean hasAttribs;
+    private java.lang.String attribs_ = "";
+    public boolean hasAttribs() { return hasAttribs; }
+    public java.lang.String getAttribs() { return attribs_; }
+    
     // required string path = 4;
     private boolean hasPath;
     private java.lang.String path_ = "";
@@ -473,6 +479,24 @@ public final class LocalRepositoryProtos {
       public Builder clearModified() {
         result.hasModified = false;
         result.modified_ = 0L;
+        return this;
+      }
+      
+      // required string attribs = 6;
+      public boolean hasAttribs() {
+        return result.hasAttribs();
+      }
+      public java.lang.String getAttribs() {
+        return result.getAttribs();
+      }
+      public Builder setAttribs(java.lang.String value) {
+        result.hasAttribs = true;
+        result.attribs_ = value;
+        return this;
+      }
+      public Builder clearAttribs() {
+        result.hasAttribs = false;
+        result.attribs_ = "";
         return this;
       }
       
@@ -1966,7 +1990,7 @@ public final class LocalRepositoryProtos {
       internal_static_ComponentFileMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ComponentFileMemento_descriptor,
-          new java.lang.String[] { "Hash", "Size", "Modified", "Path", "Tag", },
+          new java.lang.String[] { "Hash", "Size", "Modified", "Attribs", "Path", "Tag", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor

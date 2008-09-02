@@ -183,7 +183,7 @@ public class InstallerTests {
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), new String[0],
+            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), "-", new String[0],
                     filepath(i)));
         return files;
     }

@@ -3,6 +3,7 @@ package com.yoursway.autoupdater.installer;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
+import static java.lang.Runtime.getRuntime;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -71,6 +72,9 @@ public class Installation {
         Set<String> newVersionFilePaths = newHashSet();
         
         for (ComponentDefinition component : newVD.components()) {
+            if (component.isInstaller())
+                continue;
+            
             for (ComponentFile file : component.files()) {
                 newVersionFilePaths.add(file.path());
                 setupFile(file, component.packs(), log, target);
@@ -115,6 +119,18 @@ public class Installation {
         boolean ok = targetFile.setLastModified(file.modified());
         if (!ok)
             log.error("Cannot set lastmodified property of file " + targetFile);
+        
+        if (file.hasExecAttribute()) {
+            String command = "chmod +x " + targetFile.getCanonicalPath();
+            log.debug(command);
+            Process process = getRuntime().exec(command);
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace(); //!
+            }
+            log.debug("exit value: " + process.exitValue());
+        }
     }
     
     public InstallationMemento toMemento() {
@@ -138,21 +154,23 @@ public class Installation {
         return new Installation(current, version, packs, target);
     }
     
-    public void startVersionExecutable() throws IOException {
-        String executable = newVD.executable();
-        if (executable.length() == 0)
-            return;
+    public void startVersionExecutable(InstallerLog log) throws Exception {
+        File executable = new File(target, newVD.executable().path());
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(target);
         
-        if (executable.endsWith(".jar")) {
+        if (executable.getName().endsWith(".jar")) {
             String javaHome = System.getProperty("java.home");
             File java = new File(javaHome, "bin/java"); //! check "bin/java" at windows
             
-            pb.command(java.getAbsolutePath(), "-jar", executable);
-        } else
-            pb.command(executable);
+            pb.command(java.getCanonicalPath(), "-jar", executable.getCanonicalPath());
+        } else {
+            log.debug(target.toString());
+            log.debug(executable.getCanonicalPath());
+            
+            pb.command(executable.getCanonicalPath());
+        }
         
         pb.start();
     }

@@ -12,14 +12,16 @@ public class ComponentFile {
     final String hash;
     final long size;
     final long modified;
+    private final String attribs;
     final String path;
     
     private final Set<String> tags;
     
-    public ComponentFile(String hash, long size, long modified, String[] tags, String path) {
+    public ComponentFile(String hash, long size, long modified, String attribs, String[] tags, String path) {
         this.hash = hash;
         this.size = size;
         this.modified = modified;
+        this.attribs = attribs;
         this.path = path;
         
         this.tags = newHashSet(tags);
@@ -27,12 +29,12 @@ public class ComponentFile {
     
     static ComponentFile fromMemento(ComponentFileMemento m) {
         String[] tags = m.getTagList().toArray(new String[m.getTagCount()]);
-        return new ComponentFile(m.getHash(), m.getSize(), m.getModified(), tags, m.getPath());
+        return new ComponentFile(m.getHash(), m.getSize(), m.getModified(), m.getAttribs(), tags, m.getPath());
     }
     
     ComponentFileMemento toMemento() {
-        return newBuilder().setHash(hash).setSize(size).setModified(modified).setPath(path).addAllTag(tags)
-                .build();
+        return newBuilder().setHash(hash).setSize(size).setModified(modified).setAttribs(attribs).setPath(
+                path).addAllTag(tags).build();
     }
     
     public String hash() {
@@ -47,14 +49,11 @@ public class ComponentFile {
         return modified;
     }
     
-    public boolean hasTag(String tag) {
-        return tags.contains(tag);
-    }
-    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((attribs == null) ? 0 : attribs.hashCode());
         result = prime * result + ((hash == null) ? 0 : hash.hashCode());
         result = prime * result + (int) (modified ^ (modified >>> 32));
         result = prime * result + ((path == null) ? 0 : path.hashCode());
@@ -72,6 +71,11 @@ public class ComponentFile {
         if (getClass() != obj.getClass())
             return false;
         ComponentFile other = (ComponentFile) obj;
+        if (attribs == null) {
+            if (other.attribs != null)
+                return false;
+        } else if (!attribs.equals(other.attribs))
+            return false;
         if (hash == null) {
             if (other.hash != null)
                 return false;
@@ -92,6 +96,22 @@ public class ComponentFile {
         } else if (!tags.equals(other.tags))
             return false;
         return true;
+    }
+    
+    private boolean hasTag(String tag) {
+        return tags.contains(tag);
+    }
+    
+    public boolean isAppExec() {
+        return hasTag("exec");
+    }
+    
+    public boolean isRunJar() {
+        return hasTag("runjar");
+    }
+    
+    public boolean hasExecAttribute() {
+        return attribs.contains("exec");
     }
     
 }
