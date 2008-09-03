@@ -12,10 +12,10 @@ public class FileState {
     final long doneSize;
     private final long prevDoneSize;
     
-    FileState(LibraryFile file, long doneSize, long prevDoneSize) {
+    FileState(LibraryFile file, long doneSize, long prevSignificantlyDoneSize) {
         this.file = file;
         this.doneSize = doneSize;
-        this.prevDoneSize = prevDoneSize;
+        this.prevDoneSize = prevSignificantlyDoneSize;
     }
     
     URL url() {

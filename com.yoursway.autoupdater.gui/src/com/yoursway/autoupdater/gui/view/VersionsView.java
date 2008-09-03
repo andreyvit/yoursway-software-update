@@ -96,12 +96,6 @@ public class VersionsView {
                             }
                         });
                         
-                        //! remove it
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                            //!
-                        }
                     }
                     
                     public void downloadingCompleted() {

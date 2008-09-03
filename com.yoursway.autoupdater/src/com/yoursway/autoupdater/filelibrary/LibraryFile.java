@@ -10,7 +10,7 @@ public class LibraryFile {
     
     private final File localFile;
     
-    private long prevDoneSize;
+    private long prevSignificantlyDoneSize = 0;
     
     LibraryFile(URL url, long size, File localFile) {
         if (url == null)
@@ -25,8 +25,9 @@ public class LibraryFile {
     
     FileState state() {
         long doneSize = doneSize();
-        FileState state = new FileState(this, doneSize, prevDoneSize);
-        prevDoneSize = doneSize;
+        FileState state = new FileState(this, doneSize, prevSignificantlyDoneSize);
+        if (state.significantlyChanged())
+            prevSignificantlyDoneSize = doneSize;
         return state;
     }
     

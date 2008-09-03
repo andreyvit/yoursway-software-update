@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfField;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
+import com.yoursway.utils.log.Log;
 
 public class DownloaderImpl extends AbstractDownloader {
     
@@ -130,6 +131,7 @@ public class DownloaderImpl extends AbstractDownloader {
             InputStream in = null;
             OutputStream out = null;
             
+            Log.write("Loading " + task.url());
             try {
                 URLConnection connection = task.url().openConnection();
                 boolean append = false;
@@ -161,6 +163,7 @@ public class DownloaderImpl extends AbstractDownloader {
                         break;
                     
                     out.write(buffer, 0, read);
+                    out.flush(); //!
                     
                     broadcaster.fire().someBytesDownloaded(task.url());
                 }

@@ -55,6 +55,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
                 e.printStackTrace(); //!
             }
         } else {
+            Log.write(state.localBytes(packRequests) + " of " + state.totalBytes(packRequests));
             double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
             listener().downloading(progress);
         }
