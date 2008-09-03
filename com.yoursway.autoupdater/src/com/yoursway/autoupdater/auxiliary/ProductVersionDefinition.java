@@ -132,12 +132,8 @@ public class ProductVersionDefinition {
     }
     
     public ComponentFile executable() throws Exception {
-        for (ComponentDefinition component : components) {
-            ComponentFile exec = component.getExecIfExists();
-            if (exec != null)
-                return exec;
-        }
-        throw new Exception("The product version hasn't executable");
+        throw new UnsupportedOperationException();
+        //throw new Exception("The product version hasn't executable");
     }
     
     public Collection<ComponentFile> files() {

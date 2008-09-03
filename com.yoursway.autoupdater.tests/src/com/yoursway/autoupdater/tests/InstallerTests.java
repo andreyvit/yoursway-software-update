@@ -38,7 +38,6 @@ import com.yoursway.autoupdater.installer.InternalInstaller;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
 import com.yoursway.autoupdater.tests.internal.Pack;
-import com.yoursway.autoupdater.tests.internal.Tagger;
 import com.yoursway.utils.YsFileUtils;
 
 public class InstallerTests {
@@ -76,21 +75,13 @@ public class InstallerTests {
     private ComponentDefinition createInstallerComponent() throws IOException {
         String root = System.getProperty("user.dir");
         File installerDir = new File(root, "../com.yoursway.autoupdater.installer/build");
-        Pack pack = new Pack(installerDir, new Tagger() {
-            public String[] tagsFor(File file) {
-                if (file.getName().equals("installer.jar"))
-                    return newLinkedList("runjar").toArray(new String[1]);
-                
-                return new String[0];
-            }
-        });
+        Pack pack = new Pack(installerDir);
         
         Collection<Request> packs = newLinkedList(pack.request());
         Collection<ComponentFile> files = pack.files();
-        String[] tags = newLinkedList("installer").toArray(new String[1]);
         
         this.packs.put(pack.hash(), pack.packFile());
-        return new ComponentDefinition(files, packs, tags);
+        return new ComponentDefinition("installer", files, packs);
     }
     
     @Test
@@ -177,14 +168,14 @@ public class InstallerTests {
     }
     
     private ComponentDefinition component(int first, int last) throws IOException {
-        return new ComponentDefinition(files(first, last), packs(first, last), new String[0]);
+        return new ComponentDefinition("component-" + first + "-" + last, files(first, last), packs(first,
+                last));
     }
     
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), "-", new String[0],
-                    filepath(i)));
+            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), "-", filepath(i)));
         return files;
     }
     

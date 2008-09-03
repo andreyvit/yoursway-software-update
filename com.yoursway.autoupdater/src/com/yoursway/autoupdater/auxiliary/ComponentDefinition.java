@@ -2,7 +2,6 @@ package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento;
@@ -28,18 +26,20 @@ public class ComponentDefinition {
     private final Map<String, ComponentFile> files = newHashMap();
     private final Collection<Request> packs;
     
-    private String name;
-    private final Set<String> tags;
+    private final String name;
     
-    public ComponentDefinition(Collection<ComponentFile> files, Collection<Request> packs, String[] tags) {
+    public ComponentDefinition(String name, Collection<ComponentFile> files, Collection<Request> packs) {
+        if (name == null)
+            throw new NullPointerException("name is null");
         if (packs == null)
             throw new NullPointerException("packs is null");
+        
         for (Request packRequest : packs)
             if (!packRequest.url().toString().endsWith(".zip"))
                 throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
         
+        this.name = name;
         this.packs = packs;
-        this.tags = newHashSet(tags);
         
         for (ComponentFile file : files)
             addFile(file);
@@ -49,11 +49,9 @@ public class ComponentDefinition {
         files.put(file.hash, file);
     }
     
-    public ComponentDefinition(URL updateSite, String name, String[] tags) throws IOException,
-            InvalidFileFormatException {
+    public ComponentDefinition(URL updateSite, String name) throws IOException, InvalidFileFormatException {
         
         this.name = name;
-        this.tags = newHashSet(tags);
         packs = newLinkedList();
         
         URL url = new URL(updateSite + COMPONENTS_PATH + filename());
@@ -74,8 +72,7 @@ public class ComponentDefinition {
                 packs.add(request);
             } else if (type.equals("F")) {
                 long modified = Long.parseLong(fields[3]);
-                String[] fileTags = fields[5].split(",");
-                addFile(new ComponentFile(hash, size, modified, fields[4], fileTags, fields[6]));
+                addFile(new ComponentFile(hash, size, modified, fields[4], fields[5]));
             } else
                 throw new InvalidFileFormatException(url);
         }
@@ -96,8 +93,7 @@ public class ComponentDefinition {
             packs.add(Request.fromMemento(m));
         for (ComponentFileMemento m : memento.getFileList())
             files.add(ComponentFile.fromMemento(m));
-        String[] tags = memento.getTagList().toArray(new String[memento.getTagCount()]);
-        return new ComponentDefinition(files, packs, tags);
+        return new ComponentDefinition(memento.getName(), files, packs);
     }
     
     ComponentDefinitionMemento toMemento() {
@@ -106,7 +102,6 @@ public class ComponentDefinition {
             b.addPack(pack.toMemento());
         for (ComponentFile file : files.values())
             b.addFile(file.toMemento());
-        b.addAllTag(tags);
         return b.build();
     }
     
@@ -114,25 +109,11 @@ public class ComponentDefinition {
         return packs;
     }
     
-    private boolean hasTag(String tag) {
-        return tags.contains(tag);
+    public ComponentFile runJar() throws Exception {
+        throw new UnsupportedOperationException();
     }
     
     public boolean isInstaller() {
-        return hasTag("installer");
-    }
-    
-    public ComponentFile runJar() throws Exception {
-        for (ComponentFile file : files.values())
-            if (file.isRunJar())
-                return file;
-        throw new Exception("The component has not runjar file"); //!
-    }
-    
-    public ComponentFile getExecIfExists() {
-        for (ComponentFile file : files.values())
-            if (file.isAppExec())
-                return file;
-        return null;
+        return name.endsWith("installer");
     }
 }

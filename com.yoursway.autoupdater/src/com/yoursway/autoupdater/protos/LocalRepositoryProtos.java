@@ -16,27 +16,27 @@ public final class LocalRepositoryProtos {
     java.lang.String descriptorData =
       "\n\033LocalRepositoryProtos.proto\"9\n\016Request" +
       "Memento\022\013\n\003url\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\014\n\004sh" +
-      "a1\030\003 \002(\t\"p\n\024ComponentFileMemento\022\014\n\004hash" +
+      "a1\030\003 \002(\t\"c\n\024ComponentFileMemento\022\014\n\004hash" +
       "\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\020\n\010modified\030\003 \002(\003\022\017" +
-      "\n\007attribs\030\006 \002(\t\022\014\n\004path\030\004 \002(\t\022\013\n\003tag\030\005 \003" +
-      "(\t\"m\n\032ComponentDefinitionMemento\022#\n\004file" +
-      "\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002 " +
-      "\003(\0132\017.RequestMemento\022\013\n\003tag\030\003 \003(\t\"\032\n\030Pro" +
-      "ductDefinitionMemento\"\260\001\n\037ProductVersion" +
-      "DefinitionMemento\022*\n\007product\030\001 \002(\0132\031.Pro" +
-      "ductDefinitionMemento\022\035\n\004pack\030\002 \003(\0132\017.Re" +
-      "questMemento\022.\n\tcomponent\030\003 \003(\0132\033.Compon" +
-      "entDefinitionMemento\022\022\n\nexecutable\030\004 \002(\t" +
-      "\"\247\001\n\032LocalProductVersionMemento\0224\n\ndefin" +
-      "ition\030\001 \002(\0132 .ProductVersionDefinitionMe" +
-      "mento\0220\n\005state\030\002 \002(\0162!.LocalProductVersi" +
-      "onMemento.State\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\nIn" +
-      "stalling\020\001\"r\n\023LocalProductMemento\022-\n\ndef" +
-      "inition\030\001 \002(\0132\031.ProductDefinitionMemento" +
-      "\022,\n\007version\030\002 \003(\0132\033.LocalProductVersionM" +
-      "emento\"?\n\026LocalRepositoryMemento\022%\n\007prod" +
-      "uct\030\001 \003(\0132\024.LocalProductMementoB!\n\037com.y" +
-      "oursway.autoupdater.protos";
+      "\n\007attribs\030\006 \002(\t\022\014\n\004path\030\004 \002(\t\"n\n\032Compone" +
+      "ntDefinitionMemento\022\014\n\004name\030\003 \002(\t\022#\n\004fil" +
+      "e\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002" +
+      " \003(\0132\017.RequestMemento\"\032\n\030ProductDefiniti" +
+      "onMemento\"\260\001\n\037ProductVersionDefinitionMe" +
+      "mento\022*\n\007product\030\001 \002(\0132\031.ProductDefiniti" +
+      "onMemento\022\035\n\004pack\030\002 \003(\0132\017.RequestMemento" +
+      "\022.\n\tcomponent\030\003 \003(\0132\033.ComponentDefinitio" +
+      "nMemento\022\022\n\nexecutable\030\004 \002(\t\"\247\001\n\032LocalPr" +
+      "oductVersionMemento\0224\n\ndefinition\030\001 \002(\0132" +
+      " .ProductVersionDefinitionMemento\0220\n\005sta" +
+      "te\030\002 \002(\0162!.LocalProductVersionMemento.St" +
+      "ate\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001\"r" +
+      "\n\023LocalProductMemento\022-\n\ndefinition\030\001 \002(" +
+      "\0132\031.ProductDefinitionMemento\022,\n\007version\030" +
+      "\002 \003(\0132\033.LocalProductVersionMemento\"?\n\026Lo" +
+      "calRepositoryMemento\022%\n\007product\030\001 \003(\0132\024." +
+      "LocalProductMementoB!\n\037com.yoursway.auto" +
+      "updater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -307,17 +307,6 @@ public final class LocalRepositoryProtos {
     public boolean hasPath() { return hasPath; }
     public java.lang.String getPath() { return path_; }
     
-    // repeated string tag = 5;
-    private java.util.List<java.lang.String> tag_ =
-      java.util.Collections.emptyList();
-    public java.util.List<java.lang.String> getTagList() {
-      return tag_;
-    }
-    public int getTagCount() { return tag_.size(); }
-    public java.lang.String getTag(int index) {
-      return tag_.get(index);
-    }
-    
     public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -418,10 +407,6 @@ public final class LocalRepositoryProtos {
       }
       
       public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento buildPartial() {
-        if (result.tag_ != java.util.Collections.EMPTY_LIST) {
-          result.tag_ =
-            java.util.Collections.unmodifiableList(result.tag_);
-        }
         com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento returnMe = result;
         result = null;
         return returnMe;
@@ -517,40 +502,6 @@ public final class LocalRepositoryProtos {
         result.path_ = "";
         return this;
       }
-      
-      // repeated string tag = 5;
-      public java.util.List<java.lang.String> getTagList() {
-        return java.util.Collections.unmodifiableList(result.tag_);
-      }
-      public int getTagCount() {
-        return result.getTagCount();
-      }
-      public java.lang.String getTag(int index) {
-        return result.getTag(index);
-      }
-      public Builder setTag(int index, java.lang.String value) {
-        result.tag_.set(index, value);
-        return this;
-      }
-      public Builder addTag(java.lang.String value) {
-        if (result.tag_.isEmpty()) {
-          result.tag_ = new java.util.ArrayList<java.lang.String>();
-        }
-        result.tag_.add(value);
-        return this;
-      }
-      public Builder addAllTag(
-          java.lang.Iterable<? extends java.lang.String> values) {
-        if (result.tag_.isEmpty()) {
-          result.tag_ = new java.util.ArrayList<java.lang.String>();
-        }
-        super.addAll(values, result.tag_);
-        return this;
-      }
-      public Builder clearTag() {
-        result.tag_ = java.util.Collections.emptyList();
-        return this;
-      }
     }
   }
   
@@ -578,6 +529,12 @@ public final class LocalRepositoryProtos {
       return com.yoursway.autoupdater.protos.LocalRepositoryProtos.internal_static_ComponentDefinitionMemento_fieldAccessorTable;
     }
     
+    // required string name = 3;
+    private boolean hasName;
+    private java.lang.String name_ = "";
+    public boolean hasName() { return hasName; }
+    public java.lang.String getName() { return name_; }
+    
     // repeated .ComponentFileMemento file = 1;
     private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> file_ =
       java.util.Collections.emptyList();
@@ -598,17 +555,6 @@ public final class LocalRepositoryProtos {
     public int getPackCount() { return pack_.size(); }
     public com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento getPack(int index) {
       return pack_.get(index);
-    }
-    
-    // repeated string tag = 3;
-    private java.util.List<java.lang.String> tag_ =
-      java.util.Collections.emptyList();
-    public java.util.List<java.lang.String> getTagList() {
-      return tag_;
-    }
-    public int getTagCount() { return tag_.size(); }
-    public java.lang.String getTag(int index) {
-      return tag_.get(index);
     }
     
     public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento parseFrom(
@@ -719,15 +665,29 @@ public final class LocalRepositoryProtos {
           result.pack_ =
             java.util.Collections.unmodifiableList(result.pack_);
         }
-        if (result.tag_ != java.util.Collections.EMPTY_LIST) {
-          result.tag_ =
-            java.util.Collections.unmodifiableList(result.tag_);
-        }
         com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento returnMe = result;
         result = null;
         return returnMe;
       }
       
+      
+      // required string name = 3;
+      public boolean hasName() {
+        return result.hasName();
+      }
+      public java.lang.String getName() {
+        return result.getName();
+      }
+      public Builder setName(java.lang.String value) {
+        result.hasName = true;
+        result.name_ = value;
+        return this;
+      }
+      public Builder clearName() {
+        result.hasName = false;
+        result.name_ = "";
+        return this;
+      }
       
       // repeated .ComponentFileMemento file = 1;
       public java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento> getFileList() {
@@ -816,40 +776,6 @@ public final class LocalRepositoryProtos {
       }
       public Builder clearPack() {
         result.pack_ = java.util.Collections.emptyList();
-        return this;
-      }
-      
-      // repeated string tag = 3;
-      public java.util.List<java.lang.String> getTagList() {
-        return java.util.Collections.unmodifiableList(result.tag_);
-      }
-      public int getTagCount() {
-        return result.getTagCount();
-      }
-      public java.lang.String getTag(int index) {
-        return result.getTag(index);
-      }
-      public Builder setTag(int index, java.lang.String value) {
-        result.tag_.set(index, value);
-        return this;
-      }
-      public Builder addTag(java.lang.String value) {
-        if (result.tag_.isEmpty()) {
-          result.tag_ = new java.util.ArrayList<java.lang.String>();
-        }
-        result.tag_.add(value);
-        return this;
-      }
-      public Builder addAllTag(
-          java.lang.Iterable<? extends java.lang.String> values) {
-        if (result.tag_.isEmpty()) {
-          result.tag_ = new java.util.ArrayList<java.lang.String>();
-        }
-        super.addAll(values, result.tag_);
-        return this;
-      }
-      public Builder clearTag() {
-        result.tag_ = java.util.Collections.emptyList();
         return this;
       }
     }
@@ -1990,7 +1916,7 @@ public final class LocalRepositoryProtos {
       internal_static_ComponentFileMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ComponentFileMemento_descriptor,
-          new java.lang.String[] { "Hash", "Size", "Modified", "Attribs", "Path", "Tag", },
+          new java.lang.String[] { "Hash", "Size", "Modified", "Attribs", "Path", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor
@@ -2001,7 +1927,7 @@ public final class LocalRepositoryProtos {
       internal_static_ComponentDefinitionMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ComponentDefinitionMemento_descriptor,
-          new java.lang.String[] { "File", "Pack", "Tag", },
+          new java.lang.String[] { "Name", "File", "Pack", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor

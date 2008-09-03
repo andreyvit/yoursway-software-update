@@ -1,9 +1,6 @@
 package com.yoursway.autoupdater.auxiliary;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento.newBuilder;
-
-import java.util.Set;
 
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentFileMemento;
 
@@ -15,26 +12,21 @@ public class ComponentFile {
     private final String attribs;
     final String path;
     
-    private final Set<String> tags;
-    
-    public ComponentFile(String hash, long size, long modified, String attribs, String[] tags, String path) {
+    public ComponentFile(String hash, long size, long modified, String attribs, String path) {
         this.hash = hash;
         this.size = size;
         this.modified = modified;
         this.attribs = attribs;
         this.path = path;
-        
-        this.tags = newHashSet(tags);
     }
     
     static ComponentFile fromMemento(ComponentFileMemento m) {
-        String[] tags = m.getTagList().toArray(new String[m.getTagCount()]);
-        return new ComponentFile(m.getHash(), m.getSize(), m.getModified(), m.getAttribs(), tags, m.getPath());
+        return new ComponentFile(m.getHash(), m.getSize(), m.getModified(), m.getAttribs(), m.getPath());
     }
     
     ComponentFileMemento toMemento() {
         return newBuilder().setHash(hash).setSize(size).setModified(modified).setAttribs(attribs).setPath(
-                path).addAllTag(tags).build();
+                path).build();
     }
     
     public String hash() {
@@ -58,7 +50,6 @@ public class ComponentFile {
         result = prime * result + (int) (modified ^ (modified >>> 32));
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + (int) (size ^ (size >>> 32));
-        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
         return result;
     }
     
@@ -90,24 +81,7 @@ public class ComponentFile {
             return false;
         if (size != other.size)
             return false;
-        if (tags == null) {
-            if (other.tags != null)
-                return false;
-        } else if (!tags.equals(other.tags))
-            return false;
         return true;
-    }
-    
-    private boolean hasTag(String tag) {
-        return tags.contains(tag);
-    }
-    
-    public boolean isAppExec() {
-        return hasTag("exec");
-    }
-    
-    public boolean isRunJar() {
-        return hasTag("runjar");
     }
     
     public boolean hasExecAttribute() {
