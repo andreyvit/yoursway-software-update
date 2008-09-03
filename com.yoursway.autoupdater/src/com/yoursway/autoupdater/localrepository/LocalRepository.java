@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
@@ -23,20 +24,6 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMeme
 import com.yoursway.utils.YsFileUtils;
 
 public class LocalRepository {
-    
-    private final class UpdatableApplicationWithLocalRepository implements UpdatableApplication {
-        public LocalRepository localRepository() {
-            return LocalRepository.this;
-        }
-        
-        public File rootFolder(String productName) {
-            throw new UnsupportedOperationException();
-        }
-        
-        public SuiteDefinition suite() {
-            throw new UnsupportedOperationException();
-        }
-    }
     
     private final Map<ProductDefinition, LocalProduct> products = new HashMap<ProductDefinition, LocalProduct>();
     private final Installer installer;
@@ -112,6 +99,29 @@ public class LocalRepository {
             return new LocalRepository(app, installer);
         } catch (Throwable e) {
             throw new LocalRepositoryException(e);
+        }
+    }
+    
+    private final class UpdatableApplicationWithLocalRepository implements UpdatableApplication {
+        public LocalRepository localRepository() {
+            return LocalRepository.this;
+        }
+        
+        public File rootFolder(String productName) {
+            throw new UnsupportedOperationException();
+        }
+        
+        public SuiteDefinition suite() {
+            throw new UnsupportedOperationException();
+        }
+        
+        public ComponentStopper componentStopper(String productName) {
+            return new ComponentStopper() {
+                public boolean stop() {
+                    System.exit(0);
+                    return true;
+                }
+            };
         }
     }
 }

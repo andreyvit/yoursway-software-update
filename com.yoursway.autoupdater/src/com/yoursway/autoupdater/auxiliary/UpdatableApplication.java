@@ -13,4 +13,6 @@ public interface UpdatableApplication {
     
     LocalRepository localRepository();
     
+    ComponentStopper componentStopper(String productName);
+    
 }

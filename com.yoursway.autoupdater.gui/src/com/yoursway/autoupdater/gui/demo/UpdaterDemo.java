@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.gui.view.VersionsView;
@@ -45,6 +46,15 @@ public class UpdaterDemo {
             
             public File rootFolder(String productName) {
                 throw new UnsupportedOperationException();
+            }
+            
+            public ComponentStopper componentStopper(String productName) {
+                return new ComponentStopper() {
+                    public boolean stop() {
+                        System.exit(0);
+                        return true;
+                    }
+                };
             }
         };
         

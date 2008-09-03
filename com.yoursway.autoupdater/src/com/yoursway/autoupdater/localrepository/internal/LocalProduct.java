@@ -126,14 +126,7 @@ public class LocalProduct {
     }
     
     public ComponentStopper componentStopper() {
-        //>
-        
-        return new ComponentStopper() {
-            public boolean stop() {
-                System.exit(0);
-                return true;
-            }
-        };
+        return app.componentStopper(definition.name());
     }
     
     public File rootFolder() throws IOException {

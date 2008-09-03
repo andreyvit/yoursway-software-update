@@ -13,7 +13,7 @@ import com.yoursway.autoupdater.installer.external.InstallerCommunication;
 
 public class InstallerServer extends InstallerCommunication {
     
-    private static final int ACCEPT_TIMEOUT = 5000;
+    private static final int ACCEPT_TIMEOUT = 30000;
     
     private final ServerSocket server;
     private BufferedReader reader;
