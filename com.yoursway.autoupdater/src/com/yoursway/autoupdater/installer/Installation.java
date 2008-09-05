@@ -28,6 +28,7 @@ import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Bu
 
 public class Installation {
     
+    private static final String EXECUTABLE_PATH = "Contents/MacOS/eclipse";
     private final ProductVersionDefinition currentVD;
     private final ProductVersionDefinition newVD;
     final Map<String, File> packs;
@@ -120,7 +121,7 @@ public class Installation {
         if (!ok)
             log.error("Cannot set lastmodified property of file " + targetFile);
         
-        if (file.hasExecAttribute()) {
+        if (file.hasExecAttribute() || file.path().equals(EXECUTABLE_PATH)) {
             String command = "chmod +x " + targetFile.getCanonicalPath();
             log.debug(command);
             Process process = getRuntime().exec(command);
@@ -155,7 +156,8 @@ public class Installation {
     }
     
     public void startVersionExecutable(InstallerLog log) throws Exception {
-        File executable = new File(target, newVD.executable().path());
+        //File executable = new File(target, newVD.executable().path());
+        File executable = new File(target, EXECUTABLE_PATH);
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(target);
