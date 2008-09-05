@@ -152,8 +152,8 @@ public class ExternalInstaller implements Installer {
     
     public static void afterInstall() throws InstallerException {
         try {
-            client.receive("OK");
-            client.send("OK");
+            client().receive("OK");
+            client().send("OK");
         } catch (Throwable e) {
             throw new InstallerException("Cannot communicate with external installer", e);
         }
