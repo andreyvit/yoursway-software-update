@@ -97,7 +97,7 @@ public class ComponentDefinition {
     }
     
     ComponentDefinitionMemento toMemento() {
-        Builder b = ComponentDefinitionMemento.newBuilder();
+        Builder b = ComponentDefinitionMemento.newBuilder().setName(name);
         for (Request pack : packs)
             b.addPack(pack.toMemento());
         for (ComponentFile file : files.values())
@@ -109,11 +109,7 @@ public class ComponentDefinition {
         return packs;
     }
     
-    public ComponentFile runJar() throws Exception {
-        throw new UnsupportedOperationException();
-    }
-    
     public boolean isInstaller() {
-        return name.endsWith("installer");
+        return name.contains("extinstaller");
     }
 }

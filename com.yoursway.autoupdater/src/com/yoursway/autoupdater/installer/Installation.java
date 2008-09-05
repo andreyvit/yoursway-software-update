@@ -186,10 +186,4 @@ public class Installation {
             setupFile(file, externalInstaller.packs(), InstallerLog.NOP, dir);
     }
     
-    public String externalInstallerRunJarPath() throws Exception {
-        ComponentDefinition externalInstaller = newVD.installer();
-        
-        return externalInstaller.runJar().path();
-    }
-    
 }

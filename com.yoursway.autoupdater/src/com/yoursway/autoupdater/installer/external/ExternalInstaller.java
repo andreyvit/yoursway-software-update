@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.installer.external;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.yoursway.utils.YsFileUtils.createTempFolder;
 
 import java.io.BufferedOutputStream;
@@ -7,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.installer.Installation;
@@ -22,8 +24,6 @@ public class ExternalInstaller implements Installer {
     private boolean prepared;
     
     private final boolean gui;
-    
-    private Object jarPath;
     
     private static InstallerClient client;
     
@@ -86,12 +86,6 @@ public class ExternalInstaller implements Installer {
             throw new InstallerException("Cannot write data for external installer", e);
         }
         
-        try {
-            jarPath = installation.externalInstallerRunJarPath();
-        } catch (Exception e) {
-            throw new InstallerException("ExternalInstaller component runjar file doesn't exist", e);
-        }
-        
         prepared = true;
     }
     
@@ -102,22 +96,52 @@ public class ExternalInstaller implements Installer {
         String javaHome = System.getProperty("java.home");
         File java = new File(javaHome, "bin/java"); //! check at windows
         
-        File installer = new File(folder, "installer.jar"); //!
+        //File installer = new File(folder, "com.yoursway.autoupdater.installer_1.0.0.jar"); //!
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(folder);
         
-        if (gui)
+        List<String> cmd;
+        try {
+            cmd = newLinkedList();
+            cmd.add(java.getCanonicalPath());
+            cmd.add("-XstartOnFirstThread");
+            cmd.add("-cp");
+            
+            StringBuilder sb = new StringBuilder();
+            getJars(sb, folder);
+            cmd.add(sb.substring(1));
+            
+            cmd.add("com.yoursway.autoupdater.installer.InstallerMain");
+            cmd.add("gui");
+        } catch (Exception e) {
+            throw new InstallerException("Cannot build java cmd", e); //!
+        }
+        pb.command(cmd);
+        
+        Log.write(cmd.toString());
+        
+        /*if (gui)
             pb.command(java.getAbsolutePath(), "-XstartOnFirstThread", "-jar", installer.getAbsolutePath(),
                     "gui");
         else
-            pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());
-        
+            pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());*/
+
         try {
             pb.start();
         } catch (IOException e) {
             throw new InstallerException("Cannot start the external installer", e);
         }
+    }
+    
+    private void getJars(StringBuilder sb, File folder) throws IOException {
+        for (File file : folder.listFiles()) {
+            if (file.getName().endsWith(".jar"))
+                sb.append(":" + file.getCanonicalPath());
+            else if (file.isDirectory())
+                getJars(sb, file);
+        }
+        
     }
     
     public static InstallerClient client() {
