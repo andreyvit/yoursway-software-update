@@ -81,7 +81,7 @@ public class InstallerTests {
         Collection<ComponentFile> files = pack.files();
         
         this.packs.put(pack.hash(), pack.packFile());
-        return new ComponentDefinition("installer", files, packs);
+        return new ComponentDefinition("extinstaller", files, packs);
     }
     
     @Test

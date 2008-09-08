@@ -6,11 +6,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
-import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesProvider;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
 import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
@@ -28,14 +27,19 @@ public class LocalRepository {
     private final Map<ProductDefinition, LocalProduct> products = new HashMap<ProductDefinition, LocalProduct>();
     private final Installer installer;
     private final FileLibrary fileLibrary;
-    private final UpdatableApplication app;
+    
+    private final UpdatableApplicationProductFeaturesProvider featuresProvider;
     
     public LocalRepository() throws IOException {
         this(new ExternalInstaller());
     }
     
-    public LocalRepository(UpdatableApplication app, Installer installer) throws IOException {
-        this.app = app;
+    public LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider, Installer installer)
+            throws IOException {
+        
+        if (featuresProvider == null)
+            throw new NullPointerException("featuresProvider is null");
+        this.featuresProvider = featuresProvider;
         
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
@@ -45,7 +49,7 @@ public class LocalRepository {
     }
     
     public LocalRepository(Installer installer) throws IOException {
-        app = new UpdatableApplicationWithLocalRepository();
+        featuresProvider = UpdatableApplicationProductFeaturesProvider.MOCK;
         
         Downloader downloader = new DownloaderImpl();
         File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
@@ -58,7 +62,7 @@ public class LocalRepository {
         ProductDefinition productDefinition = version.product();
         LocalProduct localProduct = products.get(productDefinition);
         if (localProduct == null) {
-            localProduct = new LocalProduct(productDefinition, fileLibrary, installer, app);
+            localProduct = new LocalProduct(productDefinition, fileLibrary, installer, featuresProvider);
             products.put(productDefinition, localProduct);
         }
         localProduct.startUpdating(version, listener);
@@ -81,7 +85,7 @@ public class LocalRepository {
     
     private void fromMemento(LocalRepositoryMemento memento) {
         for (LocalProductMemento m : memento.getProductList()) {
-            LocalProduct product = new LocalProduct(m, fileLibrary, installer, app);
+            LocalProduct product = new LocalProduct(m, fileLibrary, installer, featuresProvider);
             products.put(product.definition(), product);
         }
     }
@@ -102,26 +106,4 @@ public class LocalRepository {
         }
     }
     
-    private final class UpdatableApplicationWithLocalRepository implements UpdatableApplication {
-        public LocalRepository localRepository() {
-            return LocalRepository.this;
-        }
-        
-        public File rootFolder(String productName) {
-            throw new UnsupportedOperationException();
-        }
-        
-        public SuiteDefinition suite() {
-            throw new UnsupportedOperationException();
-        }
-        
-        public ComponentStopper componentStopper(String productName) {
-            return new ComponentStopper() {
-                public boolean stop() {
-                    System.exit(0);
-                    return true;
-                }
-            };
-        }
-    }
 }

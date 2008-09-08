@@ -10,7 +10,7 @@ Export-Package:
  com.yoursway.autoupdater.filelibrary.downloader;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.filelibrary.urlfilemapper;x-friends:="com.yoursway.autoupdater.tests",
  com.yoursway.autoupdater.installer;x-friends:="com.yoursway.autoupdater.tests,com.yoursway.autoupdater.installer",
- com.yoursway.autoupdater.installer.external;x-friends:="com.yoursway.autoupdater.installer,com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.installer.external;x-friends:="com.yoursway.autoupdater.installer,com.yoursway.autoupdater.tests,com.yoursway.autoupdater.gui",
  com.yoursway.autoupdater.installer.log;x-friends:="com.yoursway.autoupdater.installer",
  com.yoursway.autoupdater.localrepository,
  com.yoursway.autoupdater.localrepository.internal;x-friends:="com.yoursway.autoupdater.tests",

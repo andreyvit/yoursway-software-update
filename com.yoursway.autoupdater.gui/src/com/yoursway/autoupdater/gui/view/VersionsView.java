@@ -10,26 +10,31 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
+import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
 public class VersionsView {
     
-    public VersionsView(Composite parent, final UpdatableApplication app, UpdaterStyle style) {
-        parent.setLayout(new GridLayout());
+    private final Shell shell;
+    
+    public VersionsView(Shell shell, final UpdatableApplication app, SuiteDefinition suite,
+            final LocalRepository localRepository, UpdaterStyle style) {
+        shell.setLayout(new GridLayout());
+        this.shell = shell;
         
-        final Table versions = new Table(parent, SWT.SINGLE);
+        final Table versions = new Table(shell, SWT.SINGLE);
         versions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        for (ProductVersionDefinition version : app.suite().versions()) {
+        for (ProductVersionDefinition version : suite.versions()) {
             TableItem item = new TableItem(versions, SWT.NONE);
             item.setData(version);
             item.setText(version.toString());
@@ -37,7 +42,7 @@ public class VersionsView {
                 item.setForeground(style.damagedColor());
         }
         
-        Composite panel = new Composite(parent, SWT.NONE);
+        Shell panel = new Shell(shell, SWT.NONE);
         panel.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
         panel.setLayout(swtDefaults().margins(0, 0).extendedMargins(0, 0, 0, 0).numColumns(2).create());
         
@@ -74,7 +79,7 @@ public class VersionsView {
                 TableItem item = selection[0];
                 ProductVersionDefinition version = (ProductVersionDefinition) item.getData();
                 
-                app.localRepository().startUpdating(version, new UpdatingListener() {
+                localRepository.startUpdating(version, new UpdatingListener() {
                     public void downloadingStarted() {
                         progress.getDisplay().asyncExec(new Runnable() {
                             public void run() {
@@ -126,15 +131,32 @@ public class VersionsView {
         
     }
     
-    public static void show(UpdatableApplication app) {
+    private static VersionsView show(UpdatableApplication app, SuiteDefinition suite,
+            LocalRepository localRepository) {
+        
         Shell shell = new Shell();
         //! magic
         shell.setText("Autoupdater");
         shell.setBounds(new Rectangle(480, 320, 320, 240));
         
         UpdaterStyleMock style = new UpdaterStyleMock(shell.getDisplay());
-        new VersionsView(shell, app, style);
+        VersionsView view = new VersionsView(shell, app, suite, localRepository, style);
         
+        return view;
+    }
+    
+    public static VersionsViewFactory factory() {
+        return new VersionsViewFactory() {
+            
+            public VersionsView createView(UpdatableApplication app, SuiteDefinition suite,
+                    LocalRepository repo) {
+                
+                return show(app, suite, repo);
+            }
+        };
+    }
+    
+    public void show() {
         shell.open();
     }
 }

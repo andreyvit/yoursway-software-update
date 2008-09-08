@@ -43,7 +43,7 @@ public class LocalRepositoryTests {
     }
     
     @Test
-    public void integration_simple() throws IOException, InterruptedException {
+    public void integration_simple_without_installing() throws IOException, InterruptedException {
         final int first = 5;
         final int last = 12;
         

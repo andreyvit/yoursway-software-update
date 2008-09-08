@@ -82,7 +82,7 @@ public class SuiteDefinition {
             URL url = new URL(updateSite);
             return new SuiteDefinition(url, name);
         } catch (Throwable e) {
-            throw new SuiteDefinitionLoadingException(e);
+            throw new SuiteDefinitionLoadingException(updateSite, name, e);
         }
     }
     

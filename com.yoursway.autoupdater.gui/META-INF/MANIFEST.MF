@@ -8,4 +8,4 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.4.0",
  com.yoursway.utils;bundle-version="1.0.0",
  org.eclipse.jface;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: com.yoursway.autoupdater.gui.view
+Export-Package: com.yoursway.autoupdater.gui.controller

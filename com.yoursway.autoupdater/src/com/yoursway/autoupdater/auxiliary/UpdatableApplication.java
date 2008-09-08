@@ -1,18 +1,14 @@
 package com.yoursway.autoupdater.auxiliary;
 
-import java.io.File;
-import java.io.IOException;
 
-import com.yoursway.autoupdater.localrepository.LocalRepository;
-
-public interface UpdatableApplication {
+public interface UpdatableApplication extends UpdatableApplicationProductFeaturesProvider {
     
-    File rootFolder(String productName) throws IOException;
+    String updateSite();
     
-    SuiteDefinition suite();
+    String suiteName();
     
-    LocalRepository localRepository();
+    boolean inInstallingState();
     
-    ComponentStopper componentStopper(String productName);
+    void setInstallingState(boolean value);
     
 }

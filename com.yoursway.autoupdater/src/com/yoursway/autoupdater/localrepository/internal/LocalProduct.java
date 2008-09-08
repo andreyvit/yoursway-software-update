@@ -12,7 +12,8 @@ import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesProvider;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
@@ -33,10 +34,10 @@ public class LocalProduct {
     final OrderManager orderManager;
     final Installer installer;
     
-    private final UpdatableApplication app;
+    private final UpdatableApplicationProductFeatures features;
     
     public LocalProduct(LocalProductMemento memento, FileLibrary fileLibrary, Installer installer,
-            UpdatableApplication app) {
+            UpdatableApplicationProductFeaturesProvider featuresProvider) {
         this.orderManager = fileLibrary.orderManager();
         this.fileLibrary = fileLibrary;
         this.installer = installer;
@@ -51,11 +52,11 @@ public class LocalProduct {
             }
         }
         
-        this.app = app;
+        features = featuresProvider.getFeatures(definition.name());
     }
     
     public LocalProduct(ProductDefinition definition, FileLibrary fileLibrary, Installer installer,
-            UpdatableApplication app) {
+            UpdatableApplicationProductFeaturesProvider featuresProvider) {
         
         if (definition == null)
             throw new NullPointerException("definition is null");
@@ -63,8 +64,6 @@ public class LocalProduct {
             throw new NullPointerException("fileLibrary is null");
         if (installer == null)
             throw new NullPointerException("installer is null");
-        if (app == null)
-            throw new NullPointerException("app is null");
         
         this.orderManager = fileLibrary.orderManager();
         this.fileLibrary = fileLibrary;
@@ -72,7 +71,7 @@ public class LocalProduct {
         
         this.definition = definition;
         
-        this.app = app;
+        features = featuresProvider.getFeatures(definition.name());
     }
     
     public void startUpdating(ProductVersionDefinition versionDefinition, UpdatingListener listener) {
@@ -126,12 +125,11 @@ public class LocalProduct {
     }
     
     public ComponentStopper componentStopper() {
-        return app.componentStopper(definition.name());
+        return features.componentStopper();
     }
     
     public File rootFolder() throws IOException {
-        return app.rootFolder(definition.name());
-        // return YsFileUtils.createTempFolder("autoupdater.appRootFolder", null);
+        return features.rootFolder();
     }
     
 }
