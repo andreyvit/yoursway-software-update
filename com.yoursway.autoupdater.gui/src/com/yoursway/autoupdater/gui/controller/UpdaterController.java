@@ -13,6 +13,7 @@ public class UpdaterController {
     
     private final UpdatableApplication app;
     private final VersionsViewFactory viewFactory;
+    private LocalRepository repo;
     
     public UpdaterController(UpdatableApplication app) {
         this(app, null);
@@ -27,14 +28,21 @@ public class UpdaterController {
     }
     
     public void onStart() {
-        if (!app.inInstallingState())
-            return;
+        if (app.inInstallingState()) {
+            try {
+                ExternalInstaller.afterInstall();
+                app.setInstallingState(false);
+            } catch (AutoupdaterException e) {
+                // cannot to communicate with external installer
+                app.view().displayAutoupdaterErrorMessage(e); //?
+            } catch (Throwable e) {
+                app.view().displayAutoupdaterErrorMessage(new AutoupdaterException(e));
+            }
+        }
         
         try {
-            ExternalInstaller.afterInstall();
-            app.setInstallingState(false);
+            repo = LocalRepository.createForGUI(app);
         } catch (AutoupdaterException e) {
-            // cannot to communicate with external installer
             app.view().displayAutoupdaterErrorMessage(e); //?
         }
     }
@@ -42,7 +50,8 @@ public class UpdaterController {
     public void updateApplication() {
         try {
             SuiteDefinition suite = SuiteDefinition.load(app.updateSite(), app.suiteName());
-            LocalRepository repo = LocalRepository.createForGUI(app);
+            if (repo == null)
+                throw new AutoupdaterException("LocalRepository has not yet been created");
             
             viewFactory.createView(app.view(), suite, repo).show();
         } catch (AutoupdaterException e) {

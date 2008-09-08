@@ -6,9 +6,12 @@ public class AutoupdaterException extends Exception {
     public AutoupdaterException(String message) {
         super(message);
     }
-
+    
     public AutoupdaterException(String message, Throwable cause) {
         super(message, cause);
     }
     
+    public AutoupdaterException(Throwable cause) {
+        super("AutoupdaterException: " + cause.getMessage(), cause);
+    }
 }

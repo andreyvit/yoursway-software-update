@@ -1,5 +1,8 @@
 package com.yoursway.autoupdater.gui.demo;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -15,6 +18,7 @@ import com.yoursway.autoupdater.gui.controller.UpdaterController;
 import com.yoursway.autoupdater.gui.view.VersionsView;
 import com.yoursway.autoupdater.gui.view.VersionsViewFactory;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
+import com.yoursway.utils.YsFileUtils;
 
 public class UpdaterDemo {
     
@@ -55,6 +59,10 @@ public class UpdaterDemo {
                         fatalError(e);
                     }
                 };
+            }
+            
+            public File localRepositoryPlace() throws IOException {
+                return YsFileUtils.createTempFolder("autoupdater-demo-repo-", null);
             }
             
         };

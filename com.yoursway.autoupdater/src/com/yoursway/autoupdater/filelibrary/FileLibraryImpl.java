@@ -35,6 +35,8 @@ public class FileLibraryImpl implements FileLibrary {
         if (placeDir == null)
             throw new NullPointerException("placeDir is null");
         
+        placeDir.mkdirs();
+        
         this.downloader = downloader;
         urlFileMapper = new URLFileMapper(placeDir, files);
         

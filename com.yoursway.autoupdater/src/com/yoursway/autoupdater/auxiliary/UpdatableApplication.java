@@ -1,5 +1,8 @@
 package com.yoursway.autoupdater.auxiliary;
 
+import java.io.File;
+import java.io.IOException;
+
 public interface UpdatableApplication extends UpdatableApplicationProductFeaturesProvider {
     
     String updateSite();
@@ -11,5 +14,7 @@ public interface UpdatableApplication extends UpdatableApplicationProductFeature
     void setInstallingState(boolean value);
     
     UpdatableApplicationView view();
+    
+    File localRepositoryPlace() throws IOException;
     
 }

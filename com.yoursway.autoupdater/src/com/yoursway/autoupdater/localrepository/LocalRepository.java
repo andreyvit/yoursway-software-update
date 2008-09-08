@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.localrepository;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -25,38 +26,43 @@ import com.yoursway.utils.YsFileUtils;
 
 public class LocalRepository {
     
+    private final File place;
     private final Map<ProductDefinition, LocalProduct> products = new HashMap<ProductDefinition, LocalProduct>();
     private final Installer installer;
     private final FileLibrary fileLibrary;
     
     private final UpdatableApplicationProductFeaturesProvider featuresProvider;
     
+    @Deprecated
     public LocalRepository() throws IOException {
         this(new ExternalInstaller());
     }
     
-    public LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider, Installer installer)
-            throws IOException {
-        
-        if (featuresProvider == null)
-            throw new NullPointerException("featuresProvider is null");
-        this.featuresProvider = featuresProvider;
-        
-        Downloader downloader = new DownloaderImpl();
-        File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
-        place.mkdir();
-        fileLibrary = new FileLibraryImpl(downloader, place);
-        this.installer = installer;
-    }
-    
+    @Deprecated
     public LocalRepository(Installer installer) throws IOException {
         featuresProvider = UpdatableApplicationProductFeaturesProvider.MOCK;
         
         Downloader downloader = new DownloaderImpl();
-        File place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
-        place.mkdir();
-        fileLibrary = new FileLibraryImpl(downloader, place);
+        place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
+        fileLibrary = new FileLibraryImpl(downloader, new File(place, "fileLibrary"));
         this.installer = installer;
+    }
+    
+    public LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider, Installer installer,
+            File placeDir) throws IOException {
+        
+        if (featuresProvider == null)
+            throw new NullPointerException("featuresProvider is null");
+        if (placeDir == null)
+            throw new NullPointerException("placeDir is null");
+        this.featuresProvider = featuresProvider;
+        place = placeDir;
+        
+        Downloader downloader = new DownloaderImpl();
+        fileLibrary = new FileLibraryImpl(downloader, new File(place, "fileLibrary"));
+        this.installer = installer;
+        
+        atStartup();
     }
     
     public void startUpdating(ProductVersionDefinition version, UpdatingListener listener)
@@ -71,14 +77,13 @@ public class LocalRepository {
         try {
             localProduct.startUpdating(version, listener);
         } catch (Exception e) {
-            throw new AutoupdaterException(e.getMessage(), e);
+            throw new AutoupdaterException(e);
         }
     }
     
     public void atStartup() {
-        
-        InputStream in = null; //> get from storage
         try {
+            InputStream in = new FileInputStream(mementoFile());
             LocalRepositoryMemento memento = LocalRepositoryMemento.parseFrom(in);
             fromMemento(memento);
         } catch (IOException e) {
@@ -88,6 +93,10 @@ public class LocalRepository {
         
         for (LocalProduct product : products.values())
             product.continueWork();
+    }
+    
+    private File mementoFile() {
+        return new File(place, "localRepository");
     }
     
     private void fromMemento(LocalRepositoryMemento memento) {
@@ -107,7 +116,7 @@ public class LocalRepository {
     public static LocalRepository createForGUI(UpdatableApplication app) throws LocalRepositoryException {
         try {
             ExternalInstaller installer = new ExternalInstaller(true);
-            return new LocalRepository(app, installer);
+            return new LocalRepository(app, installer, app.localRepositoryPlace());
         } catch (Throwable e) {
             throw new LocalRepositoryException(e);
         }
