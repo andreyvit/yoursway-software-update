@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.auxiliary;
 
-
 public interface UpdatableApplication extends UpdatableApplicationProductFeaturesProvider {
     
     String updateSite();
@@ -10,5 +9,7 @@ public interface UpdatableApplication extends UpdatableApplicationProductFeature
     boolean inInstallingState();
     
     void setInstallingState(boolean value);
+    
+    UpdatableApplicationView view();
     
 }

@@ -26,24 +26,28 @@ public class UpdaterController {
         this.viewFactory = viewFactory != null ? viewFactory : VersionsView.factory();
     }
     
-    public void onStart() throws AutoupdaterException {
+    public void onStart() {
         if (!app.inInstallingState())
             return;
         
-        ExternalInstaller.afterInstall();
-        app.setInstallingState(false);
+        try {
+            ExternalInstaller.afterInstall();
+            app.setInstallingState(false);
+        } catch (AutoupdaterException e) {
+            // cannot to communicate with external installer
+            app.view().displayAutoupdaterErrorMessage(e); //?
+        }
     }
     
-    public void updateApplication() throws AutoupdaterException {
-        viewFactory.createView(app, suite(), repo()).show();
-    }
-    
-    private SuiteDefinition suite() throws AutoupdaterException {
-        return SuiteDefinition.load(app.updateSite(), app.suiteName());
-    }
-    
-    private LocalRepository repo() throws AutoupdaterException {
-        return LocalRepository.createForGUI(app);
+    public void updateApplication() {
+        try {
+            SuiteDefinition suite = SuiteDefinition.load(app.updateSite(), app.suiteName());
+            LocalRepository repo = LocalRepository.createForGUI(app);
+            
+            viewFactory.createView(app.view(), suite, repo).show();
+        } catch (AutoupdaterException e) {
+            app.view().displayAutoupdaterErrorMessage(e);
+        }
     }
     
 }

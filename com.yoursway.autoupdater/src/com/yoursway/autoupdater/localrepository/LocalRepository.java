@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
@@ -58,14 +59,20 @@ public class LocalRepository {
         this.installer = installer;
     }
     
-    public void startUpdating(ProductVersionDefinition version, UpdatingListener listener) {
+    public void startUpdating(ProductVersionDefinition version, UpdatingListener listener)
+            throws AutoupdaterException {
         ProductDefinition productDefinition = version.product();
         LocalProduct localProduct = products.get(productDefinition);
         if (localProduct == null) {
             localProduct = new LocalProduct(productDefinition, fileLibrary, installer, featuresProvider);
             products.put(productDefinition, localProduct);
         }
-        localProduct.startUpdating(version, listener);
+        
+        try {
+            localProduct.startUpdating(version, listener);
+        } catch (Exception e) {
+            throw new AutoupdaterException(e.getMessage(), e);
+        }
     }
     
     public void atStartup() {

@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
@@ -43,7 +44,8 @@ public class LocalRepositoryTests {
     }
     
     @Test
-    public void integration_simple_without_installing() throws IOException, InterruptedException {
+    public void integration_simple_without_installing() throws IOException, InterruptedException,
+            AutoupdaterException {
         final int first = 5;
         final int last = 12;
         

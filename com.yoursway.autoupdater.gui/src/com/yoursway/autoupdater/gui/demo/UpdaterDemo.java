@@ -10,6 +10,7 @@ import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
 import com.yoursway.autoupdater.gui.controller.UpdaterController;
 import com.yoursway.autoupdater.gui.view.VersionsView;
 import com.yoursway.autoupdater.gui.view.VersionsViewFactory;
@@ -48,20 +49,24 @@ public class UpdaterDemo {
                 return UpdatableApplicationProductFeatures.MOCK;
             }
             
+            public UpdatableApplicationView view() {
+                return new UpdatableApplicationView() {
+                    public void displayAutoupdaterErrorMessage(AutoupdaterException e) {
+                        fatalError(e);
+                    }
+                };
+            }
+            
         };
         
         VersionsViewFactory viewFactory = new VersionsViewFactory() {
-            public VersionsView createView(UpdatableApplication app, SuiteDefinition suite,
+            public VersionsView createView(UpdatableApplicationView appView, SuiteDefinition suite,
                     LocalRepository repo) {
-                return new VersionsView(shell, app, suite, repo, new UpdaterStyleMock(display));
+                return new VersionsView(shell, appView, suite, repo, new UpdaterStyleMock(display));
             }
         };
         UpdaterController controller = new UpdaterController(app, viewFactory);
-        try {
-            controller.updateApplication();
-        } catch (AutoupdaterException e) {
-            fatalError(e);
-        }
+        controller.updateApplication();
         
         while (!shell.isDisposed()) {
             try {

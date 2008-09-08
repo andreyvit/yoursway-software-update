@@ -16,9 +16,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
 import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
@@ -26,17 +27,22 @@ import com.yoursway.autoupdater.localrepository.UpdatingListener;
 public class VersionsView {
     
     private final LocalRepository repo;
+    private final UpdatableApplicationView appView;
     
     private final Shell shell;
     private final Table versions;
     private final ProgressBar progress;
+    private final Button update;
     
-    public VersionsView(Shell shell, final UpdatableApplication app, SuiteDefinition suite,
+    public VersionsView(Shell shell, final UpdatableApplicationView appView, SuiteDefinition suite,
             LocalRepository repo, UpdaterStyle style) {
         
         if (repo == null)
             throw new NullPointerException("repo is null");
+        if (appView == null)
+            throw new NullPointerException("appView is null");
         this.repo = repo;
+        this.appView = appView;
         
         shell.setLayout(new GridLayout());
         this.shell = shell;
@@ -60,7 +66,7 @@ public class VersionsView {
         progress.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         progress.setVisible(false);
         
-        final Button update = new Button(panel, SWT.NONE);
+        update = new Button(panel, SWT.NONE);
         update.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
         update.setText("Update");
         update.setEnabled(false);
@@ -95,7 +101,7 @@ public class VersionsView {
     public static VersionsViewFactory factory() {
         return new VersionsViewFactory() {
             
-            public VersionsView createView(UpdatableApplication app, SuiteDefinition suite,
+            public VersionsView createView(UpdatableApplicationView appView, SuiteDefinition suite,
                     LocalRepository repo) {
                 
                 Shell shell = new Shell();
@@ -104,7 +110,7 @@ public class VersionsView {
                 shell.setBounds(new Rectangle(480, 320, 320, 240));
                 
                 UpdaterStyleMock style = new UpdaterStyleMock(shell.getDisplay());
-                VersionsView view = new VersionsView(shell, app, suite, repo, style);
+                VersionsView view = new VersionsView(shell, appView, suite, repo, style);
                 
                 return view;
             }
@@ -121,7 +127,7 @@ public class VersionsView {
         TableItem item = selection[0];
         ProductVersionDefinition version = (ProductVersionDefinition) item.getData();
         
-        repo.startUpdating(version, new UpdatingListener() {
+        UpdatingListener listener = new UpdatingListener() {
             public void downloadingStarted() {
                 if (progress.isDisposed())
                     return;
@@ -179,6 +185,13 @@ public class VersionsView {
                     }
                 });
             }
-        });
+        };
+        
+        try {
+            repo.startUpdating(version, listener);
+            update.setEnabled(false);
+        } catch (AutoupdaterException e) {
+            appView.displayAutoupdaterErrorMessage(e);
+        }
     }
 }
