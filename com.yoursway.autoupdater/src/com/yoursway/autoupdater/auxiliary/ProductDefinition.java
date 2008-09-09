@@ -1,15 +1,16 @@
 package com.yoursway.autoupdater.auxiliary;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento;
 
 public class ProductDefinition {
     
     private String name;
-    private final Collection<ProductVersionDefinition> versions = newHashSet();
+    private final Map<String, ProductVersionDefinition> versions = newHashMap();
     
     public ProductDefinition(String name) {
         this.name = name;
@@ -37,11 +38,13 @@ public class ProductDefinition {
     }
     
     public void addVersion(ProductVersionDefinition version) {
-        versions.add(version);
+        if (versions.containsKey(version.name()))
+            throw new IllegalArgumentException("A product version with the name has been added already");
+        versions.put(version.name(), version);
     }
     
     public Collection<ProductVersionDefinition> versions() {
-        return versions;
+        return versions.values();
     }
     
 }

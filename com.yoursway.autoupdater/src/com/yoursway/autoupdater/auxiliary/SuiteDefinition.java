@@ -38,11 +38,12 @@ public class SuiteDefinition {
                 String line = reader.readLine();
                 if (line == null)
                     break;
-                
                 if (line.length() == 0)
                     continue;
                 
                 String[] fields = line.split("\t");
+                if (fields.length == 0)
+                    continue;
                 
                 String type = fields[0];
                 if (type.equals("PV")) {
@@ -54,16 +55,26 @@ public class SuiteDefinition {
                                 + e.getClass().getSimpleName(), ERROR);
                     }
                 } else if (type.equals("CVB")) {
-                    String componentName = fields[1];
+                    String componentName = null;
                     try {
+                        componentName = fields[1];
                         addComponent(productVersion, componentName);
-                    } catch (Exception e) {
-                        productVersion.damage();
-                        Log.write("Cannot add component " + componentName + " to product version "
-                                + productVersion + " definition: " + e.getClass().getSimpleName(), ERROR);
+                    } catch (Throwable e) {
+                        if (productVersion != null)
+                            productVersion.damage();
+                        
+                        String component = componentName != null ? " " + componentName : "";
+                        String version = productVersion != null ? " " + productVersion : "";
+                        Log.write("Cannot add component" + component + " to product version" + version
+                                + " definition: " + e.getClass().getSimpleName(), ERROR);
                     }
-                } else
-                    throw new InvalidFileFormatException(versions); //! ignore line?
+                } else {
+                    if (productVersion != null) {
+                        Log.write("Cannot understand line: " + line);
+                        productVersion.damage();
+                        productVersion = null;
+                    }
+                }
             }
             
         } finally {
