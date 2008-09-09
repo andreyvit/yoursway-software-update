@@ -2,6 +2,7 @@ package com.yoursway.autoupdater.installer.external;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.yoursway.utils.YsFileUtils.createTempFolder;
+import static com.yoursway.utils.os.YsOSUtils.javaRelativePath;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -94,9 +95,7 @@ public class ExternalInstaller implements Installer {
             throw new IllegalStateException("ExternalInstaller should be prepared before starting");
         
         String javaHome = System.getProperty("java.home");
-        File java = new File(javaHome, "bin/java"); //! check at windows
-        
-        //File installer = new File(folder, "com.yoursway.autoupdater.installer_1.0.0.jar"); //!
+        File java = new File(javaHome, javaRelativePath());
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(folder);
@@ -121,12 +120,6 @@ public class ExternalInstaller implements Installer {
         
         Log.write(cmd.toString());
         
-        /*if (gui)
-            pb.command(java.getAbsolutePath(), "-XstartOnFirstThread", "-jar", installer.getAbsolutePath(),
-                    "gui");
-        else
-            pb.command(java.getAbsolutePath(), "-jar", installer.getAbsolutePath());*/
-
         try {
             pb.start();
         } catch (IOException e) {

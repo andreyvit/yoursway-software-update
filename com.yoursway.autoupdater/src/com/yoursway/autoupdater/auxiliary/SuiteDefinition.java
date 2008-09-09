@@ -3,6 +3,7 @@ package com.yoursway.autoupdater.auxiliary;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.yoursway.utils.log.LogEntryType.ERROR;
+import static com.yoursway.utils.os.YsOSUtils.isMacOSX;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +18,6 @@ import com.yoursway.utils.log.Log;
 public class SuiteDefinition {
     
     private static final String SUITES_PATH = "suites/";
-    private static final String VERSIONS_FILENAME = "versions_mac.txt";
     
     private final URL updateSite;
     private final String name;
@@ -29,7 +29,7 @@ public class SuiteDefinition {
         
         InputStream stream = null;
         try {
-            URL versions = new URL(updateSite + SUITES_PATH + name + "/" + VERSIONS_FILENAME);
+            URL versions = new URL(updateSite + SUITES_PATH + name + "/" + versionsFilename());
             stream = versions.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             
@@ -75,6 +75,11 @@ public class SuiteDefinition {
                 }
         }
         
+    }
+    
+    private static String versionsFilename() {
+        String platform = isMacOSX() ? "mac" : "win";
+        return "versions_" + platform + ".txt";
     }
     
     public static SuiteDefinition load(String updateSite, String name) throws SuiteDefinitionLoadingException {

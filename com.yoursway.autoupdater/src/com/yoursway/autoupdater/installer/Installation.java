@@ -3,7 +3,8 @@ package com.yoursway.autoupdater.installer;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
-import static java.lang.Runtime.getRuntime;
+import static com.yoursway.utils.os.YsOSUtils.javaRelativePath;
+import static com.yoursway.utils.os.YsOSUtils.setExecAttribute;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -126,17 +127,8 @@ public class Installation {
         if (!ok)
             log.error("Cannot set lastmodified property of file " + targetFile);
         
-        if (file.hasExecAttribute() || file.path().equals(executablePath)) {
-            String command = "chmod +x " + targetFile.getCanonicalPath();
-            log.debug(command);
-            Process process = getRuntime().exec(command);
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace(); //!
-            }
-            log.debug("exit value: " + process.exitValue());
-        }
+        if (file.hasExecAttribute() || file.path().equals(executablePath))
+            setExecAttribute(targetFile);
     }
     
     public InstallationMemento toMemento() {
@@ -169,7 +161,7 @@ public class Installation {
         
         if (executable.getName().endsWith(".jar")) {
             String javaHome = System.getProperty("java.home");
-            File java = new File(javaHome, "bin/java"); //! check "bin/java" at windows
+            File java = new File(javaHome, javaRelativePath());
             
             pb.command(java.getCanonicalPath(), "-jar", executable.getCanonicalPath());
         } else {
