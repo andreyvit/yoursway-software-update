@@ -7,14 +7,20 @@ import com.yoursway.autoupdater.gui.view.UpdaterStyle;
 
 public class UpdaterStyleMock implements UpdaterStyle {
     
-    private final Color damagedColor;
+    private final Color red;
+    private final Color blue;
     
     public UpdaterStyleMock(Display display) {
-        damagedColor = new Color(display, 255, 0, 0);
+        red = new Color(display, 255, 0, 0);
+        blue = new Color(display, 0, 0, 255);
     }
     
     public Color damagedColor() {
-        return damagedColor;
+        return red;
+    }
+    
+    public Color localVersionColor() {
+        return blue;
     }
     
 }

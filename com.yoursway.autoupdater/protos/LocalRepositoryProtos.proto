@@ -27,6 +27,8 @@ message ProductDefinitionMemento {
 
 message ProductVersionDefinitionMemento {
 	required ProductDefinitionMemento product = 1;
+	required string name = 5;
+	required string type = 6;
 	
 	repeated RequestMemento pack = 2;
 	repeated ComponentDefinitionMemento component = 3;

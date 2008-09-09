@@ -15,8 +15,8 @@ import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
 import com.yoursway.autoupdater.gui.controller.UpdaterController;
-import com.yoursway.autoupdater.gui.view.VersionsView;
-import com.yoursway.autoupdater.gui.view.VersionsViewFactory;
+import com.yoursway.autoupdater.gui.view.UpdaterView;
+import com.yoursway.autoupdater.gui.view.UpdaterViewFactory;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.utils.YsFileUtils;
 
@@ -67,10 +67,10 @@ public class UpdaterDemo {
             
         };
         
-        VersionsViewFactory viewFactory = new VersionsViewFactory() {
-            public VersionsView createView(UpdatableApplicationView appView, SuiteDefinition suite,
+        UpdaterViewFactory viewFactory = new UpdaterViewFactory() {
+            public UpdaterView createView(UpdatableApplicationView appView, SuiteDefinition suite,
                     LocalRepository repo) {
-                return new VersionsView(shell, appView, suite, repo, new UpdaterStyleMock(display));
+                return new UpdaterView(shell, appView, suite, repo, new UpdaterStyleMock(display));
             }
         };
         UpdaterController controller = new UpdaterController(app, viewFactory);

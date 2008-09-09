@@ -49,8 +49,8 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         return version.product().componentStopper();
     }
     
-    protected UpdatingListener listener() {
-        return version.listener;
+    protected UpdatingListener fire() {
+        return version.broadcaster.fire();
     }
     
     public void startUpdating() {

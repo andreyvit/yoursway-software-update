@@ -23,7 +23,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
     @Override
     public void continueWork() {
         Log.write("Ordering files.");
-        listener().downloadingStarted();
+        fire().downloadingStarted();
         orderManager().orderChanged();
     }
     
@@ -37,7 +37,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
         Collection<Request> packRequests = versionDefinition().packRequests();
         if (state.filesReady(packRequests)) {
             Log.write("Files ready.");
-            listener().downloadingCompleted();
+            fire().downloadingCompleted();
             
             Collection<File> localPacks = state.getLocalFiles(packRequests);
             Map<String, File> packsMap = newHashMap();
@@ -57,7 +57,7 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
         } else {
             Log.write(state.localBytes(packRequests) + " of " + state.totalBytes(packRequests));
             double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
-            listener().downloading(progress);
+            fire().downloading(progress);
         }
     }
     

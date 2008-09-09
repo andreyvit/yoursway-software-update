@@ -24,7 +24,7 @@ import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
-public class VersionsView {
+public class UpdaterView {
     
     private final LocalRepository repo;
     private final UpdatableApplicationView appView;
@@ -34,7 +34,7 @@ public class VersionsView {
     private final ProgressBar progress;
     private final Button update;
     
-    public VersionsView(Shell shell, final UpdatableApplicationView appView, SuiteDefinition suite,
+    public UpdaterView(Shell shell, final UpdatableApplicationView appView, SuiteDefinition suite,
             LocalRepository repo, UpdaterStyle style) {
         
         if (repo == null)
@@ -56,6 +56,13 @@ public class VersionsView {
             item.setText(version.toString());
             if (version.damaged())
                 item.setForeground(style.damagedColor());
+            
+            if (repo.hasLocalVersion(version)) {
+                if (!version.damaged())
+                    item.setForeground(style.localVersionColor());
+                
+                repo.addUpdatingListener(version, new ProgressBarUpdatingListener());
+            }
         }
         
         Composite panel = new Composite(shell, SWT.NONE);
@@ -98,10 +105,10 @@ public class VersionsView {
         
     }
     
-    public static VersionsViewFactory factory() {
-        return new VersionsViewFactory() {
+    public static UpdaterViewFactory factory() {
+        return new UpdaterViewFactory() {
             
-            public VersionsView createView(UpdatableApplicationView appView, SuiteDefinition suite,
+            public UpdaterView createView(UpdatableApplicationView appView, SuiteDefinition suite,
                     LocalRepository repo) {
                 
                 Shell shell = new Shell();
@@ -110,7 +117,7 @@ public class VersionsView {
                 shell.setBounds(new Rectangle(480, 320, 320, 240));
                 
                 UpdaterStyleMock style = new UpdaterStyleMock(shell.getDisplay());
-                VersionsView view = new VersionsView(shell, appView, suite, repo, style);
+                UpdaterView view = new UpdaterView(shell, appView, suite, repo, style);
                 
                 return view;
             }
@@ -127,71 +134,72 @@ public class VersionsView {
         TableItem item = selection[0];
         ProductVersionDefinition version = (ProductVersionDefinition) item.getData();
         
-        UpdatingListener listener = new UpdatingListener() {
-            public void downloadingStarted() {
-                if (progress.isDisposed())
-                    return;
-                
-                progress.getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        if (progress.isDisposed())
-                            return;
-                        
-                        progress.setSelection(0);
-                        progress.setVisible(true);
-                    }
-                });
-            }
-            
-            public void downloading(final double p) {
-                if (progress.isDisposed())
-                    return;
-                
-                progress.getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        if (progress.isDisposed())
-                            return;
-                        
-                        int value = (int) (progress.getMaximum() * p);
-                        progress.setSelection(value);
-                    }
-                });
-                
-            }
-            
-            public void downloadingCompleted() {
-                if (progress.isDisposed())
-                    return;
-                
-                /*
-                progress.getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        if (progress.isDisposed())
-                            return;
-                        progress.setSelection(progress.getMaximum());
-                    }
-                });
-                
-                //> ask user about continuing
-                */
-
-                progress.getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        if (progress.isDisposed())
-                            return;
-                        
-                        progress.setVisible(false);
-                        //? set progress to indeterminate instead of hiding
-                    }
-                });
-            }
-        };
-        
         try {
-            repo.startUpdating(version, listener);
+            repo.startUpdating(version, new ProgressBarUpdatingListener());
             update.setEnabled(false);
         } catch (AutoupdaterException e) {
             appView.displayAutoupdaterErrorMessage(e);
+        }
+    }
+    
+    private final class ProgressBarUpdatingListener implements UpdatingListener {
+        public void downloadingStarted() {
+            if (progress.isDisposed())
+                return;
+            
+            progress.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (progress.isDisposed())
+                        return;
+                    
+                    progress.setSelection(0);
+                    progress.setVisible(true);
+                }
+            });
+        }
+        
+        public void downloading(final double p) {
+            if (progress.isDisposed())
+                return;
+            
+            progress.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (progress.isDisposed())
+                        return;
+                    
+                    int value = (int) (progress.getMaximum() * p);
+                    progress.setSelection(value);
+                    progress.setVisible(true);
+                }
+            });
+            
+        }
+        
+        public void downloadingCompleted() {
+            if (progress.isDisposed())
+                return;
+            
+            /*
+            progress.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (progress.isDisposed())
+                        return;
+                    progress.setSelection(progress.getMaximum());
+                }
+            });
+            
+            //> ask user about continuing
+            */
+
+            progress.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (progress.isDisposed())
+                        return;
+                    
+                    progress.setVisible(false);
+                    //? set progress to indeterminate instead of hiding
+                }
+            });
         }
     }
 }

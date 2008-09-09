@@ -21,6 +21,7 @@ import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.localrepository.internal.LocalProduct;
+import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
@@ -160,6 +161,21 @@ public class LocalRepository {
             e.printStackTrace(); //!
             throw new LocalRepositoryException(e);
         }
+    }
+    
+    private LocalProductVersion getLocalVersion(ProductVersionDefinition version) {
+        LocalProduct product = products.get(version.product());
+        if (product == null)
+            return null;
+        return product.getLocalVersion(version);
+    }
+    
+    public boolean hasLocalVersion(ProductVersionDefinition version) {
+        return getLocalVersion(version) != null;
+    }
+    
+    public void addUpdatingListener(ProductVersionDefinition version, UpdatingListener listener) {
+        getLocalVersion(version).events().addListener(listener);
     }
     
 }

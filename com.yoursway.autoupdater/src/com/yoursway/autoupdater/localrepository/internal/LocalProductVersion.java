@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
 import static com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.newBuilder;
+import static com.yoursway.utils.broadcaster.BroadcasterFactory.newBroadcaster;
 
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -13,16 +14,19 @@ import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
+import com.yoursway.utils.EventSource;
+import com.yoursway.utils.broadcaster.Broadcaster;
 
 public class LocalProductVersion implements FileLibraryListener, LibrarySubscriber {
     
     private ProductVersionState state;
     private final LocalProduct product;
     final ProductVersionDefinition definition;
-    UpdatingListener listener;
+    
+    final Broadcaster<UpdatingListener> broadcaster = newBroadcaster(UpdatingListener.class);
     private final LocalRepositoryChangerCallback lrcc;
     
-    LocalProductVersion(LocalProduct product, ProductVersionDefinition definition, UpdatingListener listener,
+    LocalProductVersion(LocalProduct product, ProductVersionDefinition definition,
             LocalRepositoryChangerCallback lrcc) {
         
         if (product == null)
@@ -36,8 +40,6 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         this.definition = definition;
         this.lrcc = lrcc;
         state = new ProductVersionState_Installing(this);
-        
-        setListener(listener);
     }
     
     private LocalProductVersion(LocalProductVersionMemento memento, LocalProduct product,
@@ -52,8 +54,6 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         this.lrcc = lrcc;
         definition = ProductVersionDefinition.fromMemento(memento.getDefinition());
         state = AbstractProductVersionState.from(memento.getState(), this);
-        
-        listener = UpdatingListener.NOP;
     }
     
     static LocalProductVersion fromMemento(LocalProductVersionMemento memento, LocalProduct product,
@@ -91,18 +91,16 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         state.libraryChanged(s);
     }
     
-    void setListener(UpdatingListener listener) {
-        if (listener == null)
-            throw new NullPointerException("listener is null");
-        this.listener = listener;
-    }
-    
     public LocalProduct product() {
         return product;
     }
     
     public ProductVersionDefinition definition() {
         return definition;
+    }
+    
+    public EventSource<UpdatingListener> events() {
+        return broadcaster;
     }
     
 }

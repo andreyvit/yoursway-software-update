@@ -109,13 +109,14 @@ public class SuiteDefinition {
         productVersion.addComponent(component);
     }
     
-    private ProductVersionDefinition addProductVersion(String productName, String status, String versionName) {
+    private ProductVersionDefinition addProductVersion(String productName, String releaseType,
+            String versionName) {
         ProductDefinition product = products.get(productName);
         if (product == null) {
             product = new ProductDefinition(productName);
             products.put(productName, product);
         }
-        return new ProductVersionDefinition(product, status, versionName, updateSite);
+        return new ProductVersionDefinition(product, releaseType, versionName, updateSite);
     }
     
     public Iterable<ProductDefinition> products() {

@@ -23,6 +23,7 @@ import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento.Builder;
+import com.yoursway.utils.annotations.Nullable;
 import com.yoursway.utils.log.Log;
 
 public class LocalProduct {
@@ -81,7 +82,7 @@ public class LocalProduct {
         features = featuresProvider.getFeatures(definition.name());
     }
     
-    public void startUpdating(ProductVersionDefinition versionDefinition, UpdatingListener listener) {
+    public void startUpdating(ProductVersionDefinition versionDefinition, @Nullable UpdatingListener listener) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");
         
@@ -89,10 +90,13 @@ public class LocalProduct {
         
         LocalProductVersion localVersion = versions.get(versionDefinition);
         if (localVersion != null) {
-            localVersion.setListener(listener);
+            if (listener != null)
+                localVersion.events().addListener(listener);
             localVersion.startUpdating();
         } else {
-            localVersion = new LocalProductVersion(this, versionDefinition, listener, lrcc);
+            localVersion = new LocalProductVersion(this, versionDefinition, lrcc);
+            if (listener != null)
+                localVersion.events().addListener(listener);
             versions.put(versionDefinition, localVersion);
             lrcc.localRepositoryChanged();
             registerVersionEvents(localVersion);
@@ -133,7 +137,7 @@ public class LocalProduct {
         
         Collection<Request> requests = Collections.emptyList();
         Collection<ComponentDefinition> components = Collections.emptyList();
-        return new ProductVersionDefinition(definition, requests, components, ""); //! executable
+        return new ProductVersionDefinition(definition, "current", "current", requests, components, ""); //! executable
     }
     
     public ComponentStopper componentStopper() {
@@ -146,6 +150,10 @@ public class LocalProduct {
     
     public String executablePath() {
         return features.executablePath();
+    }
+    
+    public LocalProductVersion getLocalVersion(ProductVersionDefinition version) {
+        return versions.get(version);
     }
     
 }

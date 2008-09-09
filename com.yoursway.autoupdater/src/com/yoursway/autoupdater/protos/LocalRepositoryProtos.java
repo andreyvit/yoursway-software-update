@@ -22,21 +22,22 @@ public final class LocalRepositoryProtos {
       "ntDefinitionMemento\022\014\n\004name\030\003 \002(\t\022#\n\004fil" +
       "e\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002" +
       " \003(\0132\017.RequestMemento\"(\n\030ProductDefiniti" +
-      "onMemento\022\014\n\004name\030\001 \002(\t\"\260\001\n\037ProductVersi" +
+      "onMemento\022\014\n\004name\030\001 \002(\t\"\314\001\n\037ProductVersi" +
       "onDefinitionMemento\022*\n\007product\030\001 \002(\0132\031.P" +
-      "roductDefinitionMemento\022\035\n\004pack\030\002 \003(\0132\017." +
-      "RequestMemento\022.\n\tcomponent\030\003 \003(\0132\033.Comp" +
-      "onentDefinitionMemento\022\022\n\nexecutable\030\004 \002" +
-      "(\t\"\247\001\n\032LocalProductVersionMemento\0224\n\ndef" +
-      "inition\030\001 \002(\0132 .ProductVersionDefinition" +
-      "Memento\0220\n\005state\030\002 \002(\0162!.LocalProductVer" +
-      "sionMemento.State\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\n" +
-      "Installing\020\001\"r\n\023LocalProductMemento\022-\n\nd" +
-      "efinition\030\001 \002(\0132\031.ProductDefinitionMemen" +
-      "to\022,\n\007version\030\002 \003(\0132\033.LocalProductVersio" +
-      "nMemento\"?\n\026LocalRepositoryMemento\022%\n\007pr" +
-      "oduct\030\001 \003(\0132\024.LocalProductMementoB!\n\037com" +
-      ".yoursway.autoupdater.protos";
+      "roductDefinitionMemento\022\014\n\004name\030\005 \002(\t\022\014\n" +
+      "\004type\030\006 \002(\t\022\035\n\004pack\030\002 \003(\0132\017.RequestMemen" +
+      "to\022.\n\tcomponent\030\003 \003(\0132\033.ComponentDefinit" +
+      "ionMemento\022\022\n\nexecutable\030\004 \002(\t\"\247\001\n\032Local" +
+      "ProductVersionMemento\0224\n\ndefinition\030\001 \002(" +
+      "\0132 .ProductVersionDefinitionMemento\0220\n\005s" +
+      "tate\030\002 \002(\0162!.LocalProductVersionMemento." +
+      "State\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001" +
+      "\"r\n\023LocalProductMemento\022-\n\ndefinition\030\001 " +
+      "\002(\0132\031.ProductDefinitionMemento\022,\n\007versio" +
+      "n\030\002 \003(\0132\033.LocalProductVersionMemento\"?\n\026" +
+      "LocalRepositoryMemento\022%\n\007product\030\001 \003(\0132" +
+      "\024.LocalProductMementoB!\n\037com.yoursway.au" +
+      "toupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -967,6 +968,18 @@ public final class LocalRepositoryProtos {
     public boolean hasProduct() { return hasProduct; }
     public com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento getProduct() { return product_; }
     
+    // required string name = 5;
+    private boolean hasName;
+    private java.lang.String name_ = "";
+    public boolean hasName() { return hasName; }
+    public java.lang.String getName() { return name_; }
+    
+    // required string type = 6;
+    private boolean hasType;
+    private java.lang.String type_ = "";
+    public boolean hasType() { return hasType; }
+    public java.lang.String getType() { return type_; }
+    
     // repeated .RequestMemento pack = 2;
     private java.util.List<com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento> pack_ =
       java.util.Collections.emptyList();
@@ -1140,6 +1153,42 @@ public final class LocalRepositoryProtos {
       public Builder clearProduct() {
         result.hasProduct = false;
         result.product_ = com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento.getDefaultInstance();
+        return this;
+      }
+      
+      // required string name = 5;
+      public boolean hasName() {
+        return result.hasName();
+      }
+      public java.lang.String getName() {
+        return result.getName();
+      }
+      public Builder setName(java.lang.String value) {
+        result.hasName = true;
+        result.name_ = value;
+        return this;
+      }
+      public Builder clearName() {
+        result.hasName = false;
+        result.name_ = "";
+        return this;
+      }
+      
+      // required string type = 6;
+      public boolean hasType() {
+        return result.hasType();
+      }
+      public java.lang.String getType() {
+        return result.getType();
+      }
+      public Builder setType(java.lang.String value) {
+        result.hasType = true;
+        result.type_ = value;
+        return this;
+      }
+      public Builder clearType() {
+        result.hasType = false;
+        result.type_ = "";
         return this;
       }
       
@@ -1973,7 +2022,7 @@ public final class LocalRepositoryProtos {
       internal_static_ProductVersionDefinitionMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ProductVersionDefinitionMemento_descriptor,
-          new java.lang.String[] { "Product", "Pack", "Component", "Executable", },
+          new java.lang.String[] { "Product", "Name", "Type", "Pack", "Component", "Executable", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor
