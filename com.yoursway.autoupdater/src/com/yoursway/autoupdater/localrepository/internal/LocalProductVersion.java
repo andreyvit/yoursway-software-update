@@ -10,6 +10,7 @@ import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.LibrarySubscriber;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
 
@@ -19,25 +20,45 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
     private final LocalProduct product;
     final ProductVersionDefinition definition;
     UpdatingListener listener;
+    private final LocalRepositoryChangerCallback lrcc;
     
-    LocalProductVersion(LocalProduct product, ProductVersionDefinition version, UpdatingListener listener) {
+    LocalProductVersion(LocalProduct product, ProductVersionDefinition definition, UpdatingListener listener,
+            LocalRepositoryChangerCallback lrcc) {
+        
+        if (product == null)
+            throw new NullPointerException("product is null");
+        if (definition == null)
+            throw new NullPointerException("definition is null");
+        if (lrcc == null)
+            throw new NullPointerException("lrcc is null");
+        
         this.product = product;
-        this.definition = version;
+        this.definition = definition;
+        this.lrcc = lrcc;
         state = new ProductVersionState_Installing(this);
         
         setListener(listener);
     }
     
-    private LocalProductVersion(LocalProductVersionMemento memento, LocalProduct productState)
-            throws MalformedURLException {
-        this.product = productState;
+    private LocalProductVersion(LocalProductVersionMemento memento, LocalProduct product,
+            LocalRepositoryChangerCallback lrcc) throws MalformedURLException {
+        
+        if (product == null)
+            throw new NullPointerException("product is null");
+        if (lrcc == null)
+            throw new NullPointerException("lrcc is null");
+        
+        this.product = product;
+        this.lrcc = lrcc;
         definition = ProductVersionDefinition.fromMemento(memento.getDefinition());
         state = AbstractProductVersionState.from(memento.getState(), this);
+        
+        listener = UpdatingListener.NOP;
     }
     
-    static LocalProductVersion fromMemento(LocalProductVersionMemento memento, LocalProduct product)
-            throws MalformedURLException {
-        return new LocalProductVersion(memento, product);
+    static LocalProductVersion fromMemento(LocalProductVersionMemento memento, LocalProduct product,
+            LocalRepositoryChangerCallback lrcc) throws MalformedURLException {
+        return new LocalProductVersion(memento, product, lrcc);
     }
     
     LocalProductVersionMemento toMemento() {
@@ -46,6 +67,7 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
     
     void changeState(ProductVersionState newState) {
         state = newState;
+        lrcc.localRepositoryChanged();
         continueWork();
     }
     

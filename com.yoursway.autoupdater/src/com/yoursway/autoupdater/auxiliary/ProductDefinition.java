@@ -9,15 +9,11 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMe
 
 public class ProductDefinition {
     
-    private String name;
+    private final String name;
     private final Map<String, ProductVersionDefinition> versions = newHashMap();
     
     public ProductDefinition(String name) {
         this.name = name;
-    }
-    
-    private ProductDefinition() {
-        //?
     }
     
     @Override
@@ -26,11 +22,11 @@ public class ProductDefinition {
     }
     
     public static ProductDefinition fromMemento(ProductDefinitionMemento memento) {
-        return new ProductDefinition();
+        return new ProductDefinition(memento.getName());
     }
     
     public ProductDefinitionMemento toMemento() {
-        return ProductDefinitionMemento.newBuilder().build();
+        return ProductDefinitionMemento.newBuilder().setName(name).build();
     }
     
     public String name() {

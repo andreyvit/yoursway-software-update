@@ -18,6 +18,7 @@ import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
+import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
@@ -33,20 +34,23 @@ public class LocalProduct {
     private final FileLibrary fileLibrary;
     final OrderManager orderManager;
     final Installer installer;
+    private final LocalRepositoryChangerCallback lrcc;
     
     private final UpdatableApplicationProductFeatures features;
     
     public LocalProduct(LocalProductMemento memento, FileLibrary fileLibrary, Installer installer,
-            UpdatableApplicationProductFeaturesProvider featuresProvider) {
+            UpdatableApplicationProductFeaturesProvider featuresProvider, LocalRepositoryChangerCallback lrcc) {
         this.orderManager = fileLibrary.orderManager();
         this.fileLibrary = fileLibrary;
         this.installer = installer;
+        this.lrcc = lrcc;
         
         definition = ProductDefinition.fromMemento(memento.getDefinition());
         for (LocalProductVersionMemento m : memento.getVersionList()) {
             try {
-                LocalProductVersion version = LocalProductVersion.fromMemento(m, this);
+                LocalProductVersion version = LocalProductVersion.fromMemento(m, this, lrcc);
                 versions.put(version.definition, version);
+                registerVersionEvents(version);
             } catch (MalformedURLException e) {
                 e.printStackTrace(); //!
             }
@@ -56,7 +60,7 @@ public class LocalProduct {
     }
     
     public LocalProduct(ProductDefinition definition, FileLibrary fileLibrary, Installer installer,
-            UpdatableApplicationProductFeaturesProvider featuresProvider) {
+            UpdatableApplicationProductFeaturesProvider featuresProvider, LocalRepositoryChangerCallback lrcc) {
         
         if (definition == null)
             throw new NullPointerException("definition is null");
@@ -64,10 +68,13 @@ public class LocalProduct {
             throw new NullPointerException("fileLibrary is null");
         if (installer == null)
             throw new NullPointerException("installer is null");
+        if (lrcc == null)
+            throw new NullPointerException("lrcc is null");
         
         this.orderManager = fileLibrary.orderManager();
         this.fileLibrary = fileLibrary;
         this.installer = installer;
+        this.lrcc = lrcc;
         
         this.definition = definition;
         
@@ -85,12 +92,17 @@ public class LocalProduct {
             localVersion.setListener(listener);
             localVersion.startUpdating();
         } else {
-            localVersion = new LocalProductVersion(this, versionDefinition, listener);
+            localVersion = new LocalProductVersion(this, versionDefinition, listener, lrcc);
             versions.put(versionDefinition, localVersion);
-            fileLibrary.events().addListener(localVersion);
-            orderManager.register(localVersion);
+            lrcc.localRepositoryChanged();
+            registerVersionEvents(localVersion);
             localVersion.continueWork();
         }
+    }
+    
+    private void registerVersionEvents(LocalProductVersion version) {
+        fileLibrary.events().addListener(version);
+        orderManager.register(version);
     }
     
     private boolean updating() {

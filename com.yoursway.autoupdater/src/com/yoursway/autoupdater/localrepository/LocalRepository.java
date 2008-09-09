@@ -1,9 +1,11 @@
 package com.yoursway.autoupdater.localrepository;
 
+import static com.yoursway.utils.log.LogEntryType.ERROR;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,10 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
 import com.yoursway.utils.YsFileUtils;
+import com.yoursway.utils.io.InputStreamConsumer;
+import com.yoursway.utils.io.OutputStreamConsumer;
+import com.yoursway.utils.log.Log;
+import com.yoursway.utils.storage.atomic.AtomicFile;
 
 public class LocalRepository {
     
@@ -32,6 +38,16 @@ public class LocalRepository {
     private final FileLibrary fileLibrary;
     
     private final UpdatableApplicationProductFeaturesProvider featuresProvider;
+    
+    private final LocalRepositoryChangerCallback lrcc = new LocalRepositoryChangerCallback() {
+        public void localRepositoryChanged() {
+            try {
+                save();
+            } catch (IOException e) {
+                e.printStackTrace(); //!
+            }
+        }
+    };
     
     @Deprecated
     public LocalRepository() throws IOException {
@@ -70,29 +86,52 @@ public class LocalRepository {
         ProductDefinition productDefinition = version.product();
         LocalProduct localProduct = products.get(productDefinition);
         if (localProduct == null) {
-            localProduct = new LocalProduct(productDefinition, fileLibrary, installer, featuresProvider);
+            localProduct = new LocalProduct(productDefinition, fileLibrary, installer, featuresProvider, lrcc);
             products.put(productDefinition, localProduct);
+            lrcc.localRepositoryChanged();
         }
         
         try {
             localProduct.startUpdating(version, listener);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AutoupdaterException(e);
         }
     }
     
     public void atStartup() {
         try {
-            InputStream in = new FileInputStream(mementoFile());
-            LocalRepositoryMemento memento = LocalRepositoryMemento.parseFrom(in);
-            fromMemento(memento);
-        } catch (IOException e) {
-            //! crash autoupdater
-            e.printStackTrace();
+            if (!mementoFile().exists())
+                return;
+            
+            atomicMementoFile().read(new InputStreamConsumer() {
+                public void run(InputStream in) throws IOException {
+                    LocalRepositoryMemento memento = LocalRepositoryMemento.parseFrom(in);
+                    fromMemento(memento);
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace(); //!
+            
+            products.clear();
+            Log.write("Cannot load localrepo. New localrepo created.", ERROR);
+            return;
         }
         
         for (LocalProduct product : products.values())
             product.continueWork();
+    }
+    
+    private void save() throws IOException {
+        atomicMementoFile().overwrite(new OutputStreamConsumer() {
+            public void run(OutputStream out) throws IOException {
+                toMemento().writeTo(out);
+            }
+        });
+    }
+    
+    private AtomicFile atomicMementoFile() {
+        return new AtomicFile(mementoFile());
     }
     
     private File mementoFile() {
@@ -101,7 +140,7 @@ public class LocalRepository {
     
     private void fromMemento(LocalRepositoryMemento memento) {
         for (LocalProductMemento m : memento.getProductList()) {
-            LocalProduct product = new LocalProduct(m, fileLibrary, installer, featuresProvider);
+            LocalProduct product = new LocalProduct(m, fileLibrary, installer, featuresProvider, lrcc);
             products.put(product.definition(), product);
         }
     }
@@ -118,6 +157,7 @@ public class LocalRepository {
             ExternalInstaller installer = new ExternalInstaller(true);
             return new LocalRepository(app, installer, app.localRepositoryPlace());
         } catch (Throwable e) {
+            e.printStackTrace(); //!
             throw new LocalRepositoryException(e);
         }
     }

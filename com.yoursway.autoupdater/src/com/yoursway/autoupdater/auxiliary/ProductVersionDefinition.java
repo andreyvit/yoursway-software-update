@@ -12,11 +12,11 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinition
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.RequestMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder;
+import com.yoursway.utils.annotations.Nullable;
 
 public class ProductVersionDefinition {
     
     private final ProductDefinition product;
-    private Collection<Request> packs;
     private final String status;
     private final String name;
     
@@ -24,21 +24,24 @@ public class ProductVersionDefinition {
     
     private boolean damaged;
     
+    @Nullable
+    private Collection<Request> packs;
+    
     private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;
     
-    public ProductVersionDefinition(ProductDefinition product, Collection<Request> packs,
+    @Deprecated
+    public ProductVersionDefinition(ProductDefinition product, @Nullable Collection<Request> packs,
             Collection<ComponentDefinition> components, String executable) {
         if (product == null)
             throw new NullPointerException("product is null");
-        if (packs == null)
-            throw new NullPointerException("packs is null");
         if (components == null)
             throw new NullPointerException("components is null");
         
-        for (Request packRequest : packs)
-            if (!packRequest.url().toString().endsWith(".zip"))
-                throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
+        if (packs != null)
+            for (Request packRequest : packs)
+                if (!packRequest.url().toString().endsWith(".zip"))
+                    throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
         
         this.product = product;
         product.addVersion(this);
@@ -111,9 +114,13 @@ public class ProductVersionDefinition {
     public static ProductVersionDefinition fromMemento(ProductVersionDefinitionMemento memento)
             throws MalformedURLException {
         ProductDefinition product = ProductDefinition.fromMemento(memento.getProduct());
-        Collection<Request> packs = newLinkedList();
-        for (RequestMemento m : memento.getPackList())
+        Collection<Request> packs = null;
+        for (RequestMemento m : memento.getPackList()) {
+            if (packs == null)
+                packs = newLinkedList();
+            
             packs.add(Request.fromMemento(m));
+        }
         Collection<ComponentDefinition> components = newLinkedList();
         for (ComponentDefinitionMemento m : memento.getComponentList())
             components.add(ComponentDefinition.fromMemento(m));
@@ -124,8 +131,9 @@ public class ProductVersionDefinition {
     public ProductVersionDefinitionMemento toMemento() {
         Builder b = ProductVersionDefinitionMemento.newBuilder().setProduct(product.toMemento())
                 .setExecutable(executable);
-        for (Request r : packs)
-            b.addPack(r.toMemento());
+        if (packs != null)
+            for (Request r : packs)
+                b.addPack(r.toMemento());
         for (ComponentDefinition c : components)
             b.addComponent(c.toMemento());
         return b.build();

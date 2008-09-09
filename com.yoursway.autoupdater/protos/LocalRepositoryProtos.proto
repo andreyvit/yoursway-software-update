@@ -22,7 +22,7 @@ message ComponentDefinitionMemento {
 }
 
 message ProductDefinitionMemento {
-
+	required string name = 1;
 }
 
 message ProductVersionDefinitionMemento {
