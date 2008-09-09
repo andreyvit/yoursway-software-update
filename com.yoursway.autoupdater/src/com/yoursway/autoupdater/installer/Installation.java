@@ -28,14 +28,14 @@ import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Bu
 
 public class Installation {
     
-    private static final String EXECUTABLE_PATH = "Contents/MacOS/eclipse";
     private final ProductVersionDefinition currentVD;
     private final ProductVersionDefinition newVD;
     final Map<String, File> packs;
     private final File target;
+    private final String executablePath;
     
     Installation(ProductVersionDefinition currentVD, ProductVersionDefinition newVD, Map<String, File> packs,
-            File target) {
+            File target, String executablePath) {
         if (currentVD == null)
             throw new NullPointerException("current is null");
         if (newVD == null)
@@ -44,11 +44,14 @@ public class Installation {
             throw new NullPointerException("packs is null");
         if (target == null)
             throw new NullPointerException("target is null");
+        if (executablePath == null)
+            throw new NullPointerException("executablePath is null");
         
         this.currentVD = currentVD;
         this.newVD = newVD;
         this.packs = packs;
         this.target = target;
+        this.executablePath = executablePath;
     }
     
     public Installation(LocalProductVersion version, Map<String, File> packs) throws InstallerException {
@@ -67,6 +70,8 @@ public class Installation {
         }
         
         this.packs = packs;
+        
+        executablePath = product.executablePath();
     }
     
     public void perform(InstallerLog log) throws IOException {
@@ -121,7 +126,7 @@ public class Installation {
         if (!ok)
             log.error("Cannot set lastmodified property of file " + targetFile);
         
-        if (file.hasExecAttribute() || file.path().equals(EXECUTABLE_PATH)) {
+        if (file.hasExecAttribute() || file.path().equals(executablePath)) {
             String command = "chmod +x " + targetFile.getCanonicalPath();
             log.debug(command);
             Process process = getRuntime().exec(command);
@@ -136,7 +141,7 @@ public class Installation {
     
     public InstallationMemento toMemento() {
         Builder b = InstallationMemento.newBuilder().setCurrent(currentVD.toMemento()).setVersion(
-                newVD.toMemento()).setTarget(target.getAbsolutePath());
+                newVD.toMemento()).setTarget(target.getAbsolutePath()).setExecutable(executablePath);
         for (Map.Entry<String, File> entry : packs.entrySet()) {
             String hash = entry.getKey();
             File file = entry.getValue();
@@ -152,12 +157,12 @@ public class Installation {
         for (PackMemento m : memento.getPackList())
             packs.put(m.getHash(), new File(m.getPath()));
         File target = new File(memento.getTarget());
-        return new Installation(current, version, packs, target);
+        return new Installation(current, version, packs, target, memento.getExecutable());
     }
     
     public void startVersionExecutable(InstallerLog log) throws Exception {
         //File executable = new File(target, newVD.executable().path());
-        File executable = new File(target, EXECUTABLE_PATH);
+        File executable = new File(target, executablePath);
         
         ProcessBuilder pb = new ProcessBuilder();
         pb.directory(target);

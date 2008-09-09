@@ -16,12 +16,13 @@ public final class InstallationProtos {
     java.lang.String descriptorData =
       "\n\030InstallationProtos.proto\032\033LocalReposit" +
       "oryProtos.proto\")\n\013PackMemento\022\014\n\004hash\030\001" +
-      " \002(\t\022\014\n\004path\030\002 \002(\t\"\247\001\n\023InstallationMemen" +
+      " \002(\t\022\014\n\004path\030\002 \002(\t\"\273\001\n\023InstallationMemen" +
       "to\0221\n\007current\030\001 \002(\0132 .ProductVersionDefi" +
       "nitionMemento\0221\n\007version\030\002 \002(\0132 .Product" +
       "VersionDefinitionMemento\022\032\n\004pack\030\003 \003(\0132\014" +
-      ".PackMemento\022\016\n\006target\030\004 \002(\tB!\n\037com.your" +
-      "sway.autoupdater.protos";
+      ".PackMemento\022\016\n\006target\030\004 \002(\t\022\022\n\nexecutab" +
+      "le\030\005 \002(\tB!\n\037com.yoursway.autoupdater.pro" +
+      "tos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -268,6 +269,12 @@ public final class InstallationProtos {
     public boolean hasTarget() { return hasTarget; }
     public java.lang.String getTarget() { return target_; }
     
+    // required string executable = 5;
+    private boolean hasExecutable;
+    private java.lang.String executable_ = "";
+    public boolean hasExecutable() { return hasExecutable; }
+    public java.lang.String getExecutable() { return executable_; }
+    
     public static com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -508,6 +515,24 @@ public final class InstallationProtos {
         result.target_ = "";
         return this;
       }
+      
+      // required string executable = 5;
+      public boolean hasExecutable() {
+        return result.hasExecutable();
+      }
+      public java.lang.String getExecutable() {
+        return result.getExecutable();
+      }
+      public Builder setExecutable(java.lang.String value) {
+        result.hasExecutable = true;
+        result.executable_ = value;
+        return this;
+      }
+      public Builder clearExecutable() {
+        result.hasExecutable = false;
+        result.executable_ = "";
+        return this;
+      }
     }
   }
   
@@ -530,7 +555,7 @@ public final class InstallationProtos {
       internal_static_InstallationMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_InstallationMemento_descriptor,
-          new java.lang.String[] { "Current", "Version", "Pack", "Target", },
+          new java.lang.String[] { "Current", "Version", "Pack", "Target", "Executable", },
           com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.class,
           com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Builder.class);
 }

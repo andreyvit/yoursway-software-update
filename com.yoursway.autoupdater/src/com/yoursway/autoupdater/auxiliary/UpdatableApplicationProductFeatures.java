@@ -11,6 +11,8 @@ public interface UpdatableApplicationProductFeatures {
     
     ComponentStopper componentStopper();
     
+    String executablePath();
+    
     UpdatableApplicationProductFeatures MOCK = new UpdatableApplicationProductFeatures() {
         
         public ComponentStopper componentStopper() {
@@ -24,6 +26,10 @@ public interface UpdatableApplicationProductFeatures {
         
         public File rootFolder() throws IOException {
             return YsFileUtils.createTempFolder("autoupdater-appRoot-", null);
+        }
+        
+        public String executablePath() {
+            return "Contents/MacOS/eclipse";
         }
         
     };

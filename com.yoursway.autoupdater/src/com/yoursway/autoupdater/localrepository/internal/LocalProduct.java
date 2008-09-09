@@ -132,4 +132,8 @@ public class LocalProduct {
         return features.rootFolder();
     }
     
+    public String executablePath() {
+        return features.executablePath();
+    }
+    
 }
