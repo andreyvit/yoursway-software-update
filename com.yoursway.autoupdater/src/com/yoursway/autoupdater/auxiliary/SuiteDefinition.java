@@ -5,10 +5,8 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.yoursway.utils.log.LogEntryType.ERROR;
 import static com.yoursway.utils.os.YsOSUtils.isMacOSX;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -31,19 +29,13 @@ public class SuiteDefinition {
         try {
             URL versions = new URL(updateSite + SUITES_PATH + name + "/" + versionsFilename());
             stream = versions.openStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            DefinitionReader reader = new DefinitionReader(stream);
             
             ProductVersionDefinition productVersion = null;
             while (true) {
-                String line = reader.readLine();
-                if (line == null)
+                String[] fields = reader.readLine();
+                if (fields == null)
                     break;
-                if (line.length() == 0)
-                    continue;
-                
-                String[] fields = line.split("\t");
-                if (fields.length == 0)
-                    continue;
                 
                 String type = fields[0];
                 if (type.equals("PV")) {
@@ -70,7 +62,7 @@ public class SuiteDefinition {
                     }
                 } else {
                     if (productVersion != null) {
-                        Log.write("Cannot understand line: " + line);
+                        Log.write("Cannot understand line: " + fields);
                         productVersion.damage();
                         productVersion = null;
                     }
@@ -116,7 +108,7 @@ public class SuiteDefinition {
             product = new ProductDefinition(productName);
             products.put(productName, product);
         }
-        return new ProductVersionDefinition(product, releaseType, versionName, updateSite);
+        return new ProductVersionDefinition(product, releaseType, versionName);
     }
     
     public Iterable<ProductDefinition> products() {

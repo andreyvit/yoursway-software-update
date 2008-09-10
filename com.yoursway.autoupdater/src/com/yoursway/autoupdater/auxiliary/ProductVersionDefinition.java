@@ -3,6 +3,8 @@ package com.yoursway.autoupdater.auxiliary;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -30,8 +32,7 @@ public class ProductVersionDefinition {
     private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;
     
-    @Deprecated
-    public ProductVersionDefinition(ProductDefinition product, String name, String releaseType,
+    private ProductVersionDefinition(ProductDefinition product, String name, String releaseType,
             @Nullable Collection<Request> packs, Collection<ComponentDefinition> components, String executable) {
         if (product == null)
             throw new NullPointerException("product is null");
@@ -56,7 +57,7 @@ public class ProductVersionDefinition {
         this.executable = executable;
     }
     
-    public ProductVersionDefinition(ProductDefinition product, String releaseType, String name, URL updateSite) {
+    public ProductVersionDefinition(ProductDefinition product, String releaseType, String name) {
         this.product = product;
         product.addVersion(this);
         
@@ -203,4 +204,31 @@ public class ProductVersionDefinition {
         return installer;
     }
     
+    public static ProductVersionDefinition loadFrom(URL url, ProductDefinition product) throws IOException,
+            InvalidFileFormatException {
+        InputStream stream = url.openStream();
+        DefinitionReader reader = new DefinitionReader(stream);
+        
+        String[] firstLine = reader.readLine();
+        if (firstLine.length != 4 || !firstLine[0].equals("PV"))
+            throw new InvalidFileFormatException(url);
+        if (!firstLine[1].equals(product.name()))
+            throw new IllegalArgumentException("This version is one of another product");
+        
+        ProductVersionDefinition definition = new ProductVersionDefinition(product, firstLine[2],
+                firstLine[3]);
+        
+        while (true) {
+            String[] fields = reader.readLine();
+            if (fields == null)
+                break;
+            
+            if (fields.length != 2 || !fields[0].equals("CVB"))
+                throw new InvalidFileFormatException(url);
+            
+            throw new UnsupportedOperationException();
+        }
+        
+        return definition;
+    }
 }

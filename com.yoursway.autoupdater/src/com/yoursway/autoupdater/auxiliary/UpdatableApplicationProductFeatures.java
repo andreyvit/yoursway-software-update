@@ -13,6 +13,8 @@ public interface UpdatableApplicationProductFeatures {
     
     String executablePath();
     
+    String currentVersionDefinitionPath() throws IOException;
+    
     UpdatableApplicationProductFeatures MOCK = new UpdatableApplicationProductFeatures() {
         
         public ComponentStopper componentStopper() {
@@ -30,6 +32,10 @@ public interface UpdatableApplicationProductFeatures {
         
         public String executablePath() {
             return "Contents/MacOS/eclipse";
+        }
+        
+        public String currentVersionDefinitionPath() {
+            return "Contents/Resources/updates/version.txt";
         }
         
     };

@@ -3,12 +3,9 @@ package com.yoursway.autoupdater.localrepository.internal;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
@@ -16,7 +13,6 @@ import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesProvider;
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
-import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
@@ -132,12 +128,14 @@ public class LocalProduct {
         return b.build();
     }
     
-    public ProductVersionDefinition currentVersion() {
-        //>
-        
-        Collection<Request> requests = Collections.emptyList();
-        Collection<ComponentDefinition> components = Collections.emptyList();
-        return new ProductVersionDefinition(definition, "current", "current", requests, components, ""); //! executable
+    public ProductVersionDefinition currentVersion() throws DefinitionException {
+        try {
+            String vdPath = features.currentVersionDefinitionPath();
+            File vdFile = new File(rootFolder(), vdPath);
+            return ProductVersionDefinition.loadFrom(vdFile.toURL(), definition);
+        } catch (Throwable e) {
+            throw new DefinitionException("Cannot load the current version definition", e);
+        }
     }
     
     public ComponentStopper componentStopper() {

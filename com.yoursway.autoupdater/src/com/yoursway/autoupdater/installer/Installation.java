@@ -21,6 +21,7 @@ import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
+import com.yoursway.autoupdater.localrepository.internal.DefinitionException;
 import com.yoursway.autoupdater.localrepository.internal.LocalProduct;
 import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
@@ -58,7 +59,11 @@ public class Installation {
     public Installation(LocalProductVersion version, Map<String, File> packs) throws InstallerException {
         LocalProduct product = version.product();
         
-        currentVD = product.currentVersion();
+        try {
+            currentVD = product.currentVersion();
+        } catch (DefinitionException e) {
+            throw new InstallerException("Cannot get current version definition", e);
+        }
         newVD = version.definition();
         
         if (!currentVD.product().equals(newVD.product()))
