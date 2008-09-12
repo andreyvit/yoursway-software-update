@@ -27,17 +27,18 @@ public final class LocalRepositoryProtos {
       "roductDefinitionMemento\022\014\n\004name\030\005 \002(\t\022\014\n" +
       "\004type\030\006 \002(\t\022\035\n\004pack\030\002 \003(\0132\017.RequestMemen" +
       "to\022.\n\tcomponent\030\003 \003(\0132\033.ComponentDefinit" +
-      "ionMemento\022\022\n\nexecutable\030\004 \002(\t\"\247\001\n\032Local" +
+      "ionMemento\022\022\n\nexecutable\030\004 \002(\t\"\322\001\n\032Local" +
       "ProductVersionMemento\0224\n\ndefinition\030\001 \002(" +
       "\0132 .ProductVersionDefinitionMemento\0220\n\005s" +
       "tate\030\002 \002(\0162!.LocalProductVersionMemento." +
-      "State\"!\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001" +
-      "\"r\n\023LocalProductMemento\022-\n\ndefinition\030\001 " +
-      "\002(\0132\031.ProductDefinitionMemento\022,\n\007versio" +
-      "n\030\002 \003(\0132\033.LocalProductVersionMemento\"?\n\026" +
-      "LocalRepositoryMemento\022%\n\007product\030\001 \003(\0132" +
-      "\024.LocalProductMementoB!\n\037com.yoursway.au" +
-      "toupdater.protos";
+      "State\"L\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001" +
+      "\022\026\n\022InstallingExternal\020\002\022\021\n\rInternalErro" +
+      "r\020\003\"r\n\023LocalProductMemento\022-\n\ndefinition" +
+      "\030\001 \002(\0132\031.ProductDefinitionMemento\022,\n\007ver" +
+      "sion\030\002 \003(\0132\033.LocalProductVersionMemento\"" +
+      "?\n\026LocalRepositoryMemento\022%\n\007product\030\001 \003" +
+      "(\0132\024.LocalProductMementoB!\n\037com.yoursway" +
+      ".autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -1329,6 +1330,8 @@ public final class LocalRepositoryProtos {
     public static enum State {
       Idle(0, 0),
       Installing(1, 1),
+      InstallingExternal(2, 2),
+      InternalError(3, 3),
       ;
       
       
@@ -1338,6 +1341,8 @@ public final class LocalRepositoryProtos {
         switch (value) {
           case 0: return Idle;
           case 1: return Installing;
+          case 2: return InstallingExternal;
+          case 3: return InternalError;
           default: return null;
         }
       }
@@ -1356,7 +1361,7 @@ public final class LocalRepositoryProtos {
       }
       
       private static final State[] VALUES = {
-        Idle, Installing, 
+        Idle, Installing, InstallingExternal, InternalError, 
       };
       public static State valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {

@@ -9,10 +9,6 @@ public interface UpdatableApplication extends UpdatableApplicationProductFeature
     
     String suiteName();
     
-    boolean inInstallingState();
-    
-    void setInstallingState(boolean value);
-    
     UpdatableApplicationView view();
     
     File localRepositoryPlace() throws IOException;

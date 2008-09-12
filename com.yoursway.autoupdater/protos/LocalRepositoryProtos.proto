@@ -42,6 +42,8 @@ message LocalProductVersionMemento {
 	enum State {
 		Idle = 0;
 		Installing = 1;
+		InstallingExternal = 2;
+		InternalError = 3;
 	}
 	
 	required State state = 2;

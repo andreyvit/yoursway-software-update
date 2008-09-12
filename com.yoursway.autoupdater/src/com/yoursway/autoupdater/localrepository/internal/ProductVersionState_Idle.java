@@ -2,10 +2,10 @@ package com.yoursway.autoupdater.localrepository.internal;
 
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 
-class ProductVersionState_Idle extends AbstractProductVersionState implements ProductVersionState {
+final class ProductVersionState_Idle extends AbstractProductVersionState implements ProductVersionState {
     
-    ProductVersionState_Idle(LocalProductVersion wrap) {
-        super(wrap);
+    ProductVersionState_Idle(LocalProductVersion version) {
+        super(version);
     }
     
     @Override

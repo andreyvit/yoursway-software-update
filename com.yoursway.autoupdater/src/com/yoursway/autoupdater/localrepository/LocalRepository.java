@@ -65,8 +65,8 @@ public class LocalRepository {
         this.installer = installer;
     }
     
-    public LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider, Installer installer,
-            File placeDir) throws IOException {
+    private LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider,
+            Installer installer, File placeDir) throws IOException {
         
         if (featuresProvider == null)
             throw new NullPointerException("featuresProvider is null");
@@ -78,8 +78,6 @@ public class LocalRepository {
         Downloader downloader = new DownloaderImpl();
         fileLibrary = new FileLibraryImpl(downloader, new File(place, "fileLibrary"));
         this.installer = installer;
-        
-        atStartup();
     }
     
     public void startUpdating(ProductVersionDefinition version, UpdatingListener listener)

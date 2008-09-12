@@ -73,4 +73,8 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
+    public void atStartup() {
+        continueWork();
+    }
+    
 }

@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.Request;
@@ -14,10 +15,10 @@ import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 import com.yoursway.utils.log.Log;
 
-class ProductVersionState_Installing extends AbstractProductVersionState implements FileLibraryListener {
+final class ProductVersionState_Installing extends AbstractProductVersionState implements FileLibraryListener {
     
-    ProductVersionState_Installing(LocalProductVersion wrap) {
-        super(wrap);
+    ProductVersionState_Installing(LocalProductVersion version) {
+        super(version);
     }
     
     @Override
@@ -39,25 +40,35 @@ class ProductVersionState_Installing extends AbstractProductVersionState impleme
             Log.write("Files ready.");
             fire().downloadingCompleted();
             
-            Collection<File> localPacks = state.getLocalFiles(packRequests);
-            Map<String, File> packsMap = newHashMap();
-            for (File file : localPacks) {
-                String name = file.getName();
-                if (!name.endsWith(".zip"))
-                    throw new AssertionError("A pack file name must ends with .zip");
-                String hash = name.substring(0, name.length() - 4);
-                packsMap.put(hash, file);
-            }
-            try {
-                Installation installation = new Installation(version, packsMap);
-                installer().install(installation, componentStopper());
-            } catch (InstallerException e) {
-                e.printStackTrace(); //!
-            }
+            startInstallation(state.getLocalFiles(packRequests));
         } else {
             Log.write(state.localBytes(packRequests) + " of " + state.totalBytes(packRequests));
             double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
             fire().downloading(progress);
+        }
+    }
+    
+    private void startInstallation(Collection<File> localPacks) throws AssertionError {
+        Map<String, File> packsMap = newHashMap();
+        for (File file : localPacks) {
+            String name = file.getName();
+            if (!name.endsWith(".zip"))
+                throw new AssertionError("A pack file name must ends with .zip");
+            String hash = name.substring(0, name.length() - 4);
+            packsMap.put(hash, file);
+        }
+        try {
+            Installation installation = new Installation(version, packsMap);
+            
+            ComponentStopper stopper = new ComponentStopper() {
+                public boolean stop() {
+                    changeState(new ProductVersionState_InstallingExternal(version));
+                    return componentStopper().stop();
+                }
+            };
+            installer().install(installation, stopper);
+        } catch (InstallerException e) {
+            e.printStackTrace(); //!
         }
     }
     

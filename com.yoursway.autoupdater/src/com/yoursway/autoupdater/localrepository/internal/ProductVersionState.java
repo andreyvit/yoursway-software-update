@@ -14,4 +14,6 @@ public interface ProductVersionState extends FileLibraryListener, LibrarySubscri
     
     State toMementoState();
     
+    void atStartup();
+    
 }

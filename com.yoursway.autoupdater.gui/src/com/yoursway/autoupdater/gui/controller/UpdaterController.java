@@ -5,7 +5,6 @@ import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.gui.view.UpdaterView;
 import com.yoursway.autoupdater.gui.view.UpdaterViewFactory;
-import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.utils.annotations.Nullable;
 
@@ -28,20 +27,9 @@ public class UpdaterController {
     }
     
     public void onStart() {
-        if (app.inInstallingState()) {
-            try {
-                ExternalInstaller.afterInstall();
-                app.setInstallingState(false);
-            } catch (AutoupdaterException e) {
-                // cannot to communicate with external installer
-                app.view().displayAutoupdaterErrorMessage(e); //?
-            } catch (Throwable e) {
-                app.view().displayAutoupdaterErrorMessage(new AutoupdaterException(e));
-            }
-        }
-        
         try {
             repo = LocalRepository.createForGUI(app);
+            repo.atStartup();
         } catch (AutoupdaterException e) {
             app.view().displayAutoupdaterErrorMessage(e); //?
         }
