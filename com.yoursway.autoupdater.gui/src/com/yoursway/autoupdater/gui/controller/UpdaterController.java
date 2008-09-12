@@ -1,6 +1,7 @@
 package com.yoursway.autoupdater.gui.controller;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.auxiliary.ErrorsListener;
 import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
 import com.yoursway.autoupdater.gui.view.UpdaterView;
@@ -29,6 +30,11 @@ public class UpdaterController {
     public void onStart() {
         try {
             repo = LocalRepository.createForGUI(app);
+            repo.errors().addListener(new ErrorsListener() {
+                public void errorOccured(AutoupdaterException e) {
+                    app.view().displayAutoupdaterErrorMessage(e);
+                }
+            });
             repo.atStartup();
         } catch (AutoupdaterException e) {
             app.view().displayAutoupdaterErrorMessage(e); //?

@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.localrepository;
 
-import static com.yoursway.autoupdater.auxiliary.AutoupdaterMultiexception._for;
 import static com.yoursway.utils.log.LogEntryType.ERROR;
 
 import java.io.File;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.MEDoBlock;
+import com.yoursway.autoupdater.auxiliary.ErrorsListener;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
@@ -27,6 +26,7 @@ import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
+import com.yoursway.utils.EventSource;
 import com.yoursway.utils.io.InputStreamConsumer;
 import com.yoursway.utils.io.OutputStreamConsumer;
 import com.yoursway.utils.log.Log;
@@ -41,10 +41,14 @@ public class LocalRepository {
     
     private final UpdatableApplicationProductFeaturesProvider featuresProvider;
     
+    ErrorsAggregator errors = new ErrorsAggregator();
+    
+    private boolean initialized = false;
     private final LocalRepositoryChangerCallback lrcc = new LocalRepositoryChangerCallback() {
         public void localRepositoryChanged() {
             try {
-                save();
+                if (initialized)
+                    save();
             } catch (IOException e) {
                 e.printStackTrace(); //!
             }
@@ -66,14 +70,17 @@ public class LocalRepository {
         this.installer = installer;
     }
     
+    public EventSource<ErrorsListener> errors() {
+        return errors;
+    }
+    
     public void startUpdating(ProductVersionDefinition version, UpdatingListener listener)
             throws AutoupdaterException {
         ProductDefinition productDefinition = version.product();
         LocalProduct localProduct = products.get(productDefinition);
         if (localProduct == null) {
             localProduct = new LocalProduct(productDefinition, fileLibrary, installer, featuresProvider, lrcc);
-            products.put(productDefinition, localProduct);
-            lrcc.localRepositoryChanged();
+            add(localProduct);
         }
         
         try {
@@ -82,6 +89,12 @@ public class LocalRepository {
             e.printStackTrace();
             throw new AutoupdaterException(e);
         }
+    }
+    
+    private void add(LocalProduct product) {
+        product.errors().addListener(errors);
+        products.put(product.definition(), product);
+        lrcc.localRepositoryChanged();
     }
     
     public void atStartup() throws AutoupdaterException {
@@ -100,14 +113,12 @@ public class LocalRepository {
             
             products.clear();
             Log.write("Cannot load localrepo. New localrepo created.", ERROR);
-            return;
+        } finally {
+            initialized = true;
         }
         
-        _for(products.values(), new MEDoBlock<LocalProduct>() {
-            public void _do(LocalProduct product) throws AutoupdaterException {
-                product.atStartup();
-            }
-        });
+        for (LocalProduct product : products.values())
+            product.atStartup();
     }
     
     private void save() throws IOException {
@@ -129,7 +140,7 @@ public class LocalRepository {
     private void fromMemento(LocalRepositoryMemento memento) {
         for (LocalProductMemento m : memento.getProductList()) {
             LocalProduct product = new LocalProduct(m, fileLibrary, installer, featuresProvider, lrcc);
-            products.put(product.definition(), product);
+            add(product);
         }
     }
     

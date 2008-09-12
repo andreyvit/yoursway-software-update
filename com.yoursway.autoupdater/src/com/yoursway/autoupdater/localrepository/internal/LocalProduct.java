@@ -1,6 +1,6 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
-import static com.yoursway.autoupdater.auxiliary.AutoupdaterMultiexception._for;
+import static com.yoursway.utils.broadcaster.BroadcasterFactory.newBroadcaster;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.MEDoBlock;
+import com.yoursway.autoupdater.auxiliary.ErrorsListener;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
@@ -23,7 +23,9 @@ import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento.Builder;
+import com.yoursway.utils.EventSource;
 import com.yoursway.utils.annotations.Nullable;
+import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.log.Log;
 
 public class LocalProduct {
@@ -38,6 +40,8 @@ public class LocalProduct {
     private final LocalRepositoryChangerCallback lrcc;
     
     private final UpdatableApplicationProductFeatures features;
+    
+    private final Broadcaster<ErrorsListener> errors = newBroadcaster(ErrorsListener.class);
     
     public LocalProduct(LocalProductMemento memento, FileLibrary fileLibrary, Installer installer,
             UpdatableApplicationProductFeaturesProvider featuresProvider, LocalRepositoryChangerCallback lrcc) {
@@ -82,6 +86,10 @@ public class LocalProduct {
         features = featuresProvider.getFeatures(definition.name());
     }
     
+    public EventSource<ErrorsListener> errors() {
+        return errors;
+    }
+
     public void startUpdating(ProductVersionDefinition versionDefinition, @Nullable UpdatingListener listener) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");
@@ -116,12 +124,13 @@ public class LocalProduct {
         return false;
     }
     
-    public void atStartup() throws AutoupdaterException {
-        _for(versions.values(), new MEDoBlock<LocalProductVersion>() {
-            public void _do(LocalProductVersion version) throws AutoupdaterException {
+    public void atStartup() {
+        for (LocalProductVersion version : versions.values())
+            try {
                 version.atStartup();
+            } catch (AutoupdaterException e) {
+                errors.fire().errorOccured(e);
             }
-        });
     }
     
     public void continueWork() {

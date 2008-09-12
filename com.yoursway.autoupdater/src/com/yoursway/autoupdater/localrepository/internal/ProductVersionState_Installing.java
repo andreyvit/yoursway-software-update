@@ -67,6 +67,10 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
                 }
             };
             installer().install(installation, stopper);
+            
+            // an application wasn't terminated by the a stopper
+            changeState(new ProductVersionState_InternalError(version));
+            
         } catch (InstallerException e) {
             e.printStackTrace(); //!
         }
