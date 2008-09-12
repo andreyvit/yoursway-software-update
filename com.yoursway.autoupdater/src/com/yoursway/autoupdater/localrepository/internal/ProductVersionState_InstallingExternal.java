@@ -1,6 +1,5 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
@@ -21,7 +20,7 @@ final class ProductVersionState_InstallingExternal extends AbstractProductVersio
     }
     
     @Override
-    public void atStartup() throws AutoupdaterException {
+    public void atStartup() {
         try {
             ExternalInstaller.afterInstall();
             changeState(new ProductVersionState_Idle(version));
@@ -29,7 +28,7 @@ final class ProductVersionState_InstallingExternal extends AbstractProductVersio
             changeState(new ProductVersionState_InternalError(version));
             
             e.printStackTrace(); //!
-            throw new InstallingFailedException(e);
+            errorOccured(new InstallingFailedException(e));
         }
         
         super.atStartup();

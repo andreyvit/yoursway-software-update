@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -30,10 +31,14 @@ public class LibraryState {
         return true;
     }
     
-    public Collection<File> getLocalFiles(Collection<Request> requests) {
+    public Collection<File> getLocalFiles(Collection<Request> requests) throws IOException, AssertionError {
         Collection<File> files = newLinkedList();
         for (Request request : requests) {
             FileState state = stateOf(request.url());
+            
+            if (!request.hash().equals(state.hash()))
+                throw new AssertionError("Requested file is invalid and should be redownloaded before.");
+            
             files.add(state.getLocalFile());
         }
         return files;

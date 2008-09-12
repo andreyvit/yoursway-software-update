@@ -78,12 +78,16 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public void atStartup() throws AutoupdaterException {
+    public void atStartup() {
         continueWork();
     }
     
     public boolean failed() {
         return false;
+    }
+    
+    protected void errorOccured(AutoupdaterException e) {
+        version.errors.errorOccured(e);
     }
     
 }

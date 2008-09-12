@@ -1,7 +1,5 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
-import static com.yoursway.utils.broadcaster.BroadcasterFactory.newBroadcaster;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -18,6 +16,7 @@ import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesPro
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.installer.Installer;
+import com.yoursway.autoupdater.localrepository.ErrorsAggregator;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
@@ -25,7 +24,6 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersion
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento.Builder;
 import com.yoursway.utils.EventSource;
 import com.yoursway.utils.annotations.Nullable;
-import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.log.Log;
 
 public class LocalProduct {
@@ -41,7 +39,7 @@ public class LocalProduct {
     
     private final UpdatableApplicationProductFeatures features;
     
-    private final Broadcaster<ErrorsListener> errors = newBroadcaster(ErrorsListener.class);
+    private final ErrorsAggregator errors = new ErrorsAggregator();
     
     public LocalProduct(LocalProductMemento memento, FileLibrary fileLibrary, Installer installer,
             UpdatableApplicationProductFeaturesProvider featuresProvider, LocalRepositoryChangerCallback lrcc) {
@@ -54,8 +52,7 @@ public class LocalProduct {
         for (LocalProductVersionMemento m : memento.getVersionList()) {
             try {
                 LocalProductVersion version = LocalProductVersion.fromMemento(m, this, lrcc);
-                versions.put(version.definition, version);
-                registerVersionEvents(version);
+                add(version);
             } catch (MalformedURLException e) {
                 e.printStackTrace(); //!
             }
@@ -89,7 +86,7 @@ public class LocalProduct {
     public EventSource<ErrorsListener> errors() {
         return errors;
     }
-
+    
     public void startUpdating(ProductVersionDefinition versionDefinition, @Nullable UpdatingListener listener) {
         if (updating())
             throw new IllegalStateException("Updating of the product has started already.");
@@ -105,16 +102,17 @@ public class LocalProduct {
             localVersion = new LocalProductVersion(this, versionDefinition, lrcc);
             if (listener != null)
                 localVersion.events().addListener(listener);
-            versions.put(versionDefinition, localVersion);
-            lrcc.localRepositoryChanged();
-            registerVersionEvents(localVersion);
+            add(localVersion);
             localVersion.continueWork();
         }
     }
     
-    private void registerVersionEvents(LocalProductVersion version) {
+    private void add(LocalProductVersion version) {
+        versions.put(version.definition(), version);
+        lrcc.localRepositoryChanged();
         fileLibrary.events().addListener(version);
         orderManager.register(version);
+        version.errors.addListener(errors);
     }
     
     private boolean updating() {
@@ -129,7 +127,7 @@ public class LocalProduct {
             try {
                 version.atStartup();
             } catch (AutoupdaterException e) {
-                errors.fire().errorOccured(e);
+                errors.errorOccured(e);
             }
     }
     

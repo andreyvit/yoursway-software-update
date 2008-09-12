@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
@@ -35,16 +36,29 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
     
     @Override
     public void libraryChanged(LibraryState state) {
-        Collection<Request> packRequests = versionDefinition().packRequests();
-        if (state.filesReady(packRequests)) {
-            Log.write("Files ready.");
-            fire().downloadingCompleted();
-            
-            startInstallation(state.getLocalFiles(packRequests));
-        } else {
-            Log.write(state.localBytes(packRequests) + " of " + state.totalBytes(packRequests));
-            double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
-            fire().downloading(progress);
+        try {
+            Collection<Request> packRequests = versionDefinition().packRequests();
+            if (state.filesReady(packRequests)) {
+                Log.write("Files ready.");
+                fire().downloadingCompleted();
+                
+                Collection<File> localFiles = null;
+                try {
+                    localFiles = state.getLocalFiles(packRequests);
+                } catch (Throwable e) {
+                    throw new InvalidDownloadedFilesException(e);
+                }
+                startInstallation(localFiles);
+            } else {
+                Log.write(state.localBytes(packRequests) + " of " + state.totalBytes(packRequests));
+                double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
+                fire().downloading(progress);
+            }
+        } catch (AutoupdaterException e) {
+            errorOccured(e);
+            changeState(new ProductVersionState_InternalError(version));
+        } catch (Throwable e) {
+            e.printStackTrace(); //!
         }
     }
     
@@ -57,6 +71,7 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
             String hash = name.substring(0, name.length() - 4);
             packsMap.put(hash, file);
         }
+        
         try {
             Installation installation = new Installation(version, packsMap);
             
@@ -73,6 +88,8 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
             
         } catch (InstallerException e) {
             e.printStackTrace(); //!
+            errorOccured(e);
+            changeState(new ProductVersionState_InternalError(version));
         }
     }
     

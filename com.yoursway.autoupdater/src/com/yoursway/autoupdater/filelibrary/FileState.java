@@ -1,8 +1,11 @@
 package com.yoursway.autoupdater.filelibrary;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 
+import com.yoursway.utils.YsDigest;
 import com.yoursway.utils.annotations.Immutable;
 
 @Immutable
@@ -41,5 +44,10 @@ public class FileState {
         if (isDone() && prevDoneSize != file.size)
             return true;
         return (doneSize - prevDoneSize >= file.size / 100.0);
+    }
+    
+    public String hash() throws IOException {
+        //! performance
+        return YsDigest.sha1(new FileInputStream(getLocalFile()));
     }
 }

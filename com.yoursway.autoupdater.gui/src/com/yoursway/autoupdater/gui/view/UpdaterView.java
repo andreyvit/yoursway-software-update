@@ -138,7 +138,6 @@ public class UpdaterView {
         
         try {
             repo.startUpdating(version, new ProgressBarUpdatingListener());
-            update.setEnabled(false);
         } catch (AutoupdaterException e) {
             appView.displayAutoupdaterErrorMessage(e);
         }

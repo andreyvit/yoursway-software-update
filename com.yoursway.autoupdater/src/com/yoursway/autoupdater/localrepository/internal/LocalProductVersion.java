@@ -12,6 +12,7 @@ import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.LibrarySubscriber;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.localrepository.ErrorsAggregator;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;
@@ -26,6 +27,7 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
     
     final Broadcaster<UpdatingListener> broadcaster = newBroadcaster(UpdatingListener.class);
     private final LocalRepositoryChangerCallback lrcc;
+    final ErrorsAggregator errors = new ErrorsAggregator();
     
     LocalProductVersion(LocalProduct product, ProductVersionDefinition definition,
             LocalRepositoryChangerCallback lrcc) {
