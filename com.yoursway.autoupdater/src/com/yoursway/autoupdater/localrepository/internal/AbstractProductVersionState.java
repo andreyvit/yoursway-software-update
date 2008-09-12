@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 
 import java.util.Collection;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
@@ -26,6 +27,10 @@ abstract class AbstractProductVersionState implements ProductVersionState {
             return new ProductVersionState_Installing(v);
         if (s == State.Idle)
             return new ProductVersionState_Idle(v);
+        if (s == State.InstallingExternal)
+            return new ProductVersionState_InstallingExternal(v);
+        if (s == State.InternalError)
+            return new ProductVersionState_InternalError(v);
         throw new IllegalArgumentException("State s == " + s.toString());
     }
     
@@ -73,8 +78,12 @@ abstract class AbstractProductVersionState implements ProductVersionState {
         // nothing to do
     }
     
-    public void atStartup() {
+    public void atStartup() throws AutoupdaterException {
         continueWork();
+    }
+    
+    public boolean failed() {
+        return false;
     }
     
 }

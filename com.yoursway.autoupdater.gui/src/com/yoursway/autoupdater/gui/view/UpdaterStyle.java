@@ -8,4 +8,6 @@ public interface UpdaterStyle {
     
     Color localVersionColor();
     
+    Color failedColor();
+    
 }

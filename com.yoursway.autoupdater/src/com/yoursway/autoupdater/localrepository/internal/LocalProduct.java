@@ -1,12 +1,16 @@
 package com.yoursway.autoupdater.localrepository.internal;
 
+import static com.yoursway.autoupdater.auxiliary.AutoupdaterMultiexception._for;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
+import com.yoursway.autoupdater.auxiliary.MEDoBlock;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
@@ -110,6 +114,14 @@ public class LocalProduct {
             if (version.updating())
                 return true;
         return false;
+    }
+    
+    public void atStartup() throws AutoupdaterException {
+        _for(versions.values(), new MEDoBlock<LocalProductVersion>() {
+            public void _do(LocalProductVersion version) throws AutoupdaterException {
+                version.atStartup();
+            }
+        });
     }
     
     public void continueWork() {

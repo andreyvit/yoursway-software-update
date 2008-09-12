@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.localrepository;
 
+import static com.yoursway.autoupdater.auxiliary.AutoupdaterMultiexception._for;
 import static com.yoursway.utils.log.LogEntryType.ERROR;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.auxiliary.MEDoBlock;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
@@ -25,7 +27,6 @@ import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalRepositoryMemento.Builder;
-import com.yoursway.utils.YsFileUtils;
 import com.yoursway.utils.io.InputStreamConsumer;
 import com.yoursway.utils.io.OutputStreamConsumer;
 import com.yoursway.utils.log.Log;
@@ -49,21 +50,6 @@ public class LocalRepository {
             }
         }
     };
-    
-    @Deprecated
-    public LocalRepository() throws IOException {
-        this(new ExternalInstaller());
-    }
-    
-    @Deprecated
-    public LocalRepository(Installer installer) throws IOException {
-        featuresProvider = UpdatableApplicationProductFeaturesProvider.MOCK;
-        
-        Downloader downloader = new DownloaderImpl();
-        place = YsFileUtils.createTempFolder("localrepository.filelibrary.place", null);
-        fileLibrary = new FileLibraryImpl(downloader, new File(place, "fileLibrary"));
-        this.installer = installer;
-    }
     
     private LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider,
             Installer installer, File placeDir) throws IOException {
@@ -98,7 +84,7 @@ public class LocalRepository {
         }
     }
     
-    public void atStartup() {
+    public void atStartup() throws AutoupdaterException {
         try {
             if (!mementoFile().exists())
                 return;
@@ -117,8 +103,11 @@ public class LocalRepository {
             return;
         }
         
-        for (LocalProduct product : products.values())
-            product.continueWork();
+        _for(products.values(), new MEDoBlock<LocalProduct>() {
+            public void _do(LocalProduct product) throws AutoupdaterException {
+                product.atStartup();
+            }
+        });
     }
     
     private void save() throws IOException {
@@ -174,6 +163,10 @@ public class LocalRepository {
     
     public void addUpdatingListener(ProductVersionDefinition version, UpdatingListener listener) {
         getLocalVersion(version).events().addListener(listener);
+    }
+    
+    public boolean isVersionFailed(ProductVersionDefinition version) {
+        return getLocalVersion(version).failed();
     }
     
 }

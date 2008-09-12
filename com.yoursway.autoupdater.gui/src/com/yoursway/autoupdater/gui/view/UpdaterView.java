@@ -54,15 +54,17 @@ public class UpdaterView {
             TableItem item = new TableItem(versions, SWT.NONE);
             item.setData(version);
             item.setText(version.toString());
-            if (version.damaged())
-                item.setForeground(style.damagedColor());
             
             if (repo.hasLocalVersion(version)) {
-                if (!version.damaged())
-                    item.setForeground(style.localVersionColor());
+                if (repo.isVersionFailed(version))
+                    item.setForeground(style.failedColor());
                 
                 repo.addUpdatingListener(version, new ProgressBarUpdatingListener());
             }
+            
+            if (version.damaged())
+                item.setForeground(style.damagedColor());
+            
         }
         
         Composite panel = new Composite(shell, SWT.NONE);

@@ -6,6 +6,7 @@ import static com.yoursway.utils.broadcaster.BroadcasterFactory.newBroadcaster;
 import java.net.MalformedURLException;
 import java.util.Collection;
 
+import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
@@ -79,6 +80,10 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
         return state.updating();
     }
     
+    void atStartup() throws AutoupdaterException {
+        state.atStartup();
+    }
+    
     void continueWork() {
         state.continueWork();
     }
@@ -101,6 +106,10 @@ public class LocalProductVersion implements FileLibraryListener, LibrarySubscrib
     
     public EventSource<UpdatingListener> events() {
         return broadcaster;
+    }
+    
+    public boolean failed() {
+        return state.failed();
     }
     
 }
