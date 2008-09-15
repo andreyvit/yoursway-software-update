@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.installer;
 
+import static com.yoursway.autoupdater.installer.external.InstallerCommunication.INSTALL_FAILED;
 import static com.yoursway.autoupdater.installer.external.InstallerCommunication.OK;
 import static com.yoursway.autoupdater.installer.external.InstallerCommunication.READY;
 import static com.yoursway.autoupdater.installer.external.InstallerCommunication.STOPPING;
@@ -7,6 +8,7 @@ import static com.yoursway.autoupdater.installer.external.InstallerCommunication
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import com.yoursway.autoupdater.installer.external.InstallerCommunication;
 import com.yoursway.autoupdater.installer.gui.InstallerView;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
@@ -47,8 +49,10 @@ public class InstallerThread extends Thread {
             server.waitDisconnect();
             
             log.debug("Starting installation");
+            String rollbackReason = INSTALL_FAILED;
             try {
                 installation.perform(log);
+                rollbackReason = InstallerCommunication.CRASHED;
                 
                 log.debug("Restarting the application");
                 installation.startVersionExecutable(log);
@@ -56,13 +60,27 @@ public class InstallerThread extends Thread {
                 log.debug("Checking application state");
                 server.reconnect();
                 server.send(OK);
-                server.receive(OK);
+                server.receive(OK); //! terminate app if not receive OK
                 
             } catch (Throwable e) {
                 log.error(e);
-                
-                log.debug("Rollback");
-                installation.rollback();
+                log.debug("Starting rollback");
+                try {
+                    installation.rollback();
+                    
+                    log.debug("Restarting the application");
+                    installation.startVersionExecutable(log);
+                    
+                    log.debug("Checking application state");
+                    server.reconnect();
+                    server.send(rollbackReason);
+                    server.receive(OK);
+                    
+                } catch (Throwable e1) {
+                    //> ROLLBACK_FAILED user message
+                    //>     "download new version from site" 
+                    throw e1;
+                }
             }
             
             // only if installation or rollback done successfully

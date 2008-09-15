@@ -18,6 +18,8 @@ public class SWTView implements InstallerView {
     private final StyledText styledText;
     private final Color errorColor;
     
+    private boolean errors = false;
+    
     public SWTView() {
         display = new Display();
         
@@ -47,6 +49,7 @@ public class SWTView implements InstallerView {
             }
             
             public void error(final String msg) {
+                errors = true;
                 styledText.getDisplay().asyncExec(new Runnable() {
                     public void run() {
                         StyleRange sr = new StyleRange();
@@ -61,12 +64,13 @@ public class SWTView implements InstallerView {
             }
             
             public void error(Throwable e) {
+                errors = true;
                 error(e.getClass().getSimpleName() + ": " + e.getMessage());
             }
             
         };
     }
-
+    
     public void doMessageLoop() {
         while (!shell.isDisposed()) {
             try {
@@ -82,6 +86,9 @@ public class SWTView implements InstallerView {
     
     public void done() {
         //> allow user to close the window
+        
+        if (!errors) {
+            shell.close();
+        }
     }
-    
 }

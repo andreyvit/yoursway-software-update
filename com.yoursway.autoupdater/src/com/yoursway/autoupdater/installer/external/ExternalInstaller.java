@@ -1,6 +1,9 @@
 package com.yoursway.autoupdater.installer.external;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.yoursway.autoupdater.installer.external.InstallerCommunication.CRASHED;
+import static com.yoursway.autoupdater.installer.external.InstallerCommunication.INSTALL_FAILED;
+import static com.yoursway.autoupdater.installer.external.InstallerCommunication.OK;
 import static com.yoursway.utils.YsFileUtils.createTempFolder;
 import static com.yoursway.utils.os.YsOSUtils.javaRelativePath;
 
@@ -26,7 +29,7 @@ public class ExternalInstaller implements Installer {
     
     private final boolean gui;
     
-    private static InstallerClient client;
+    private static InstallerCommunication client;
     
     public ExternalInstaller() {
         this(false);
@@ -49,8 +52,8 @@ public class ExternalInstaller implements Installer {
         start();
         
         try {
-            client().receive(InstallerClient.READY);
-            client().send(InstallerClient.STOPPING);
+            client().receive(InstallerCommunication.READY);
+            client().send(InstallerCommunication.STOPPING);
         } catch (Exception e) {
             throw new InstallerException("Cannot communicate with the external installer", e);
         }
@@ -137,16 +140,18 @@ public class ExternalInstaller implements Installer {
         
     }
     
-    public static InstallerClient client() {
+    public static InstallerCommunication client() {
         if (client == null)
             client = new InstallerClient();
         return client;
     }
     
-    public static void afterInstall() throws InstallerException {
+    public static String afterInstall() throws InstallerException {
         try {
-            client().receive("OK");
-            client().send("OK");
+            String result = client().receiveOneOf(OK, INSTALL_FAILED, CRASHED);
+            client().send(OK);
+            
+            return result;
         } catch (Throwable e) {
             throw new InstallerException("Cannot communicate with external installer", e);
         }
