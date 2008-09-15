@@ -1,5 +1,6 @@
 package com.yoursway.autoupdater.installer;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
@@ -11,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -27,6 +29,7 @@ import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.PackMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Builder;
+import com.yoursway.utils.YsFileUtils;
 
 public class Installation {
     
@@ -35,6 +38,9 @@ public class Installation {
     final Map<String, File> packs;
     private final File target;
     private final String executablePath;
+    
+    private final List<RollbackAction> rollbackActions = newLinkedList();
+    private File backupDir;
     
     Installation(ProductVersionDefinition currentVD, ProductVersionDefinition newVD, Map<String, File> packs,
             File target, String executablePath) {
@@ -80,37 +86,56 @@ public class Installation {
         executablePath = product.executablePath();
     }
     
-    public void perform(InstallerLog log) throws IOException {
-        Set<String> newVersionFilePaths = newHashSet();
+    public void perform(InstallerLog log) throws InstallerException {
         
-        for (ComponentDefinition component : newVD.components()) {
-            if (component.isInstaller())
-                continue;
-            
-            for (ComponentFile file : component.files()) {
-                newVersionFilePaths.add(file.path());
-                setupFile(file, component.packs(), log, target);
-            }
+        try {
+            backupDir = YsFileUtils.createTempFolder("autoupdater-installation-backup-", null);
+        } catch (IOException e) {
+            throw new InstallerException("Cannot create installation backup directory", e);
         }
         
-        for (ComponentDefinition component : currentVD.components()) {
-            if (component.isInstaller())
-                continue;
+        try {
+            Set<String> newVersionFilePaths = newHashSet();
             
-            for (ComponentFile file : component.files()) {
-                String path = file.path();
-                if (!newVersionFilePaths.contains(path)) {
-                    log.debug("Deleting old file " + path);
-                    File localFile = new File(target, path);
-                    boolean deleted = localFile.delete();
-                    if (!deleted)
-                        log.error("Cannot delete file " + localFile);
+            for (ComponentDefinition component : newVD.components()) {
+                if (component.isInstaller())
+                    continue;
+                
+                for (ComponentFile file : component.files()) {
+                    newVersionFilePaths.add(file.path());
+                    setupFile(file, component.packs(), log, target);
                 }
             }
+            
+            for (ComponentDefinition component : currentVD.components()) {
+                if (component.isInstaller())
+                    continue;
+                
+                for (ComponentFile file : component.files()) {
+                    String path = file.path();
+                    if (!newVersionFilePaths.contains(path)) {
+                        removeOldFile(path, log);
+                    }
+                }
+            }
+            
+        } catch (Throwable e) {
+            log.error(e); //!
+            log.debug("Rollback");
+            rollback();
         }
     }
     
-    private void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log, File target)
+    private void rollback() throws RollbackException {
+        for (RollbackAction action : rollbackActions) {
+            boolean ok = action._do();
+            if (!ok)
+                throw new RollbackException();
+        }
+        rollbackActions.clear();
+    }
+    
+    protected void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log, File target)
             throws IOException {
         log.debug("Setting up file " + file.path());
         
@@ -129,9 +154,26 @@ public class Installation {
             throw new FileNotFoundException(); //?
             
         InputStream in = pack.getInputStream(entry);
-        File targetFile = new File(target, file.path());
+        final File targetFile = new File(target, file.path());
+        
+        if (targetFile.exists()) {
+            final File rollbackFile = new File(backupDir, file.path());
+            targetFile.renameTo(rollbackFile);
+            rollbackActions.add(0, new RollbackAction() {
+                public boolean _do() {
+                    return rollbackFile.renameTo(targetFile);
+                }
+            });
+        }
+        
         targetFile.getParentFile().mkdirs();
         saveToFile(in, targetFile);
+        
+        rollbackActions.add(0, new RollbackAction() {
+            public boolean _do() {
+                return targetFile.delete();
+            }
+        });
         
         boolean ok = targetFile.setLastModified(file.modified());
         if (!ok)
@@ -139,6 +181,22 @@ public class Installation {
         
         if (file.hasExecAttribute() || file.path().equals(executablePath))
             setExecAttribute(targetFile);
+    }
+    
+    protected void removeOldFile(String path, InstallerLog log) {
+        log.debug("Removing old file " + path);
+        final File localFile = new File(target, path);
+        
+        final File rollbackFile = new File(backupDir, path);
+        boolean renamed = localFile.renameTo(rollbackFile);
+        rollbackActions.add(0, new RollbackAction() {
+            public boolean _do() {
+                return rollbackFile.renameTo(localFile);
+            }
+        });
+        
+        if (!renamed)
+            log.error("Cannot remove old file " + localFile);
     }
     
     public InstallationMemento toMemento() {

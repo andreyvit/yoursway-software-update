@@ -3,7 +3,6 @@ package com.yoursway.autoupdater.tests;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.yoursway.autoupdater.auxiliary.AuxiliaryUtils.createProductVersionDefinition;
-import static com.yoursway.autoupdater.installer.InstallationUtils.createInstallation;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContentsOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
@@ -32,10 +31,13 @@ import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.installer.DefaultInstallationCreator;
 import com.yoursway.autoupdater.installer.Installation;
+import com.yoursway.autoupdater.installer.InstallationCreator;
 import com.yoursway.autoupdater.installer.Installer;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.installer.InternalInstaller;
+import com.yoursway.autoupdater.installer.RollbackTestInstallationCreator;
 import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.external.UnexpectedMessageException;
 import com.yoursway.autoupdater.tests.internal.Pack;
@@ -128,6 +130,27 @@ public class InstallerTests {
             assertEquals(lastModifiedOf(i), new File(target, filepath(i)).lastModified());
     }
     
+    @Test
+    public void rollback() throws IOException, InstallerException {
+        Installer installer = new InternalInstaller();
+        Collection<ComponentDefinition> components1 = newLinkedList(component(8, 15), component(33, 48));
+        Collection<ComponentDefinition> components2 = newLinkedList(component(12, 25), component(23, 42));
+        File target = createTempFolder();
+        
+        createFiles(target, components1);
+        for (int i = 8; i < 12; i++)
+            assertTrue(new File(target, filepath(i)).exists());
+        
+        install(installer, components1, components2, target, new RollbackTestInstallationCreator());
+        
+        //> check file contents replacement
+        
+        for (int i = 8; i <= 15; i++)
+            assertTrue(new File(target, filepath(i)).exists());
+        for (int i = 15 + 1; i < 33; i++)
+            assertFalse(new File(target, filepath(i)).exists());
+    }
+    
     @After
     public void cleanEach() {
         for (File folder : tempFolders)
@@ -139,6 +162,14 @@ public class InstallerTests {
     private void install(Installer installer, Collection<ComponentDefinition> oldComponents,
             Collection<ComponentDefinition> newComponents, File target) throws IOException,
             InstallerException {
+        
+        InstallationCreator installationCreator = new DefaultInstallationCreator();
+        install(installer, oldComponents, newComponents, target, installationCreator);
+    }
+    
+    private void install(Installer installer, Collection<ComponentDefinition> oldComponents,
+            Collection<ComponentDefinition> newComponents, File target,
+            InstallationCreator installationCreator) throws InstallerException {
         
         ProductDefinition productD = new ProductDefinition("UNNAMED");
         Collection<Request> p = newLinkedList();
@@ -154,7 +185,8 @@ public class InstallerTests {
             }
         };
         
-        Installation installation = createInstallation(currentVD, newVD, packs, target, "");
+        Installation installation = installationCreator.createInstallation(currentVD, newVD, packs, target,
+                "");
         installer.install(installation, stopper);
     }
     

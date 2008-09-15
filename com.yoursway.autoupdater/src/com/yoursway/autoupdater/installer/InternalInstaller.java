@@ -1,7 +1,5 @@
 package com.yoursway.autoupdater.installer;
 
-import java.io.IOException;
-
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.installer.log.ConsoleLog;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
@@ -19,11 +17,7 @@ public class InternalInstaller implements Installer {
     }
     
     public void install(Installation installation, ComponentStopper stopper) throws InstallerException {
-        try {
-            installation.perform(log);
-        } catch (IOException e) {
-            throw new InstallerException("Cannot perform the installation", e);
-        }
+        installation.perform(log);
     }
     
 }
