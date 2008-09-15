@@ -120,19 +120,21 @@ public class Installation {
             }
             
         } catch (Throwable e) {
-            log.error(e); //!
-            log.debug("Rollback");
-            rollback();
+            throw new InstallerException("Cannot perform installation", e);
         }
     }
     
-    private void rollback() throws RollbackException {
+    public void rollback() throws RollbackException {
         for (RollbackAction action : rollbackActions) {
             boolean ok = action._do();
             if (!ok)
                 throw new RollbackException();
         }
         rollbackActions.clear();
+    }
+    
+    public void deleteBackupFiles() {
+        YsFileUtils.deleteRecursively(backupDir);
     }
     
     protected void setupFile(ComponentFile file, Iterable<Request> packs, InstallerLog log, File target)

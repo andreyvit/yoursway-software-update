@@ -17,7 +17,13 @@ public class InternalInstaller implements Installer {
     }
     
     public void install(Installation installation, ComponentStopper stopper) throws InstallerException {
-        installation.perform(log);
+        try {
+            installation.perform(log);
+        } catch (Throwable e) {
+            installation.rollback();
+        }
+        
+        // only if installation or rollback done successfully
+        installation.deleteBackupFiles();
     }
-    
 }

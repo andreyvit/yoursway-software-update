@@ -47,18 +47,30 @@ public class InstallerThread extends Thread {
             server.waitDisconnect();
             
             log.debug("Starting installation");
-            installation.perform(log);
+            try {
+                installation.perform(log);
+                
+                log.debug("Restarting the application");
+                installation.startVersionExecutable(log);
+                
+                log.debug("Checking application state");
+                server.reconnect();
+                server.send(OK);
+                server.receive(OK);
+                
+            } catch (Throwable e) {
+                log.error(e);
+                
+                log.debug("Rollback");
+                installation.rollback();
+            }
             
-            log.debug("Restarting the application");
-            installation.startVersionExecutable(log);
-            
-            log.debug("Checking application state");
-            server.reconnect();
-            server.send(OK);
-            server.receive(OK);
+            // only if installation or rollback done successfully
+            installation.deleteBackupFiles();
             
         } catch (Throwable e) {
             log.error(e);
+            
         } finally {
             try {
                 server.close();
@@ -71,5 +83,4 @@ public class InstallerThread extends Thread {
             interrupt();
         }
     }
-    
 }
