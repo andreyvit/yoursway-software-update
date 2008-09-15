@@ -20,6 +20,7 @@ public class InternalInstaller implements Installer {
         try {
             installation.perform(log);
         } catch (Throwable e) {
+            log.error(e);
             installation.rollback();
         }
         

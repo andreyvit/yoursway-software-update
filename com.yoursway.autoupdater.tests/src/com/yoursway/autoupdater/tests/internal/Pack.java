@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
 
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.utils.YsDigest;
 
 public class Pack {
     
@@ -27,7 +28,7 @@ public class Pack {
         packFile = File.createTempFile("autoupdater.pack", "");
         ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(packFile));
         for (File file : dir.listFiles()) {
-            String hash = "filehash_" + file.getName();
+            String hash = YsDigest.sha1(new FileInputStream(file));
             files.add(new ComponentFile(hash, file.length(), file.lastModified(), "-", file.getName()));
             
             zip.putNextEntry(new ZipEntry(hash));

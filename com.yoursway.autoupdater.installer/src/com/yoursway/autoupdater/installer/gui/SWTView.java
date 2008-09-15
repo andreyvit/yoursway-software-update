@@ -64,7 +64,6 @@ public class SWTView implements InstallerView {
             }
             
             public void error(Throwable e) {
-                errors = true;
                 error(e.getClass().getSimpleName() + ": " + e.getMessage());
             }
             
@@ -88,7 +87,11 @@ public class SWTView implements InstallerView {
         //> allow user to close the window
         
         if (!errors) {
-            shell.close();
+            display.asyncExec(new Runnable() {
+                public void run() {
+                    shell.close();
+                }
+            });
         }
     }
 }

@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.yoursway.autoupdater.auxiliary.AuxiliaryUtils.createProductVersionDefinition;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContentsOf;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.hashOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
@@ -210,7 +211,7 @@ public class InstallerTests {
     private Collection<ComponentFile> files(int first, int last) {
         Collection<ComponentFile> files = newLinkedList();
         for (int i = first; i <= last; i++)
-            files.add(new ComponentFile("filehash" + i, sizeOf(i), lastModifiedOf(i), "-", filepath(i)));
+            files.add(new ComponentFile(hashOf(i), sizeOf(i), lastModifiedOf(i), "-", filepath(i)));
         return files;
     }
     
@@ -231,7 +232,7 @@ public class InstallerTests {
         File pack = new File(packsFolder, "packfile" + i + ".zip");
         ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(pack));
         for (int j = i * 10; j <= i * 10 + 14; j++) {
-            zip.putNextEntry(new ZipEntry("filehash" + j));
+            zip.putNextEntry(new ZipEntry(hashOf(j)));
             writeString(zip, fileContentsOf(j));
             zip.closeEntry();
         }

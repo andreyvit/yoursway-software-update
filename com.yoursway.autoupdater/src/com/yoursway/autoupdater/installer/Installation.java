@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +31,7 @@ import com.yoursway.autoupdater.localrepository.internal.LocalProductVersion;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.PackMemento;
 import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento.Builder;
+import com.yoursway.utils.YsDigest;
 import com.yoursway.utils.YsFileUtils;
 
 public class Installation {
@@ -155,7 +158,8 @@ public class Installation {
         if (entry == null)
             throw new FileNotFoundException(); //?
             
-        InputStream in = pack.getInputStream(entry);
+        MessageDigest digest = YsDigest.createSha1();
+        InputStream in = new DigestInputStream(pack.getInputStream(entry), digest);
         final File targetFile = new File(target, file.path());
         
         if (targetFile.exists()) {
@@ -171,6 +175,11 @@ public class Installation {
         targetFile.getParentFile().mkdirs();
         saveToFile(in, targetFile);
         
+        String hash = YsDigest.asHex(digest.digest());
+        
+        if (!hash.equals(file.hash()))
+            throw new RuntimeException("Incorrect hash"); //!
+            
         rollbackActions.add(0, new RollbackAction() {
             public boolean _do() {
                 return targetFile.delete();

@@ -29,7 +29,7 @@ public class ExternalInstaller implements Installer {
     
     private final boolean gui;
     
-    private static InstallerCommunication client;
+    private static InstallerClient client;
     
     public ExternalInstaller() {
         this(false);
@@ -140,7 +140,7 @@ public class ExternalInstaller implements Installer {
         
     }
     
-    public static InstallerCommunication client() {
+    public static InstallerClient client() {
         if (client == null)
             client = new InstallerClient();
         return client;
