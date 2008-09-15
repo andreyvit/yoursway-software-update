@@ -93,14 +93,19 @@ public class Installation {
             }
         }
         
-        for (ComponentFile file : currentVD.files()) {
-            String path = file.path();
-            if (!newVersionFilePaths.contains(path)) {
-                log.debug("Deleting old file " + path);
-                File localFile = new File(target, path);
-                boolean deleted = localFile.delete();
-                if (!deleted)
-                    log.error("Cannot delete file " + localFile);
+        for (ComponentDefinition component : currentVD.components()) {
+            if (component.isInstaller())
+                continue;
+            
+            for (ComponentFile file : component.files()) {
+                String path = file.path();
+                if (!newVersionFilePaths.contains(path)) {
+                    log.debug("Deleting old file " + path);
+                    File localFile = new File(target, path);
+                    boolean deleted = localFile.delete();
+                    if (!deleted)
+                        log.error("Cannot delete file " + localFile);
+                }
             }
         }
     }
@@ -158,6 +163,10 @@ public class Installation {
     }
     
     public void startVersionExecutable(InstallerLog log) throws Exception {
+        log.debug("exepath: " + executablePath);
+        if (executablePath.length() == 0)
+            return;
+        
         //File executable = new File(target, newVD.executable().path());
         File executable = new File(target, executablePath);
         

@@ -2,8 +2,9 @@ package com.yoursway.autoupdater.tests;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.yoursway.autoupdater.auxiliary.AuxiliaryUtils.createProductVersionDefinition;
 import static com.yoursway.autoupdater.installer.InstallationUtils.createInstallation;
-import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContents;
+import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContentsOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.lastModifiedOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
@@ -69,7 +70,7 @@ public class InstallerTests {
         ExternalInstaller.client().send("OK");
         
         for (int i = 12; i <= 42; i++)
-            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+            assertEquals(fileContentsOf(i), readAsString(new File(target, filepath(i))));
     }
     
     private ComponentDefinition createInstallerComponent() throws IOException {
@@ -93,7 +94,7 @@ public class InstallerTests {
         install(installer, components, components, target);
         
         for (int i = 12; i <= 42; i++)
-            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+            assertEquals(fileContentsOf(i), readAsString(new File(target, filepath(i))));
     }
     
     @Test
@@ -112,7 +113,7 @@ public class InstallerTests {
         for (int i = 8; i < 12; i++)
             assertFalse(new File(target, filepath(i)).exists());
         for (int i = 12; i <= 42; i++)
-            assertEquals(fileContents(sizeOf(i)), readAsString(new File(target, filepath(i))));
+            assertEquals(fileContentsOf(i), readAsString(new File(target, filepath(i))));
     }
     
     @Test
@@ -142,8 +143,10 @@ public class InstallerTests {
         ProductDefinition productD = new ProductDefinition("UNNAMED");
         Collection<Request> p = newLinkedList();
         
-        ProductVersionDefinition currentVD = new ProductVersionDefinition(productD, p, oldComponents, "");
-        ProductVersionDefinition newVD = new ProductVersionDefinition(productD, p, newComponents, "");
+        ProductVersionDefinition currentVD = createProductVersionDefinition(productD, "current", "current",
+                p, oldComponents, "");
+        ProductVersionDefinition newVD = createProductVersionDefinition(productD, "new", "new", p,
+                newComponents, "");
         
         ComponentStopper stopper = new ComponentStopper() {
             public boolean stop() {
@@ -151,7 +154,7 @@ public class InstallerTests {
             }
         };
         
-        Installation installation = createInstallation(currentVD, newVD, packs, target);
+        Installation installation = createInstallation(currentVD, newVD, packs, target, "");
         installer.install(installation, stopper);
     }
     
@@ -197,7 +200,7 @@ public class InstallerTests {
         ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(pack));
         for (int j = i * 10; j <= i * 10 + 14; j++) {
             zip.putNextEntry(new ZipEntry("filehash" + j));
-            writeString(zip, fileContents(sizeOf(j)));
+            writeString(zip, fileContentsOf(j));
             zip.closeEntry();
         }
         zip.close();

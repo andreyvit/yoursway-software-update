@@ -17,6 +17,8 @@ public interface UpdatableApplicationProductFeatures {
     
     UpdatableApplicationProductFeatures MOCK = new UpdatableApplicationProductFeatures() {
         
+        private File tmpRoot;
+        
         public ComponentStopper componentStopper() {
             return new ComponentStopper() {
                 public boolean stop() {
@@ -27,15 +29,20 @@ public interface UpdatableApplicationProductFeatures {
         }
         
         public File rootFolder() throws IOException {
-            return YsFileUtils.createTempFolder("autoupdater-appRoot-", null);
+            if (tmpRoot == null)
+                tmpRoot = YsFileUtils.createTempFolder("autoupdater-appRoot-", null);
+            return tmpRoot;
         }
         
         public String executablePath() {
             return "Contents/MacOS/eclipse";
         }
         
-        public String currentVersionDefinitionPath() {
-            return "Contents/Resources/updates/version.txt";
+        public String currentVersionDefinitionPath() throws IOException {
+            String path = "version.txt";
+            File file = new File(rootFolder(), path);
+            YsFileUtils.writeString(file, "PV\tUNNAMED\tcurrent\tcurrent");
+            return path;
         }
         
     };

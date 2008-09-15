@@ -1,7 +1,6 @@
 package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newHashSet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +31,7 @@ public class ProductVersionDefinition {
     private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;
     
-    private ProductVersionDefinition(ProductDefinition product, String name, String releaseType,
+    ProductVersionDefinition(ProductDefinition product, String name, String releaseType,
             @Nullable Collection<Request> packs, Collection<ComponentDefinition> components, String executable) {
         if (product == null)
             throw new NullPointerException("product is null");
@@ -44,9 +43,6 @@ public class ProductVersionDefinition {
                 if (!packRequest.url().toString().endsWith(".zip"))
                     throw new IllegalArgumentException("packs: A pack filename must ends with .zip");
         
-        this.product = product;
-        product.addVersion(this);
-        
         for (ComponentDefinition component : components)
             addComponent(component);
         this.packs = packs;
@@ -55,18 +51,21 @@ public class ProductVersionDefinition {
         this.name = name;
         
         this.executable = executable;
+        
+        this.product = product;
+        product.addVersion(this);
     }
     
     public ProductVersionDefinition(ProductDefinition product, String releaseType, String name) {
-        this.product = product;
-        product.addVersion(this);
-        
         packs = null;
         
         this.releaseType = releaseType;
         this.name = name;
         
         executable = System.getProperty("user.dir") + "/afterupdate.jar";
+        
+        this.product = product;
+        product.addVersion(this);
     }
     
     @Override
@@ -180,13 +179,6 @@ public class ProductVersionDefinition {
     public ComponentFile executable() throws Exception {
         throw new UnsupportedOperationException();
         //throw new Exception("The product version hasn't executable");
-    }
-    
-    public Collection<ComponentFile> files() {
-        Collection<ComponentFile> files = newHashSet();
-        for (ComponentDefinition component : components)
-            files.addAll(component.files());
-        return files;
     }
     
     void damage() {

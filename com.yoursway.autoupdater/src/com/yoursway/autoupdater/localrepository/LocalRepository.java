@@ -55,8 +55,8 @@ public class LocalRepository {
         }
     };
     
-    private LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider,
-            Installer installer, File placeDir) throws IOException {
+    LocalRepository(UpdatableApplicationProductFeaturesProvider featuresProvider, Installer installer,
+            File placeDir) throws IOException {
         
         if (featuresProvider == null)
             throw new NullPointerException("featuresProvider is null");
