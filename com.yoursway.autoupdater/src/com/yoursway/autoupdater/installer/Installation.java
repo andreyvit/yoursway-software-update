@@ -24,6 +24,7 @@ import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.installer.external.ExternalInstaller;
 import com.yoursway.autoupdater.installer.log.InstallerLog;
 import com.yoursway.autoupdater.localrepository.internal.DefinitionException;
 import com.yoursway.autoupdater.localrepository.internal.LocalProduct;
@@ -231,7 +232,7 @@ public class Installation {
         return new Installation(current, version, packs, target, memento.getExecutable());
     }
     
-    public void startVersionExecutable(InstallerLog log) throws Exception {
+    public void startVersionExecutable(InstallerLog log, int port) throws Exception {
         log.debug("exepath: " + executablePath);
         if (executablePath.length() == 0)
             return;
@@ -254,6 +255,7 @@ public class Installation {
             pb.command(executable.getCanonicalPath());
         }
         
+        pb.environment().put(ExternalInstaller.EXTINSTALLER_PORT, Integer.toString(port));
         pb.start();
     }
     

@@ -22,8 +22,7 @@ import com.yoursway.utils.log.Log;
 
 public class ExternalInstaller implements Installer {
     
-    public static final int PORT = 32123;
-    
+    public static final String EXTINSTALLER_PORT = "EXTINSTALLER_PORT";
     private File folder;
     private boolean prepared;
     
@@ -49,14 +48,11 @@ public class ExternalInstaller implements Installer {
         prepare(installation);
         Log.write("External installer prepared in " + folder + ".");
         
-        start();
+        InstallerCommunication communication = InstallerCommunication.listen();
+        start(communication.port());
         
-        try {
-            client().receive(InstallerCommunication.READY);
-            client().send(InstallerCommunication.STOPPING);
-        } catch (Exception e) {
-            throw new InstallerException("Cannot communicate with the external installer", e);
-        }
+        communication.receive(InstallerCommunication.READY);
+        communication.send(InstallerCommunication.STOPPING);
         
         boolean stopped = stopper.stop();
         if (!stopped)
@@ -93,7 +89,7 @@ public class ExternalInstaller implements Installer {
         prepared = true;
     }
     
-    private void start() throws InstallerException {
+    private void start(int port) throws InstallerException {
         if (!prepared)
             throw new IllegalStateException("ExternalInstaller should be prepared before starting");
         
@@ -117,11 +113,10 @@ public class ExternalInstaller implements Installer {
             cmd.add("com.yoursway.autoupdater.installer.InstallerMain");
             cmd.add("gui");
         } catch (Exception e) {
-            throw new InstallerException("Cannot build java cmd", e); //!
+            throw new InstallerException("Cannot create java cmd", e); //!
         }
         pb.command(cmd);
-        
-        Log.write(cmd.toString());
+        pb.environment().put(EXTINSTALLER_PORT, Integer.toString(port));
         
         try {
             pb.start();
@@ -140,16 +135,12 @@ public class ExternalInstaller implements Installer {
         
     }
     
-    public static InstallerClient client() {
-        if (client == null)
-            client = new InstallerClient();
-        return client;
-    }
-    
     public static String afterInstall() throws InstallerException {
         try {
-            String result = client().receiveOneOf(OK, INSTALL_FAILED, CRASHED);
-            client().send(OK);
+            InstallerCommunication communication = InstallerCommunication.connect();
+            
+            String result = communication.receiveOneOf(OK, INSTALL_FAILED, CRASHED);
+            communication.send(OK);
             
             return result;
         } catch (Throwable e) {

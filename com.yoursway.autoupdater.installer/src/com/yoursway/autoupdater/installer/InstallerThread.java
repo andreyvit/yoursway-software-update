@@ -32,10 +32,10 @@ public class InstallerThread extends Thread {
     
     @Override
     public void run() {
-        InstallerServer server = null;
+        InstallerCommunication communication = null;
         try {
             log.debug("Initializing communication with the application");
-            server = new InstallerServer();
+            communication = InstallerCommunication.connect();
             
             log.debug("Restoring installation from file");
             InputStream input = new FileInputStream("installation");
@@ -44,9 +44,9 @@ public class InstallerThread extends Thread {
             Installation installation = Installation.fromMemento(memento);
             
             log.debug("Stopping the application");
-            server.send(READY);
-            server.receive(STOPPING);
-            server.waitDisconnect();
+            communication.send(READY);
+            communication.receive(STOPPING);
+            communication.waitDisconnect();
             
             log.debug("Starting installation");
             String rollbackReason = INSTALL_FAILED;
@@ -55,12 +55,12 @@ public class InstallerThread extends Thread {
                 rollbackReason = InstallerCommunication.CRASHED;
                 
                 log.debug("Restarting the application");
-                installation.startVersionExecutable(log);
+                communication = InstallerCommunication.listen();
+                installation.startVersionExecutable(log, communication.port());
                 
                 log.debug("Checking application state");
-                server.reconnect();
-                server.send(OK);
-                server.receive(OK); //! terminate app if not receive OK
+                communication.send(OK);
+                communication.receive(OK); //! terminate app if not receive OK
                 
             } catch (Throwable e) {
                 log.error(e);
@@ -69,12 +69,12 @@ public class InstallerThread extends Thread {
                     installation.rollback();
                     
                     log.debug("Restarting the application");
-                    installation.startVersionExecutable(log);
+                    communication = InstallerCommunication.listen();
+                    installation.startVersionExecutable(log, communication.port());
                     
                     log.debug("Checking application state");
-                    server.reconnect();
-                    server.send(rollbackReason);
-                    server.receive(OK);
+                    communication.send(rollbackReason);
+                    communication.receive(OK);
                     
                 } catch (Throwable e1) {
                     //> ROLLBACK_FAILED user message
@@ -91,7 +91,7 @@ public class InstallerThread extends Thread {
             
         } finally {
             try {
-                server.close();
+                communication.close();
             } catch (Exception e) {
                 log.error(e);
             }
