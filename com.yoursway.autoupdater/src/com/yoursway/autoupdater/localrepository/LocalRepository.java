@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.auxiliary.ErrorsAggregator;
 import com.yoursway.autoupdater.auxiliary.ErrorsListener;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;

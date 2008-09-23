@@ -54,11 +54,12 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
                 double progress = state.localBytes(packRequests) * 1.0 / state.totalBytes(packRequests);
                 fire().downloading(progress);
             }
-        } catch (AutoupdaterException e) {
-            errorOccured(e);
-            changeState(new ProductVersionState_InternalError(version));
         } catch (Throwable e) {
-            e.printStackTrace(); //!
+            AutoupdaterException ae = e instanceof AutoupdaterException ? (AutoupdaterException) e
+                    : new AutoupdaterException(e);
+            
+            errorOccured(ae);
+            changeState(new ProductVersionState_InternalError(version));
         }
     }
     

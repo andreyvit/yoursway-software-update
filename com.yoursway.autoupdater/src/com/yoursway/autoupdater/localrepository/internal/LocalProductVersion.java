@@ -7,12 +7,12 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.auxiliary.ErrorsAggregator;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
 import com.yoursway.autoupdater.filelibrary.LibraryState;
 import com.yoursway.autoupdater.filelibrary.LibrarySubscriber;
 import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.localrepository.ErrorsAggregator;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento;

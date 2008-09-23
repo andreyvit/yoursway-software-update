@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
 import com.yoursway.autoupdater.auxiliary.ComponentStopper;
+import com.yoursway.autoupdater.auxiliary.ErrorsAggregator;
 import com.yoursway.autoupdater.auxiliary.ErrorsListener;
 import com.yoursway.autoupdater.auxiliary.ProductDefinition;
 import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
@@ -16,7 +17,6 @@ import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesPro
 import com.yoursway.autoupdater.filelibrary.FileLibrary;
 import com.yoursway.autoupdater.filelibrary.OrderManager;
 import com.yoursway.autoupdater.installer.Installer;
-import com.yoursway.autoupdater.localrepository.ErrorsAggregator;
 import com.yoursway.autoupdater.localrepository.LocalRepositoryChangerCallback;
 import com.yoursway.autoupdater.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductMemento;
