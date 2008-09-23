@@ -2,6 +2,8 @@ package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -12,8 +14,16 @@ public class ProductDefinition {
     private final String name;
     private final Map<String, ProductVersionDefinition> versions = newHashMap();
     
-    public ProductDefinition(String name) {
+    final URL updateSite;
+    
+    public ProductDefinition(String name, URL updateSite) {
+        if (name == null)
+            throw new NullPointerException("name is null");
+        if (updateSite == null)
+            throw new NullPointerException("updateSite is null");
+        
         this.name = name;
+        this.updateSite = updateSite;
     }
     
     @Override
@@ -46,8 +56,9 @@ public class ProductDefinition {
         return name;
     }
     
-    public static ProductDefinition fromMemento(ProductDefinitionMemento memento) {
-        return new ProductDefinition(memento.getName());
+    public static ProductDefinition fromMemento(ProductDefinitionMemento memento)
+            throws MalformedURLException {
+        return new ProductDefinition(memento.getName(), new URL(memento.getUpdateSite()));
     }
     
     public ProductDefinitionMemento toMemento() {

@@ -1,12 +1,14 @@
 package com.yoursway.autoupdater.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.yoursway.autoupdater.auxiliary.ComponentDefinition.PACKS_PATH;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 import com.yoursway.autoupdater.filelibrary.Request;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinitionMemento;
@@ -26,7 +28,7 @@ public class ProductVersionDefinition {
     private boolean damaged;
     
     @Nullable
-    private Collection<Request> packs;
+    private static Collection<Request> packs;
     
     private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;
@@ -210,18 +212,53 @@ public class ProductVersionDefinition {
         ProductVersionDefinition definition = new ProductVersionDefinition(product, firstLine[2],
                 firstLine[3]);
         
+        boolean dontReadNext = false;
+        String[] fields = null;
         while (true) {
-            String[] fields = reader.readLine();
+            if (!dontReadNext)
+                fields = reader.readLine();
+            else
+                dontReadNext = false;
+            
             if (fields == null)
                 break;
             
             if (fields.length != 2 || !fields[0].equals("CVB"))
                 throw new InvalidFileFormatException(url);
             
-            throw new UnsupportedOperationException();
+            String componentName = fields[1];
+            List<Request> packs = newLinkedList();
+            List<ComponentFile> files = newLinkedList();
+            
+            while (true) {
+                fields = reader.readLine();
+                if (fields == null)
+                    break;
+                
+                String type = fields[0];
+                if (type.equals("P") || type.equals("F")) {
+                    String hash = fields[1];
+                    long size = Long.parseLong(fields[2]);
+                    if (type.equals("P")) {
+                        URL packUrl = new URL(product.updateSite + PACKS_PATH + hash + ".zip");
+                        Request request = new Request(packUrl, size, hash);
+                        packs.add(request);
+                    } else {
+                        long modified = Long.parseLong(fields[3]);
+                        ComponentFile file = new ComponentFile(hash, size, modified, fields[4], fields[5]);
+                        files.add(file);
+                    }
+                } else {
+                    dontReadNext = true;
+                    break;
+                }
+                
+            }
+            
+            ComponentDefinition component = new ComponentDefinition(componentName, packs, files);
+            definition.addComponent(component);
         }
         
         return definition;
     }
-    
 }

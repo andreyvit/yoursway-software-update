@@ -23,6 +23,7 @@ message ComponentDefinitionMemento {
 
 message ProductDefinitionMemento {
 	required string name = 1;
+	optional string updateSite = 2;
 }
 
 message ProductVersionDefinitionMemento {

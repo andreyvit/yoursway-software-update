@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.yoursway.autoupdater.filelibrary.Request;
@@ -21,7 +22,7 @@ import com.yoursway.autoupdater.protos.LocalRepositoryProtos.ComponentDefinition
 public class ComponentDefinition {
     
     private static final String COMPONENTS_PATH = "components/";
-    private static final String PACKS_PATH = "packs/";
+    static final String PACKS_PATH = "packs/";
     
     private final Map<String, ComponentFile> files = newHashMap();
     private final Collection<Request> packs;
@@ -43,10 +44,6 @@ public class ComponentDefinition {
         
         for (ComponentFile file : files)
             addFile(file);
-    }
-    
-    private void addFile(ComponentFile file) {
-        files.put(file.hash, file);
     }
     
     public ComponentDefinition(URL updateSite, String name) throws IOException, InvalidFileFormatException {
@@ -76,6 +73,23 @@ public class ComponentDefinition {
             } else
                 throw new InvalidFileFormatException(url);
         }
+    }
+    
+    ComponentDefinition(String name, List<Request> packs, List<ComponentFile> files) {
+        if (name == null)
+            throw new NullPointerException("name is null");
+        if (packs == null)
+            throw new NullPointerException("packs is null");
+        
+        this.name = name;
+        this.packs = packs;
+        
+        for (ComponentFile file : files)
+            addFile(file);
+    }
+    
+    private void addFile(ComponentFile file) {
+        files.put(file.hash, file);
     }
     
     private String filename() {

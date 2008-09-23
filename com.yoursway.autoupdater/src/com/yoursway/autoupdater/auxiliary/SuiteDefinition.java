@@ -105,7 +105,7 @@ public class SuiteDefinition {
             String versionName) {
         ProductDefinition product = products.get(productName);
         if (product == null) {
-            product = new ProductDefinition(productName);
+            product = new ProductDefinition(productName, updateSite);
             products.put(productName, product);
         }
         return new ProductVersionDefinition(product, releaseType, versionName);

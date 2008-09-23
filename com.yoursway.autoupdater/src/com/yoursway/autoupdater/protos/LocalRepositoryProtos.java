@@ -21,25 +21,25 @@ public final class LocalRepositoryProtos {
       "\n\007attribs\030\006 \002(\t\022\014\n\004path\030\004 \002(\t\"n\n\032Compone" +
       "ntDefinitionMemento\022\014\n\004name\030\003 \002(\t\022#\n\004fil" +
       "e\030\001 \003(\0132\025.ComponentFileMemento\022\035\n\004pack\030\002" +
-      " \003(\0132\017.RequestMemento\"(\n\030ProductDefiniti" +
-      "onMemento\022\014\n\004name\030\001 \002(\t\"\314\001\n\037ProductVersi" +
-      "onDefinitionMemento\022*\n\007product\030\001 \002(\0132\031.P" +
-      "roductDefinitionMemento\022\014\n\004name\030\005 \002(\t\022\014\n" +
-      "\004type\030\006 \002(\t\022\035\n\004pack\030\002 \003(\0132\017.RequestMemen" +
-      "to\022.\n\tcomponent\030\003 \003(\0132\033.ComponentDefinit" +
-      "ionMemento\022\022\n\nexecutable\030\004 \002(\t\"\362\001\n\032Local" +
-      "ProductVersionMemento\0224\n\ndefinition\030\001 \002(" +
-      "\0132 .ProductVersionDefinitionMemento\0220\n\005s" +
-      "tate\030\002 \002(\0162!.LocalProductVersionMemento." +
-      "State\"l\n\005State\022\010\n\004Idle\020\000\022\016\n\nInstalling\020\001" +
-      "\022\026\n\022InstallingExternal\020\002\022\021\n\rInternalErro" +
-      "r\020\003\022\021\n\rInstallFailed\020\004\022\013\n\007Crashed\020\005\"r\n\023L" +
-      "ocalProductMemento\022-\n\ndefinition\030\001 \002(\0132\031" +
-      ".ProductDefinitionMemento\022,\n\007version\030\002 \003" +
-      "(\0132\033.LocalProductVersionMemento\"?\n\026Local" +
-      "RepositoryMemento\022%\n\007product\030\001 \003(\0132\024.Loc" +
-      "alProductMementoB!\n\037com.yoursway.autoupd" +
-      "ater.protos";
+      " \003(\0132\017.RequestMemento\"<\n\030ProductDefiniti" +
+      "onMemento\022\014\n\004name\030\001 \002(\t\022\022\n\nupdateSite\030\002 " +
+      "\001(\t\"\314\001\n\037ProductVersionDefinitionMemento\022" +
+      "*\n\007product\030\001 \002(\0132\031.ProductDefinitionMeme" +
+      "nto\022\014\n\004name\030\005 \002(\t\022\014\n\004type\030\006 \002(\t\022\035\n\004pack\030" +
+      "\002 \003(\0132\017.RequestMemento\022.\n\tcomponent\030\003 \003(" +
+      "\0132\033.ComponentDefinitionMemento\022\022\n\nexecut" +
+      "able\030\004 \002(\t\"\362\001\n\032LocalProductVersionMement" +
+      "o\0224\n\ndefinition\030\001 \002(\0132 .ProductVersionDe" +
+      "finitionMemento\0220\n\005state\030\002 \002(\0162!.LocalPr" +
+      "oductVersionMemento.State\"l\n\005State\022\010\n\004Id" +
+      "le\020\000\022\016\n\nInstalling\020\001\022\026\n\022InstallingExtern" +
+      "al\020\002\022\021\n\rInternalError\020\003\022\021\n\rInstallFailed" +
+      "\020\004\022\013\n\007Crashed\020\005\"r\n\023LocalProductMemento\022-" +
+      "\n\ndefinition\030\001 \002(\0132\031.ProductDefinitionMe" +
+      "mento\022,\n\007version\030\002 \003(\0132\033.LocalProductVer" +
+      "sionMemento\"?\n\026LocalRepositoryMemento\022%\n" +
+      "\007product\030\001 \003(\0132\024.LocalProductMementoB!\n\037" +
+      "com.yoursway.autoupdater.protos";
     try {
       return com.google.protobuf.Descriptors.FileDescriptor
         .internalBuildGeneratedFileFrom(descriptorData,
@@ -814,6 +814,12 @@ public final class LocalRepositoryProtos {
     public boolean hasName() { return hasName; }
     public java.lang.String getName() { return name_; }
     
+    // optional string updateSite = 2;
+    private boolean hasUpdateSite;
+    private java.lang.String updateSite_ = "";
+    public boolean hasUpdateSite() { return hasUpdateSite; }
+    public java.lang.String getUpdateSite() { return updateSite_; }
+    
     public static com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -935,6 +941,24 @@ public final class LocalRepositoryProtos {
       public Builder clearName() {
         result.hasName = false;
         result.name_ = "";
+        return this;
+      }
+      
+      // optional string updateSite = 2;
+      public boolean hasUpdateSite() {
+        return result.hasUpdateSite();
+      }
+      public java.lang.String getUpdateSite() {
+        return result.getUpdateSite();
+      }
+      public Builder setUpdateSite(java.lang.String value) {
+        result.hasUpdateSite = true;
+        result.updateSite_ = value;
+        return this;
+      }
+      public Builder clearUpdateSite() {
+        result.hasUpdateSite = false;
+        result.updateSite_ = "";
         return this;
       }
     }
@@ -2021,7 +2045,7 @@ public final class LocalRepositoryProtos {
       internal_static_ProductDefinitionMemento_fieldAccessorTable = new
         com.google.protobuf.GeneratedMessage.FieldAccessorTable(
           internal_static_ProductDefinitionMemento_descriptor,
-          new java.lang.String[] { "Name", },
+          new java.lang.String[] { "Name", "UpdateSite", },
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento.class,
           com.yoursway.autoupdater.protos.LocalRepositoryProtos.ProductDefinitionMemento.Builder.class);
   private static final com.google.protobuf.Descriptors.Descriptor

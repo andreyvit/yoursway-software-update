@@ -48,7 +48,13 @@ public class LocalProduct {
         this.installer = installer;
         this.lrcc = lrcc;
         
-        definition = ProductDefinition.fromMemento(memento.getDefinition());
+        try {
+            definition = ProductDefinition.fromMemento(memento.getDefinition());
+        } catch (MalformedURLException e) {
+            e.printStackTrace(); //!
+            throw new RuntimeException(e);
+        }
+        
         for (LocalProductVersionMemento m : memento.getVersionList()) {
             try {
                 LocalProductVersion version = LocalProductVersion.fromMemento(m, this, lrcc);
