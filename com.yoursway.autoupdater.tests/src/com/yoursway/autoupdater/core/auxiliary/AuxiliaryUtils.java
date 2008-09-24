@@ -1,10 +1,9 @@
 package com.yoursway.autoupdater.core.auxiliary;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 
-import com.yoursway.autoupdater.core.auxiliary.ComponentDefinition;
-import com.yoursway.autoupdater.core.auxiliary.ProductDefinition;
-import com.yoursway.autoupdater.core.auxiliary.ProductVersionDefinition;
 import com.yoursway.autoupdater.core.filelibrary.Request;
 
 public class AuxiliaryUtils {
@@ -14,6 +13,10 @@ public class AuxiliaryUtils {
             Collection<ComponentDefinition> components, String executable) {
         
         return new ProductVersionDefinition(product, name, releaseType, packs, components, executable);
+    }
+    
+    public static ProductDefinition fakeProductDefinition() throws MalformedURLException {
+        return new ProductDefinition("UNNAMED", new URL("http://localhost/update-site/"));
     }
     
 }

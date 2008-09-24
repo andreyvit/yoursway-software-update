@@ -20,7 +20,7 @@
 <mapEntry key="com.yoursway.utils" value="${workspace_loc:/com.yoursway.utils}"/>
 <mapEntry key="com.google.collections" value="${workspace_loc:/com.google.collections}"/>
 <mapEntry key="com.google.protobuf" value="${workspace_loc:/com.google.protobuf}"/>
-<mapEntry key="com.yoursway.autoupdater" value="${workspace_loc:/com.yoursway.autoupdater}"/>
+<mapEntry key="com.yoursway.autoupdater.core" value="${workspace_loc:/com.yoursway.autoupdater.core}"/>
 <mapEntry key="org.eclipse.swt" value="${workspace_loc:/org.eclipse.swt}"/>
 <mapEntry key="com.yoursway.swt.macosx" value="${workspace_loc:/com.yoursway.swt.macosx}"/>
 <mapEntry key="com.yoursway.autoupdater.installer" value="${workspace_loc:/com.yoursway.autoupdater.installer}"/>

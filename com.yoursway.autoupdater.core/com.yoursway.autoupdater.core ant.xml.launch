@@ -18,7 +18,7 @@
 <mapEntry key="eclipse.pdebuild.templates" value="/Applications/Eclipse/plugins/org.eclipse.pde.build_3.4.0.v20080604/templates/"/>
 <mapEntry key="com.google.protobuf" value="${workspace_loc:/com.google.protobuf}"/>
 <mapEntry key="eclipse.pdebuild.home" value="/Applications/Eclipse/plugins/org.eclipse.pde.build_3.4.0.v20080604/./"/>
-<mapEntry key="com.yoursway.autoupdater" value="${workspace_loc:/com.yoursway.autoupdater}"/>
+<mapEntry key="com.yoursway.autoupdater.core" value="${workspace_loc:/com.yoursway.autoupdater.core}"/>
 <mapEntry key="com.google.collections" value="${workspace_loc:/com.google.collections}"/>
 <mapEntry key="com.yoursway.utils" value="${workspace_loc:/com.yoursway.utils}"/>
 </mapAttribute>

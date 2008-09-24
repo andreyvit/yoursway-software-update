@@ -13,7 +13,7 @@
 <zipfileset excludes="META-INF/*.SF" src="${com.google.collections}/google-collect-snapshot-20071022.jar"/>
 <fileset dir="${com.google.protobuf}/bin"/>
 <zipfileset excludes="META-INF/*.SF" src="${com.google.protobuf}/protobuf-java-2.0.0beta.jar"/>
-<fileset dir="${com.yoursway.autoupdater}/bin"/>
+<fileset dir="${com.yoursway.autoupdater.core}/bin"/>
 <fileset dir="${org.eclipse.swt}/bin"/>
 <zipfileset excludes="META-INF/*.SF" src="${org.eclipse.swt}/extra_jars/exceptions.jar"/>
 <fileset dir="${com.yoursway.swt.macosx}/bin"/>

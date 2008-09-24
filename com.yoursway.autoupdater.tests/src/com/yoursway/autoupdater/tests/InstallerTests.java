@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.yoursway.autoupdater.core.auxiliary.AuxiliaryUtils;
 import com.yoursway.autoupdater.core.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.core.auxiliary.ComponentFile;
 import com.yoursway.autoupdater.core.auxiliary.ComponentStopper;
@@ -40,6 +42,7 @@ import com.yoursway.autoupdater.core.installer.InstallerException;
 import com.yoursway.autoupdater.core.installer.InternalInstaller;
 import com.yoursway.autoupdater.core.installer.RollbackTestInstallationCreator;
 import com.yoursway.autoupdater.core.installer.external.ExternalInstaller;
+import com.yoursway.autoupdater.core.installer.external.InstallerCommunication;
 import com.yoursway.autoupdater.core.installer.external.UnexpectedMessageException;
 import com.yoursway.autoupdater.tests.internal.Pack;
 import com.yoursway.utils.YsFileUtils;
@@ -68,9 +71,8 @@ public class InstallerTests {
         components.add(createInstallerComponent());
         install(installer, components, components, target);
         
-        ExternalInstaller.client().reconnect();
-        ExternalInstaller.client().receive("OK");
-        ExternalInstaller.client().send("OK");
+        String result = ExternalInstaller.afterInstall();
+        assertEquals(InstallerCommunication.OK, result);
         
         for (int i = 12; i <= 42; i++)
             assertEquals(fileContentsOf(i), readAsString(new File(target, filepath(i))));
@@ -170,9 +172,9 @@ public class InstallerTests {
     
     private void install(Installer installer, Collection<ComponentDefinition> oldComponents,
             Collection<ComponentDefinition> newComponents, File target,
-            InstallationCreator installationCreator) throws InstallerException {
+            InstallationCreator installationCreator) throws InstallerException, MalformedURLException {
         
-        ProductDefinition productD = new ProductDefinition("UNNAMED");
+        ProductDefinition productD = AuxiliaryUtils.fakeProductDefinition();
         Collection<Request> p = newLinkedList();
         
         ProductVersionDefinition currentVD = createProductVersionDefinition(productD, "current", "current",

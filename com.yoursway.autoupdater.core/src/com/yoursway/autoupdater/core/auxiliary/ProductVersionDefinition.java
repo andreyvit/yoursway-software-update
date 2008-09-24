@@ -28,7 +28,7 @@ public class ProductVersionDefinition {
     private boolean damaged;
     
     @Nullable
-    private static Collection<Request> packs;
+    private Collection<Request> packs;
     
     private final Collection<ComponentDefinition> components = newLinkedList();
     private ComponentDefinition installer;

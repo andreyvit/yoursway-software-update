@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.AuxiliaryUtils;
 import com.yoursway.autoupdater.core.auxiliary.ComponentDefinition;
 import com.yoursway.autoupdater.core.auxiliary.ComponentStopper;
 import com.yoursway.autoupdater.core.auxiliary.ProductDefinition;
@@ -57,7 +58,7 @@ public class LocalRepositoryTests {
         Collection<Request> requests = RequestUtils.requests(first, last, ".zip");
         RequestUtils.mount(server, requests);
         
-        ProductDefinition product = new ProductDefinition("UNNAMED");
+        ProductDefinition product = AuxiliaryUtils.fakeProductDefinition();
         Collection<ComponentDefinition> components = newLinkedList();
         ProductVersionDefinition version = createProductVersionDefinition(product, "new", "new", requests,
                 components, "");

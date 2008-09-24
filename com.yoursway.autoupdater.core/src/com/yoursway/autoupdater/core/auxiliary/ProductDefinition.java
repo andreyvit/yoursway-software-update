@@ -16,7 +16,7 @@ public class ProductDefinition {
     
     final URL updateSite;
     
-    public ProductDefinition(String name, URL updateSite) {
+    ProductDefinition(String name, URL updateSite) {
         if (name == null)
             throw new NullPointerException("name is null");
         if (updateSite == null)
