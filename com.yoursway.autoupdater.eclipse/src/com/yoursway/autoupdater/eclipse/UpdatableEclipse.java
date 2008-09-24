@@ -10,9 +10,9 @@ import java.net.URL;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
 
-import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationProductFeatures;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationView;
 
 public class UpdatableEclipse implements UpdatableApplication {
     

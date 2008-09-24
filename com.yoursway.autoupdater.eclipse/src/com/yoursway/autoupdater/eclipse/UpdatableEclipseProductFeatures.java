@@ -5,8 +5,8 @@ import static com.yoursway.utils.assertions.Assert.assertion;
 import java.io.File;
 import java.io.IOException;
 
-import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
+import com.yoursway.autoupdater.core.auxiliary.ComponentStopper;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationProductFeatures;
 
 public class UpdatableEclipseProductFeatures implements UpdatableApplicationProductFeatures {
     

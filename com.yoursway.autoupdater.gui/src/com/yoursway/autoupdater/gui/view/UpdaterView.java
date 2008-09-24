@@ -16,13 +16,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
-import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.core.auxiliary.SuiteDefinition;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.localrepository.LocalRepository;
+import com.yoursway.autoupdater.core.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.gui.demo.UpdaterStyleMock;
-import com.yoursway.autoupdater.localrepository.LocalRepository;
-import com.yoursway.autoupdater.localrepository.UpdatingListener;
 
 public class UpdaterView {
     

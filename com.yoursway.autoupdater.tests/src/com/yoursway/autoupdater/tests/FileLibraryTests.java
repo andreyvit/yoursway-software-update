@@ -1,6 +1,6 @@
 package com.yoursway.autoupdater.tests;
 
-import static com.yoursway.autoupdater.filelibrary.RequestUtils.do_order;
+import static com.yoursway.autoupdater.core.filelibrary.RequestUtils.do_order;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.notNull;
@@ -14,11 +14,11 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdater.filelibrary.FileLibrary;
-import com.yoursway.autoupdater.filelibrary.FileLibraryImpl;
-import com.yoursway.autoupdater.filelibrary.FileLibraryListener;
-import com.yoursway.autoupdater.filelibrary.LibraryState;
-import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.core.filelibrary.FileLibrary;
+import com.yoursway.autoupdater.core.filelibrary.FileLibraryImpl;
+import com.yoursway.autoupdater.core.filelibrary.FileLibraryListener;
+import com.yoursway.autoupdater.core.filelibrary.LibraryState;
+import com.yoursway.autoupdater.core.filelibrary.Request;
 import com.yoursway.autoupdater.tests.internal.DownloaderMock;
 import com.yoursway.utils.YsFileUtils;
 

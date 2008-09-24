@@ -7,5 +7,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4,
  com.yoursway.utils;bundle-version="1.0.0",
  com.google.collections;bundle-version="1.0.0",
- com.yoursway.autoupdater;bundle-version="1.0.0",
+ com.yoursway.autoupdater.core;bundle-version="1.0.0",
  org.easymock;bundle-version="1.0.0"

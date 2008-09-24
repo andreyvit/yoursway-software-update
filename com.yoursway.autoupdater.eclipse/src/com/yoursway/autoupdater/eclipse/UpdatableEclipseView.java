@@ -6,8 +6,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationView;
 
 public class UpdatableEclipseView implements UpdatableApplicationView {
     

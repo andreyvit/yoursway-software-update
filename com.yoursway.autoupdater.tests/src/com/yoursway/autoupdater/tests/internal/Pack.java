@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.yoursway.autoupdater.auxiliary.ComponentFile;
-import com.yoursway.autoupdater.filelibrary.Request;
+import com.yoursway.autoupdater.core.auxiliary.ComponentFile;
+import com.yoursway.autoupdater.core.filelibrary.Request;
 import com.yoursway.utils.YsDigest;
 
 public class Pack {

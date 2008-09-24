@@ -8,7 +8,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.yoursway.autoupdater.installer.log.InstallerLog;
+import com.yoursway.autoupdater.core.installer.log.InstallerLog;
 
 public class SWTView implements InstallerView {
     

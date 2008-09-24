@@ -1,6 +1,6 @@
 package com.yoursway.autoupdater.tests;
 
-import static com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMappingUtils.createMapping;
+import static com.yoursway.autoupdater.core.filelibrary.urlfilemapper.URLFileMappingUtils.createMapping;
 import static com.yoursway.utils.YsFileUtils.readAsString;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -17,11 +17,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.yoursway.autoupdater.filelibrary.downloader.Downloader;
-import com.yoursway.autoupdater.filelibrary.downloader.DownloaderImpl;
-import com.yoursway.autoupdater.filelibrary.downloader.DownloaderListener;
-import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMapping;
-import com.yoursway.autoupdater.filelibrary.urlfilemapper.URLFileMappingUtils;
+import com.yoursway.autoupdater.core.filelibrary.downloader.Downloader;
+import com.yoursway.autoupdater.core.filelibrary.downloader.DownloaderImpl;
+import com.yoursway.autoupdater.core.filelibrary.downloader.DownloaderListener;
+import com.yoursway.autoupdater.core.filelibrary.urlfilemapper.URLFileMapping;
+import com.yoursway.autoupdater.core.filelibrary.urlfilemapper.URLFileMappingUtils;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
 import com.yoursway.utils.annotations.SynchronizedWithMonitorOfThis;
 

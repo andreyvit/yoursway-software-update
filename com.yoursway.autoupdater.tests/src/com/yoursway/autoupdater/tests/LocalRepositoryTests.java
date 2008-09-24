@@ -1,10 +1,10 @@
 package com.yoursway.autoupdater.tests;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.yoursway.autoupdater.auxiliary.AuxiliaryUtils.createProductVersionDefinition;
-import static com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesProvider.MOCK;
-import static com.yoursway.autoupdater.installer.InstallationUtils.packs;
-import static com.yoursway.autoupdater.localrepository.LocalRepositoryUtils.createLocalRepository;
+import static com.yoursway.autoupdater.core.auxiliary.AuxiliaryUtils.createProductVersionDefinition;
+import static com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationProductFeaturesProvider.MOCK;
+import static com.yoursway.autoupdater.core.installer.InstallationUtils.packs;
+import static com.yoursway.autoupdater.core.localrepository.LocalRepositoryUtils.createLocalRepository;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.fileContentsOf;
 import static com.yoursway.autoupdater.tests.internal.FileTestUtils.sizeOf;
 import static com.yoursway.utils.YsFileUtils.readAsString;
@@ -21,19 +21,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.ComponentDefinition;
-import com.yoursway.autoupdater.auxiliary.ComponentStopper;
-import com.yoursway.autoupdater.auxiliary.ProductDefinition;
-import com.yoursway.autoupdater.auxiliary.ProductVersionDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeaturesProvider;
-import com.yoursway.autoupdater.filelibrary.Request;
-import com.yoursway.autoupdater.filelibrary.RequestUtils;
-import com.yoursway.autoupdater.installer.Installation;
-import com.yoursway.autoupdater.installer.Installer;
-import com.yoursway.autoupdater.installer.InstallerException;
-import com.yoursway.autoupdater.localrepository.LocalRepository;
-import com.yoursway.autoupdater.localrepository.UpdatingListener;
+import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.ComponentDefinition;
+import com.yoursway.autoupdater.core.auxiliary.ComponentStopper;
+import com.yoursway.autoupdater.core.auxiliary.ProductDefinition;
+import com.yoursway.autoupdater.core.auxiliary.ProductVersionDefinition;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationProductFeaturesProvider;
+import com.yoursway.autoupdater.core.filelibrary.Request;
+import com.yoursway.autoupdater.core.filelibrary.RequestUtils;
+import com.yoursway.autoupdater.core.installer.Installation;
+import com.yoursway.autoupdater.core.installer.Installer;
+import com.yoursway.autoupdater.core.installer.InstallerException;
+import com.yoursway.autoupdater.core.localrepository.LocalRepository;
+import com.yoursway.autoupdater.core.localrepository.UpdatingListener;
 import com.yoursway.autoupdater.tests.internal.server.WebServer;
 import com.yoursway.utils.YsFileUtils;
 

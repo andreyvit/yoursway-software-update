@@ -9,15 +9,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationProductFeatures;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.SuiteDefinition;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationProductFeatures;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplicationView;
+import com.yoursway.autoupdater.core.localrepository.LocalRepository;
 import com.yoursway.autoupdater.gui.controller.UpdaterController;
 import com.yoursway.autoupdater.gui.view.UpdaterView;
 import com.yoursway.autoupdater.gui.view.UpdaterViewFactory;
-import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.utils.YsFileUtils;
 
 public class UpdaterDemo {

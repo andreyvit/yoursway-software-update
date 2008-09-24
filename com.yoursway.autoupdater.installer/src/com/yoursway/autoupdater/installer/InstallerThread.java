@@ -1,17 +1,18 @@
 package com.yoursway.autoupdater.installer;
 
-import static com.yoursway.autoupdater.installer.external.InstallerCommunication.INSTALL_FAILED;
-import static com.yoursway.autoupdater.installer.external.InstallerCommunication.OK;
-import static com.yoursway.autoupdater.installer.external.InstallerCommunication.READY;
-import static com.yoursway.autoupdater.installer.external.InstallerCommunication.STOPPING;
+import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.INSTALL_FAILED;
+import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.OK;
+import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.READY;
+import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.STOPPING;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import com.yoursway.autoupdater.installer.external.InstallerCommunication;
+import com.yoursway.autoupdater.core.installer.Installation;
+import com.yoursway.autoupdater.core.installer.external.InstallerCommunication;
+import com.yoursway.autoupdater.core.installer.log.InstallerLog;
+import com.yoursway.autoupdater.core.protos.InstallationProtos.InstallationMemento;
 import com.yoursway.autoupdater.installer.gui.InstallerView;
-import com.yoursway.autoupdater.installer.log.InstallerLog;
-import com.yoursway.autoupdater.protos.InstallationProtos.InstallationMemento;
 
 public class InstallerThread extends Thread {
     

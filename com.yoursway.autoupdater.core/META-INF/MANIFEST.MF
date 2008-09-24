@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Autoupdater
+Bundle-SymbolicName: com.yoursway.autoupdater.core;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Export-Package: 
+ com.yoursway.autoupdater.core.auxiliary,
+ com.yoursway.autoupdater.core.filelibrary;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.core.filelibrary.downloader;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.core.filelibrary.urlfilemapper;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.core.installer;x-friends:="com.yoursway.autoupdater.tests,com.yoursway.autoupdater.installer",
+ com.yoursway.autoupdater.core.installer.external;x-friends:="com.yoursway.autoupdater.installer,com.yoursway.autoupdater.tests,com.yoursway.autoupdater.gui",
+ com.yoursway.autoupdater.core.installer.log;x-friends:="com.yoursway.autoupdater.installer,com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.core.localrepository,
+ com.yoursway.autoupdater.core.localrepository.internal;x-friends:="com.yoursway.autoupdater.tests",
+ com.yoursway.autoupdater.core.protos;x-friends:="com.yoursway.autoupdater.installer"
+Require-Bundle: com.yoursway.utils,
+ com.google.collections;bundle-version="1.0.0",
+ com.google.protobuf;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

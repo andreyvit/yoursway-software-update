@@ -1,12 +1,12 @@
 package com.yoursway.autoupdater.gui.controller;
 
-import com.yoursway.autoupdater.auxiliary.AutoupdaterException;
-import com.yoursway.autoupdater.auxiliary.ErrorsListener;
-import com.yoursway.autoupdater.auxiliary.SuiteDefinition;
-import com.yoursway.autoupdater.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.core.auxiliary.AutoupdaterException;
+import com.yoursway.autoupdater.core.auxiliary.ErrorsListener;
+import com.yoursway.autoupdater.core.auxiliary.SuiteDefinition;
+import com.yoursway.autoupdater.core.auxiliary.UpdatableApplication;
+import com.yoursway.autoupdater.core.localrepository.LocalRepository;
 import com.yoursway.autoupdater.gui.view.UpdaterView;
 import com.yoursway.autoupdater.gui.view.UpdaterViewFactory;
-import com.yoursway.autoupdater.localrepository.LocalRepository;
 import com.yoursway.utils.annotations.Nullable;
 
 public class UpdaterController {
