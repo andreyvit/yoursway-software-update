@@ -62,7 +62,8 @@ public class ProductDefinition {
     }
     
     public ProductDefinitionMemento toMemento() {
-        return ProductDefinitionMemento.newBuilder().setName(name).build();
+        return ProductDefinitionMemento.newBuilder().setName(name).setUpdateSite(updateSite.toString())
+                .build();
     }
     
     public String name() {
