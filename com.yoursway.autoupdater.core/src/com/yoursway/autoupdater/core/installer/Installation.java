@@ -4,7 +4,6 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.yoursway.utils.YsFileUtils.saveToFile;
-import static com.yoursway.utils.os.YsOSUtils.javaRelativePath;
 import static com.yoursway.utils.os.YsOSUtils.setExecAttribute;
 
 import java.io.File;
@@ -34,6 +33,7 @@ import com.yoursway.autoupdater.core.protos.InstallationProtos.PackMemento;
 import com.yoursway.autoupdater.core.protos.InstallationProtos.InstallationMemento.Builder;
 import com.yoursway.utils.YsDigest;
 import com.yoursway.utils.YsFileUtils;
+import com.yoursway.utils.os.YsOSUtils;
 
 public class Installation {
     
@@ -233,30 +233,22 @@ public class Installation {
     }
     
     public void startVersionExecutable(InstallerLog log, int port) throws Exception {
+        log.debug("target folder: " + target.toString());
         log.debug("exepath: " + executablePath);
+        
         if (executablePath.length() == 0)
             return;
-        
-        //File executable = new File(target, newVD.executable().path());
         File executable = new File(target, executablePath);
+        //File executable = new File(target, newVD.executable().path());
         
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.directory(target);
-        
+        List<String> cmd = newLinkedList();
         if (executable.getName().endsWith(".jar")) {
-            String javaHome = System.getProperty("java.home");
-            File java = new File(javaHome, javaRelativePath());
-            
-            pb.command(java.getCanonicalPath(), "-jar", executable.getCanonicalPath());
-        } else {
-            log.debug(target.toString());
-            log.debug(executable.getCanonicalPath());
-            
-            pb.command(executable.getCanonicalPath());
+            cmd.add(YsOSUtils.javaPath());
+            cmd.add("-jar");
         }
+        cmd.add(executable.getCanonicalPath());
         
-        pb.environment().put(ExternalInstaller.EXTINSTALLER_PORT, Integer.toString(port));
-        pb.start();
+        ExternalInstaller.startProcess(cmd, target, port);
     }
     
     public ComponentDefinition getInstallerComponent() throws Exception {

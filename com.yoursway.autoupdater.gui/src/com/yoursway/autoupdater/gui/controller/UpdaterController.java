@@ -27,7 +27,7 @@ public class UpdaterController {
         this.viewFactory = viewFactory != null ? viewFactory : UpdaterView.factory();
     }
     
-    public void onStart() {
+    public void atStartup() {
         try {
             repo = LocalRepository.createForGUI(app);
             repo.errors().addListener(new ErrorsListener() {

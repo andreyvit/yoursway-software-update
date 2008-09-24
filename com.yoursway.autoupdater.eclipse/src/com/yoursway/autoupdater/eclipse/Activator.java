@@ -20,7 +20,7 @@ public class Activator extends AbstractUIPlugin {
         Log.setLogger(new FileLogger("updatable-eclipse"));
         
         controller = new UpdaterController(new UpdatableEclipse());
-        controller.onStart();
+        controller.atStartup();
         
         super.start(context);
     }

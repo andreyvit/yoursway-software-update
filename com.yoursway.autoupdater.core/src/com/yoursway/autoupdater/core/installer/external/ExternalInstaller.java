@@ -5,7 +5,6 @@ import static com.yoursway.autoupdater.core.installer.external.InstallerCommunic
 import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.INSTALL_FAILED;
 import static com.yoursway.autoupdater.core.installer.external.InstallerCommunication.OK;
 import static com.yoursway.utils.YsFileUtils.createTempFolder;
-import static com.yoursway.utils.os.YsOSUtils.javaRelativePath;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,6 +18,7 @@ import com.yoursway.autoupdater.core.installer.Installation;
 import com.yoursway.autoupdater.core.installer.Installer;
 import com.yoursway.autoupdater.core.installer.InstallerException;
 import com.yoursway.utils.log.Log;
+import com.yoursway.utils.os.YsOSUtils;
 
 public class ExternalInstaller implements Installer {
     
@@ -95,16 +95,10 @@ public class ExternalInstaller implements Installer {
         
         Log.write("Starting external installer");
         
-        String javaHome = System.getProperty("java.home");
-        File java = new File(javaHome, javaRelativePath());
-        
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.directory(folder);
-        
         List<String> cmd;
         try {
             cmd = newLinkedList();
-            cmd.add(java.getCanonicalPath());
+            cmd.add(YsOSUtils.javaPath());
             cmd.add("-XstartOnFirstThread");
             cmd.add("-cp");
             
@@ -117,16 +111,21 @@ public class ExternalInstaller implements Installer {
         } catch (Exception e) {
             throw new InstallerException("Cannot create java cmd", e); //!
         }
-        pb.command(cmd);
-        pb.environment().put(EXTINSTALLER_PORT, Integer.toString(port));
-        
         Log.write(cmd.toString());
         
         try {
-            pb.start();
+            startProcess(cmd, folder, port);
         } catch (IOException e) {
             throw new InstallerException("Cannot start the external installer", e);
         }
+    }
+    
+    public static void startProcess(List<String> cmd, File dir, int port) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.directory(dir);
+        pb.command(cmd);
+        pb.environment().put(EXTINSTALLER_PORT, Integer.toString(port));
+        pb.start();
     }
     
     private void getJars(StringBuilder sb, File folder) throws IOException {
