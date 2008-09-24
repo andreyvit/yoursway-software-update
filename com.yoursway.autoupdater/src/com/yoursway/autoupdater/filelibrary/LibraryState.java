@@ -36,9 +36,11 @@ public class LibraryState {
         for (Request request : requests) {
             FileState state = stateOf(request.url());
             
+            /* //!
             if (!request.hash().equals(state.hash()))
                 throw new AssertionError("Requested file is invalid and should be redownloaded before.");
-            
+            */
+
             files.add(state.getLocalFile());
         }
         return files;
