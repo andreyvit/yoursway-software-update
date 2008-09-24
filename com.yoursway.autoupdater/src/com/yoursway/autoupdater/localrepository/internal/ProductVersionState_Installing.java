@@ -15,6 +15,7 @@ import com.yoursway.autoupdater.installer.Installation;
 import com.yoursway.autoupdater.installer.InstallerException;
 import com.yoursway.autoupdater.protos.LocalRepositoryProtos.LocalProductVersionMemento.State;
 import com.yoursway.utils.log.Log;
+import com.yoursway.utils.log.LogEntryType;
 
 final class ProductVersionState_Installing extends AbstractProductVersionState implements FileLibraryListener {
     
@@ -55,6 +56,7 @@ final class ProductVersionState_Installing extends AbstractProductVersionState i
                 fire().downloading(progress);
             }
         } catch (Throwable e) {
+            Log.write(e.getClass().getSimpleName() + ": " + e.getMessage(), LogEntryType.ERROR);
             AutoupdaterException ae = e instanceof AutoupdaterException ? (AutoupdaterException) e
                     : new AutoupdaterException(e);
             

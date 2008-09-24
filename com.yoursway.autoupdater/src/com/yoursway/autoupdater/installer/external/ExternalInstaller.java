@@ -93,6 +93,8 @@ public class ExternalInstaller implements Installer {
         if (!prepared)
             throw new IllegalStateException("ExternalInstaller should be prepared before starting");
         
+        Log.write("Starting external installer");
+        
         String javaHome = System.getProperty("java.home");
         File java = new File(javaHome, javaRelativePath());
         
@@ -117,6 +119,8 @@ public class ExternalInstaller implements Installer {
         }
         pb.command(cmd);
         pb.environment().put(EXTINSTALLER_PORT, Integer.toString(port));
+        
+        Log.write(cmd.toString());
         
         try {
             pb.start();
