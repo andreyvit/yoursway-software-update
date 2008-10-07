@@ -45,7 +45,9 @@ public class ComponentDefinition {
         for (ComponentFile file : files)
             addFile(file);
     }
-    
+    /**
+     * Creates component from component definition file
+     * */
     public ComponentDefinition(URL updateSite, String name) throws IOException, InvalidFileFormatException {
         
         this.name = name;
@@ -74,7 +76,37 @@ public class ComponentDefinition {
                 throw new InvalidFileFormatException(url);
         }
     }
-    
+    /**
+     * Reads component definition with a definition reader
+     * */
+    public ComponentDefinition(URL updateSite, String name, DefinitionReader reader) throws IOException, InvalidFileFormatException {
+        
+        this.name = name;
+        packs = newLinkedList();
+        
+        while (true) {
+            String[] fields = reader.lookAhead();
+            if (fields == null || !fields[0].equals("P") || !fields[0].equals("F"))
+                break;
+            fields = reader.readLine();
+            
+            String type = fields[0];
+            String hash = fields[1];
+            long size = Long.parseLong(fields[2]);
+            if (type.equals("P")) {
+                URL packUrl = new URL(updateSite + PACKS_PATH + hash + ".zip");
+                Request request = new Request(packUrl, size, hash);
+                packs.add(request);
+            } else if (type.equals("F")) {
+                long modified = Long.parseLong(fields[3]);
+                addFile(new ComponentFile(hash, size, modified, fields[4], fields[5]));
+            } else {
+                URL url = new URL(updateSite + COMPONENTS_PATH + filename());
+                throw new InvalidFileFormatException(url);
+            }
+        }
+    }
+        
     ComponentDefinition(String name, List<Request> packs, List<ComponentFile> files) {
         if (name == null)
             throw new NullPointerException("name is null");

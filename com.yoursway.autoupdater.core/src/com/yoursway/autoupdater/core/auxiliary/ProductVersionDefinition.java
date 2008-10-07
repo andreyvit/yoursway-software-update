@@ -1,7 +1,7 @@
 package com.yoursway.autoupdater.core.auxiliary;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.yoursway.autoupdater.core.auxiliary.ComponentDefinition.PACKS_PATH;
+import static com.yoursway.utils.log.LogEntryType.ERROR;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,7 @@ import com.yoursway.autoupdater.core.protos.LocalRepositoryProtos.ProductVersion
 import com.yoursway.autoupdater.core.protos.LocalRepositoryProtos.RequestMemento;
 import com.yoursway.autoupdater.core.protos.LocalRepositoryProtos.ProductVersionDefinitionMemento.Builder;
 import com.yoursway.utils.annotations.Nullable;
+import com.yoursway.utils.log.Log;
 
 public class ProductVersionDefinition {
     
@@ -230,30 +231,18 @@ public class ProductVersionDefinition {
             List<Request> packs = newLinkedList();
             List<ComponentFile> files = newLinkedList();
             
-            while (true) {
-                fields = reader.readLine();
-                if (fields == null)
-                    break;
-                
-                String type = fields[0];
-                if (type.equals("P") || type.equals("F")) {
-                    String hash = fields[1];
-                    long size = Long.parseLong(fields[2]);
-                    if (type.equals("P")) {
-                        URL packUrl = new URL(product.updateSite + PACKS_PATH + hash + ".zip");
-                        Request request = new Request(packUrl, size, hash);
-                        packs.add(request);
-                    } else {
-                        long modified = Long.parseLong(fields[3]);
-                        ComponentFile file = new ComponentFile(hash, size, modified, fields[4], fields[5]);
-                        files.add(file);
-                    }
-                } else {
-                    dontReadNext = true;
-                    break;
-                }
-                
+            try {
+                componentName = fields[1];
+                definition.addComponent(new ComponentDefinition(product.updateSite, componentName, reader));
+            } catch (Throwable e) {
+                if (definition != null)
+                	definition.damage();
+                String component = componentName != null ? " " + componentName : "";
+                String version = definition != null ? " " + definition : "";
+                Log.write("Cannot add component" + component + " to product version" + version
+                        + " definition: " + e.getClass().getSimpleName(), ERROR);
             }
+
             
             ComponentDefinition component = new ComponentDefinition(componentName, packs, files);
             definition.addComponent(component);

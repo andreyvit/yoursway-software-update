@@ -46,20 +46,6 @@ public class SuiteDefinition {
                         Log.write("Cannot add product version to suite definition: "
                                 + e.getClass().getSimpleName(), ERROR);
                     }
-                } else if (type.equals("CVB")) {
-                    String componentName = null;
-                    try {
-                        componentName = fields[1];
-                        addComponent(productVersion, componentName);
-                    } catch (Throwable e) {
-                        if (productVersion != null)
-                            productVersion.damage();
-                        
-                        String component = componentName != null ? " " + componentName : "";
-                        String version = productVersion != null ? " " + productVersion : "";
-                        Log.write("Cannot add component" + component + " to product version" + version
-                                + " definition: " + e.getClass().getSimpleName(), ERROR);
-                    }
                 } else {
                     if (productVersion != null) {
                         Log.write("Cannot understand line: " + fields);
@@ -80,7 +66,11 @@ public class SuiteDefinition {
         
     }
     
-    private static String versionsFilename() {
+    public String getName() {
+		return name;
+	}
+
+	private static String versionsFilename() {
         String platform = isMacOSX() ? "mac" : "win";
         return "versions_" + platform + ".txt";
     }
@@ -92,13 +82,6 @@ public class SuiteDefinition {
         } catch (Throwable e) {
             throw new SuiteDefinitionLoadingException(updateSite, name, e);
         }
-    }
-    
-    private void addComponent(ProductVersionDefinition productVersion, String name) throws IOException,
-            InvalidFileFormatException {
-        
-        ComponentDefinition component = new ComponentDefinition(updateSite, name);
-        productVersion.addComponent(component);
     }
     
     private ProductVersionDefinition addProductVersion(String productName, String releaseType,
