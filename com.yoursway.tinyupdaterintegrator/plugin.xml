@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="com.yoursway.tinyupdaterintegrator.OnStartupChecker">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:window?after=additions">
+         <command
+               commandId="com.yoursway.tinyupdaterintegrator.update"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.yoursway.tinyupdaterintegrator.CommandHandler"
+            id="com.yoursway.tinyupdaterintegrator.update"
+            name="Check for updates…">
+      </command>
+   </extension>
+
+</plugin>
