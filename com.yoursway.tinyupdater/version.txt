@@ -1,0 +1,5 @@
+0.0
+applicationName
+mac
+stable
+file:///Users/lliypik/Desktop/tinyupdater/
