@@ -1,5 +1,11 @@
-0.0
-applicationName
-mac
-stable
-file:///Users/lliypik/Desktop/tinyupdater/
+[version]
+[applicationName]
+[platform]
+[releaseType]
+[updateSite]
+
+#0.0
+#applicationName
+#mac
+#stable
+#file:///Users/leon/Desktop/tinyupdater/
