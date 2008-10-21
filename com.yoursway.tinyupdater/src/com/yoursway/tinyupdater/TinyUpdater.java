@@ -80,8 +80,13 @@ public class TinyUpdater {
             }
             
         } catch (IOException e) {
-            Log.writeError("Cannot check update. " + e);
+            
+            Log.writeError("Cannot check for updates. " + e);
             e.printStackTrace();
+            
+            if (fromMenu)
+                notifyOfCheckUpdateFailure();
+            
         }
         
         resetTimer();
@@ -123,7 +128,7 @@ public class TinyUpdater {
                         e.printStackTrace();
                         
                         MessageBox box = new MessageBox(shell, SWT.ICON_ERROR);
-                        box.setText("Error");
+                        box.setText("Updater Error");
                         String string = "Couldn't open browser. You can download the update from "
                                 + updateUrl;
                         box.setMessage(string);
@@ -143,6 +148,20 @@ public class TinyUpdater {
                 MessageBox msgbox = new MessageBox(new Shell(), SWT.ICON_INFORMATION); //!
                 msgbox.setMessage("No updates available.");
                 msgbox.setText("Updater");
+                
+                msgbox.open();
+            }
+        });
+    }
+    
+    private void notifyOfCheckUpdateFailure() {
+        
+        Display.getDefault().syncExec(new Runnable() {
+            
+            public void run() {
+                MessageBox msgbox = new MessageBox(new Shell(), SWT.ICON_ERROR); //!
+                msgbox.setMessage("Cannot check for updates.");
+                msgbox.setText("Updater Error");
                 
                 msgbox.open();
             }
