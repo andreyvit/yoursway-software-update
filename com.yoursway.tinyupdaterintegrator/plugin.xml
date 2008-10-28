@@ -10,7 +10,11 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:window?after=additions">
+            locationURI="menu:file?after=properties">
+         <separator
+               name="com.yoursway.tinyupdaterintegrator.separator1"
+               visible="true">
+         </separator>
          <command
                commandId="com.yoursway.tinyupdaterintegrator.update"
                style="push">
