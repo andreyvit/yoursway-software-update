@@ -54,7 +54,7 @@ public class TinyUpdater {
                 String releaseType = reader.readLine();
                 URL updateSite = new URL(reader.readLine());
                 
-                String envRelType = System.getenv(product.toUpperCase().replaceAll('-', '_') + "_RELTYPE");
+                String envRelType = System.getenv(product.toUpperCase().replaceAll("-", "_") + "_RELTYPE");
                 if (envRelType != null)
                     releaseType = envRelType;
                 
