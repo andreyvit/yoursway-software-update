@@ -35,7 +35,10 @@ public class TinyUpdater {
         
         this.version = version;
         
-        lastVersionDescription = new URL(updateSite + "/version_" + product + "_" + platform + "_"
+		String updateSitePrefix = updateSite.toString();
+		if (!updateSitePrefix.endsWith("/"))
+			updateSitePrefix = updateSitePrefix + "/";
+        lastVersionDescription = new URL(updateSitePrefix + "version_" + product + "_" + platform + "_"
                 + releaseType + ".txt");
     }
     
