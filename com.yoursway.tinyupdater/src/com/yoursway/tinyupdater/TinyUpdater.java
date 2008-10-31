@@ -76,7 +76,7 @@ public class TinyUpdater {
             String updateUrl = reader.readLine();
             
             if (!lastVersion.equalsIgnoreCase(version))
-                suggestUpdate(updateUrl);
+                suggestUpdate(updateUrl, version, lastVersion);
             else {
                 if (fromMenu)
                     notifyOfNoUpdates();
@@ -112,7 +112,8 @@ public class TinyUpdater {
         
     }
     
-    private void suggestUpdate(final String updateUrl) {
+    private void suggestUpdate(final String updateUrl, final String currentVersion,
+		final String latestVersion) {
         
         Display.getDefault().syncExec(new Runnable() {
             
@@ -120,8 +121,10 @@ public class TinyUpdater {
                 Shell shell = new Shell(); //!
                 
                 MessageBox msgbox = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-                msgbox.setMessage("A new version available. Do you want to download it now?");
-                msgbox.setText("Updater");
+                msgbox.setMessage(
+					String.format("A newer version %s is available (currently you have version %s). Do you want to download it now?",
+						latestVersion, currentVersion));
+                msgbox.setText("Newer version found");
                 
                 int answer = msgbox.open();
                 if (answer == SWT.YES) {
