@@ -1,0 +1,6 @@
+[repos]
+	name = updater
+[dep "yscommons"]
+	commitid = ffd711a9c8de0c613c25d12dc62061223e348e60
+	url = git://github.com/andreyvit/yoursway-commons.git
+	branch = master
